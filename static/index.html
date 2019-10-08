@@ -71,7 +71,7 @@
                 <section>
                     <h1>Dougie Jam Productions 2019</h1>
                     <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/slider/slider-1.html -->
-                    <div class="swatch" tabindex="0">
+                    <div class="swatch" tabindex="0" aria-selected="false">
                         <h6>#CC3300</h6>
                         <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
                         <div class="swatch-modifier">
@@ -100,6 +100,7 @@
         <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html -->
         <dialog class="compare-colors" role="dialog" aria-label="Compare Colors" aria-modal="true">
             <button class="modal-exit" aria-label="Exit Compare Colors"><img src="/assets/zondicons/close.svg" alt="" /></button>
+            <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
             <div class="swatch" tabindex="0">
                 <h6>#CC3300</h6>
                 <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
@@ -118,6 +119,7 @@
                     <span aria-hidden="true">80</span>
                 </div>
             </div>
+            <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
             <div class="swatch" tabindex="0">
                 <h6>#CC3300</h6>
                 <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
@@ -141,6 +143,7 @@
         <dialog class="contrast-checker" role="dialog" aria-label="Contrast Checker" aria-modal="true">
             <button class="modal-exit" aria-label="Exit Contrast Checker"><img src="/assets/zondicons/close.svg" alt="" /></button>
             <div class="contrast-checker-left">
+                <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
                 <div class="swatch" tabindex="0">
                     <h6>#CC3300</h6>
                     <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
@@ -159,6 +162,7 @@
                         <span aria-hidden="true">80</span>
                     </div>
                 </div>
+                <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
                 <div class="swatch" tabindex="0">
                     <h6>#CC3300</h6>
                     <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
