@@ -13,7 +13,202 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.7/lottie.min.js" integrity="sha256-fRn4wIlEuPBJxI2Uoz/0Scjro4dAMp7wapNneqEb1l8=" crossorigin="anonymous"></script>
     </head>
     <body>
-        <nav></nav>
-        <main></main>
+        <!-- Make this flex -->
+        <nav role="navigation">
+            <img src="/assets/PalettePickerLogo.svg" alt="Palette Picker Logo" />
+            <!-- Following https://www.w3.org/WAI/tutorials/menus/flyout/ -->
+            <button class="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded="false" aria-controls="hamburger-menu-expanded">
+                <div class="hamburger-menu" aria-hidden="true"></div>
+            </button>
+            <div id="hamburger-menu-expanded">
+                <ul>
+                    <li><button>Dougie Jam Productions 2019</button></li>
+                    <li><button>Personal Portfolio 2019</button></li>
+                </ul>
+                <!-- Input appears here on button click, focus transferred to input -->
+                <button class="add-project"><img src="/assets/zondicons/checkmark.svg" alt="" />Add Project</button>
+            </div>
+        </nav>
+        <main>
+            <header>
+                <div class="lightness-vertical" aria-hidden="true"></div>
+                <div class="hue-saturation-circle" aria-hidden="true"></div>
+                <div class="header-toolbars">
+                    <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/listbox/listbox-collapsible.html -->
+                    <label id="dropdown-color-harmony">Color Harmony</label>
+                    <div class="dropdown">
+                        <button id="dropdown-color-harmony-selected" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-color-harmony dropdown-color-harmony-selected">None</button>
+                        <ul role="listbox" aria-labelledby="dropdown-color-harmony" tabindex="-1" aria-activedescendant="dropdown-color-harmony-0">
+                            <li id="dropdown-color-harmony-0" role="option" aria-selected="true">None</li>
+                            <li id="dropdown-color-harmony-1" role="option">Complementary</li>
+                            <li id="dropdown-color-harmony-2" role="option">Analogous</li>
+                            <li id="dropdown-color-harmony-3" role="option">Triad</li>
+                            <li id="dropdown-color-harmony-4" role="option">Split-Complementary</li>
+                            <li id="dropdown-color-harmony-5" role="option">Rectangle</li>
+                        </ul>
+                    </div>
+                    <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/listbox/listbox-collapsible.html -->
+                    <label id="dropdown-color-mode">Color Mode</label>
+                    <div class="dropdown">
+                        <button id="dropdown-color-mode-selected" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-color-mode dropdown-color-mode-selected">None</button>
+                        <ul role="listbox" aria-labelledby="dropdown-color-mode" tabindex="-1" aria-activedescendant="dropdown-color-mode-0">
+                            <li id="dropdown-color-mode-0" role="option" aria-selected="true">HSB</li>
+                            <li id="dropdown-color-mode-1" role="option">RGB</li>
+                            <li id="dropdown-color-mode-2" role="option">CMYK</li>
+                        </ul>
+                    </div>
+                    <button>
+                        Compare Colors
+                        <img src="/assets/zondicons/view-column.svg" alt="" />
+                    </button>
+                    <button>
+                        Contrast Checker
+                        <img src="/assets/zondicons/view-show.svg" alt="" />
+                    </button>
+                </div>
+            </header>
+            <article>
+                <section>
+                    <h1>Dougie Jam Productions 2019</h1>
+                    <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/slider/slider-1.html -->
+                    <div class="swatch" tabindex="0">
+                        <h6>#CC3300</h6>
+                        <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
+                        <div class="swatch-modifier">
+                            <div class="hue-modifier">
+                                <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" aria-label="Hue"></div>
+                            </div>
+                            <span aria-hidden="true">15</span>
+                            <div class="saturation-modifier">
+                                <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Saturation"></div>
+                            </div>
+                            <span aria-hidden="true">100</span>
+                            <div class="lightness-modifier">
+                                <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Lightness"></div>
+                            </div>
+                            <span aria-hidden="true">80</span>
+                        </div>
+                    </div>
+                    <button class="add-swatch" aria-label="Add Swatch"><img src="/assets/zondicons/close.svg" alt="" /></button>
+                </section>
+                <button class="add-section">
+                    <img src="/assets/zondicons/close.svg" alt="" />
+                    Add New Section
+                </button>
+            </article>
+        </main>
+        <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html -->
+        <dialog class="compare-colors" role="dialog" aria-label="Compare Colors" aria-modal="true">
+            <button class="modal-exit" aria-label="Exit Compare Colors"><img src="/assets/zondicons/close.svg" alt="" /></button>
+            <div class="swatch" tabindex="0">
+                <h6>#CC3300</h6>
+                <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
+                <div class="swatch-modifier">
+                    <div class="hue-modifier">
+                        <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" aria-label="Hue"></div>
+                    </div>
+                    <span aria-hidden="true">15</span>
+                    <div class="saturation-modifier">
+                        <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Saturation"></div>
+                    </div>
+                    <span aria-hidden="true">100</span>
+                    <div class="lightness-modifier">
+                        <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Lightness"></div>
+                    </div>
+                    <span aria-hidden="true">80</span>
+                </div>
+            </div>
+            <div class="swatch" tabindex="0">
+                <h6>#CC3300</h6>
+                <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
+                <div class="swatch-modifier">
+                    <div class="hue-modifier">
+                        <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" aria-label="Hue"></div>
+                    </div>
+                    <span aria-hidden="true">15</span>
+                    <div class="saturation-modifier">
+                        <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Saturation"></div>
+                    </div>
+                    <span aria-hidden="true">100</span>
+                    <div class="lightness-modifier">
+                        <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Lightness"></div>
+                    </div>
+                    <span aria-hidden="true">80</span>
+                </div>
+            </div>
+        </dialog>
+        <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html -->
+        <dialog class="contrast-checker" role="dialog" aria-label="Contrast Checker" aria-modal="true">
+            <button class="modal-exit" aria-label="Exit Contrast Checker"><img src="/assets/zondicons/close.svg" alt="" /></button>
+            <div class="contrast-checker-left">
+                <div class="swatch" tabindex="0">
+                    <h6>#CC3300</h6>
+                    <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
+                    <div class="swatch-modifier">
+                        <div class="hue-modifier">
+                            <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" aria-label="Hue"></div>
+                        </div>
+                        <span aria-hidden="true">15</span>
+                        <div class="saturation-modifier">
+                            <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Saturation"></div>
+                        </div>
+                        <span aria-hidden="true">100</span>
+                        <div class="lightness-modifier">
+                            <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Lightness"></div>
+                        </div>
+                        <span aria-hidden="true">80</span>
+                    </div>
+                </div>
+                <div class="swatch" tabindex="0">
+                    <h6>#CC3300</h6>
+                    <button aria-label="Delete Swatch"><img src="/assets/zondicons/trash.svg" alt="" /></button>
+                    <div class="swatch-modifier">
+                        <div class="hue-modifier">
+                            <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" aria-label="Hue"></div>
+                        </div>
+                        <span aria-hidden="true">15</span>
+                        <div class="saturation-modifier">
+                            <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Saturation"></div>
+                        </div>
+                        <span aria-hidden="true">100</span>
+                        <div class="lightness-modifier">
+                            <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" aria-label="Lightness"></div>
+                        </div>
+                        <span aria-hidden="true">80</span>
+                    </div>
+                </div>
+            </div>
+            <div class="contrast-checker-right">
+                <h2>5.95</h2>
+                <h3>Normal Text</h3>
+                <div>
+                    <img src="assets/icons/check.svg" alt="Check" />
+                    <span class="standard-name">WCAG AA</span>
+                    <span class="contrast-standard">4.5:1</span>
+                </div>
+                <div>
+                    <img src="assets/icons/check.svg" alt="Check" />
+                    <span class="standard-name">WCAG AAA</span>
+                    <span class="contrast-standard">7:1</span>
+                </div>
+                <h3>Large Text</h3>
+                <div>
+                    <img src="assets/icons/check.svg" alt="Check" />
+                    <span class="standard-name">WCAG AA</span>
+                    <span class="contrast-standard">3:1</span>
+                </div>
+                <div>
+                    <img src="assets/icons/check.svg" alt="Check" />
+                    <span class="standard-name">WCAG AAA</span>
+                    <span class="contrast-standard">4.5:1</span>
+                </div>
+                <h3>GUI Components</h3>
+                <div>
+                    <img src="assets/icons/check.svg" alt="Check" />
+                    <span class="standard-name">WCAG AA</span>
+                    <span class="contrast-standard">3:1</span>
+                </div>
+            </div>
+        </dialog>
     </body>
 </html>
