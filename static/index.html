@@ -6,27 +6,25 @@
         <meta name="description" content="A utility for picking a color palette for graphic design" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
 
-        <link rel="stylesheet" href="styles/index.min.css" />
-        <script src="scripts/index.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.7/lottie.min.js" integrity="sha256-fRn4wIlEuPBJxI2Uoz/0Scjro4dAMp7wapNneqEb1l8=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="/styles/main.min.css" />
     </head>
     <body>
         <!-- Make this flex -->
         <nav role="navigation">
             <img src="/assets/PalettePickerLogo.svg" alt="Palette Picker Logo" />
             <!-- Following https://www.w3.org/WAI/tutorials/menus/flyout/ -->
-            <button class="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded="false" aria-controls="hamburger-menu-expanded">
-                <div class="hamburger-menu" aria-hidden="true"></div>
+            <button class="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded="false" aria-controls="hamburger-menu-body">
+                <img src="/assets/zondicons/menu_offwhite.svg" alt="" />
             </button>
-            <div id="hamburger-menu-expanded">
+            <div id="hamburger-menu-body" aria-label="Your Projects" hidden>
                 <ul>
-                    <li><button>Dougie Jam Productions 2019</button></li>
+                    <li class="project-selected" aria-selected="true"><button>Dougie Jam Productions 2019</button></li>
                     <li><button>Personal Portfolio 2019</button></li>
                 </ul>
                 <!-- Input appears here on button click, focus transferred to input -->
-                <button class="add-project"><img src="/assets/zondicons/checkmark.svg" alt="" />Add Project</button>
+                <button class="add-project"><img src="/assets/zondicons/close_offwhite.svg" alt="" />Add Project</button>
             </div>
         </nav>
         <main>
@@ -98,7 +96,7 @@
             </article>
         </main>
         <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html -->
-        <dialog class="compare-colors" role="dialog" aria-label="Compare Colors" aria-modal="true">
+        <dialog class="compare-colors" role="dialog" aria-label="Compare Colors" aria-modal="true" hidden>
             <button class="modal-exit" aria-label="Exit Compare Colors"><img src="/assets/zondicons/close.svg" alt="" /></button>
             <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
             <div class="swatch" tabindex="0">
@@ -140,7 +138,7 @@
             </div>
         </dialog>
         <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html -->
-        <dialog class="contrast-checker" role="dialog" aria-label="Contrast Checker" aria-modal="true">
+        <dialog class="contrast-checker" role="dialog" aria-label="Contrast Checker" aria-modal="true" hidden>
             <button class="modal-exit" aria-label="Exit Contrast Checker"><img src="/assets/zondicons/close.svg" alt="" /></button>
             <div class="contrast-checker-left">
                 <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
