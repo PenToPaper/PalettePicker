@@ -75,4 +75,120 @@ nav
             img
                 transform: rotate(45deg)
                 height: 18px
-                margin-right: 16px      
+                margin-right: 16px
+
+header
+    display: flex
+    justify-content: center
+    align-items: center
+    margin-top: 32px
+    .lightness-vertical
+        height: 320px
+        width: 48px
+        border: 4px solid $back-dark
+        background-image: linear-gradient(hsl(0, 0, 0), hsl(0, 0, 100))
+        position: relative
+        margin-right: 48px
+        &::after
+            content: " "
+            position: absolute
+            left: -8px
+            right: -8px
+            border-radius: 4px
+            top: 25px
+            height: 8px
+            background-color: $back-dark
+    
+    .hue-saturation-circle
+        width: 352px
+        height: 352px
+        background-image: url("../assets/ColorWheel.svg")
+        background-size: contain
+        margin-right: 48px
+    
+    .header-tool
+        width: 352px
+        height: 48px
+        line-height: 48px
+        font-size: 18px
+        border: none
+        background-color: $component-light
+        text-align: left
+        color: $font-dark
+        padding: 0 16px
+        position: relative
+        display: block
+        margin-top: 32px
+        &:focus
+            border: 1px solid $back-dark
+        &::after
+            content: ""
+            position: absolute
+            top: 0
+            bottom: 0
+            right: 0
+            width: 48px
+            margin: 8px 13px
+            background-repeat: no-repeat
+            background-position: center right
+        &#compare-colors-tool::after
+            background-image: url("../assets/zondicons/view-column.svg")
+        &#contrast-checker-tool::after
+            background-image: url("../assets/zondicons/view-show.svg")
+
+label
+    display: block
+    margin-top: 16px
+    font-size: 14px
+    font-weight: 600
+    color: $font-dark-deemphasized
+
+.dropdown
+    position: relative
+    width: 352px
+    &.dropdown-expanded
+        button
+            background-color: $component-light-selected
+        ul
+            display: block
+    button
+        width: 100%
+        height: 48px
+        line-height: 48px
+        font-size: 18px
+        background-color: $component-light
+        border: none
+        text-align: left
+        padding: 0px 16px
+        color: $font-dark
+        position: relative
+        &:focus
+            border: 1px solid $back-dark
+        &::after
+            content: " "
+            position: absolute
+            right: 5px
+            top: 0
+            bottom: 0
+            width: 48px
+            background-image: url("../assets/zondicons/cheveron-down.svg")
+    ul
+        display: none
+        z-index: 5
+        position: absolute
+        top: 100%
+        left: 0
+        right: 0
+        background-color: $component-light
+        box-shadow: $shadow-2
+        li
+            height: 48px
+            line-height: 48px
+            font-size: 18px
+            padding: 0px 16px
+            cursor: pointer
+            color: $font-dark
+            &:hover, &:focus
+                background-color: $component-light-selected
+        &:focus
+            border: 1px solid $back-dark
