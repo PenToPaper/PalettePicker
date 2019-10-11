@@ -146,12 +146,11 @@
             </article>
         </main>
         <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html -->
-        <dialog class="compare-colors" role="dialog" aria-label="Compare Colors" aria-modal="true" hidden>
-            <button class="modal-exit" aria-label="Exit Compare Colors"><img src="/assets/materialicons/material_close_offblack.svg" alt="" /></button>
+        <div class="compare-colors modal" role="dialog" aria-label="Compare Colors" aria-modal="true" hidden>
+            <button class="modal-exit" aria-label="Exit Compare Colors"></button>
             <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
             <div class="swatch" tabindex="0">
                 <h6>#CC3300</h6>
-                <button aria-label="Delete Swatch"><img src="/assets/materialicons/material_delete_offblack.svg" alt="" /></button>
                 <div class="swatch-modifier">
                     <div class="hue-modifier">
                         <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" aria-label="Hue"></div>
@@ -170,7 +169,6 @@
             <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
             <div class="swatch" tabindex="0">
                 <h6>#CC3300</h6>
-                <button aria-label="Delete Swatch"><img src="/assets/materialicons/material_delete_offblack.svg" alt="" /></button>
                 <div class="swatch-modifier">
                     <div class="hue-modifier">
                         <div class="modifier-thumb" role="slider" tabindex="0" aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" aria-label="Hue"></div>
@@ -186,9 +184,9 @@
                     <span aria-hidden="true">80</span>
                 </div>
             </div>
-        </dialog>
+        </div>
         <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/dialog.html -->
-        <dialog class="contrast-checker" role="dialog" aria-label="Contrast Checker" aria-modal="true" hidden>
+        <div class="contrast-checker modal" role="dialog" aria-label="Contrast Checker" aria-modal="true" hidden>
             <button class="modal-exit" aria-label="Exit Contrast Checker"><img src="/assets/materialicons/material_close_offblack.svg" alt="" /></button>
             <div class="contrast-checker-left">
                 <!-- No aria-selected, here, these swatches should be focusable, but not selectable -->
@@ -261,6 +259,6 @@
                     <span class="contrast-standard">3:1</span>
                 </div>
             </div>
-        </dialog>
+        </div>
     </body>
 </html>
