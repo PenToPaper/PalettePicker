@@ -322,6 +322,7 @@ section
     bottom: 0
     right: 0
     left: 0
+    background-color: $back-light
     .modal-exit
         @include focus-outline($back-dark)
         position: absolute
@@ -358,3 +359,58 @@ section
                 margin-bottom: 32px
                 &:last-of-type
                     margin-bottom: 0px
+
+.contrast-checker
+    display: flex
+
+.contrast-checker-left
+    height: 100%
+    width: 25%
+    .swatch
+        width: 100%
+        height: 50%
+        padding-bottom: 0px
+        clear: left
+        h6
+            height: 80px
+            line-height: 80px
+            font-size: 32px
+            font-weight: 400
+
+.contrast-checker-right
+    width: 75%
+    padding: 32px
+    box-sizing: border-box
+    h2
+        font-size: 82px
+        font-weight: 800
+        color: $back-dark
+    h3
+        margin-top: 32px
+        font-size: 32px
+        color: $back-dark
+
+    div
+        display: flex
+        align-items: center
+        background-color: $approval-back-green
+        padding: 16px
+        max-width: 608px
+        margin-top: 16px
+        img
+            height: 50px
+        .standard-name
+            margin-left: 16px
+            color: $back-dark
+            font-weight: 600
+            font-size: 24px
+        .contrast-standard
+            color: $approval-text-green
+            font-weight: 400
+            font-size: 24px
+            flex-grow: 2
+            text-align: right
+        &.standard-not-met
+            background-color: $denial-back-red
+            .contrast-standard
+                color: $denial-text-red
