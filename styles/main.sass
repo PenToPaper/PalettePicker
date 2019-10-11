@@ -73,9 +73,8 @@ nav
             &:focus
                 border: 1px solid $front-off-white
             img
-                transform: rotate(45deg)
                 height: 18px
-                margin-right: 16px
+                margin-right: 8px
 
 header
     display: flex
@@ -128,13 +127,13 @@ header
             bottom: 0
             right: 0
             width: 48px
-            margin: 8px 13px
+            margin: 8px 17px
             background-repeat: no-repeat
             background-position: center right
         &#compare-colors-tool::after
-            background-image: url("../assets/zondicons/view-column.svg")
+            background-image: url("../assets/materialicons/material_compare_offblack.svg")
         &#contrast-checker-tool::after
-            background-image: url("../assets/zondicons/view-show.svg")
+            background-image: url("../assets/materialicons/material_visibility_offblack.svg")
 
 label
     display: block
@@ -171,7 +170,7 @@ label
             top: 0
             bottom: 0
             width: 48px
-            background-image: url("../assets/zondicons/cheveron-down.svg")
+            background-image: url("../assets/materialicons/material_dropdown_offblack.svg")
     ul
         display: none
         z-index: 5
@@ -225,12 +224,12 @@ section
     &::after
         position: absolute
         content: ""
-        top: 35%
-        bottom: 35%
-        left: 35%
-        right: 35%
-        transform: rotate(45deg)
-        background-image: url("../assets/zondicons/close.svg")
+        top: 25%
+        bottom: 25%
+        left: 25%
+        right: 25%
+        background-image: url("../assets/materialicons/material_add_offblack.svg")
+        background-size: cover
 
 .swatch
     float: left
@@ -270,7 +269,7 @@ section
         right: 8px
         height: 32px
         width: 32px
-        padding: 8px
+        padding: 0px
         border: none
         background-color: transparent
     .swatch-modifier
@@ -335,6 +334,4 @@ section
     color: $font-dark-deemphasized
     font-weight: 600
     img
-        max-height: 20px
-        margin-right: 16px
-        transform: rotate(45deg)
+        margin-right: 8px
