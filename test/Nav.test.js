@@ -1,6 +1,6 @@
 import React from "react";
 import Nav from "../src/Nav";
-import { shallow } from "enzyme";
+import { shallow, mount } from "enzyme";
 
 it("Renders navigation menu default properly.", () => {
     const navWrapper = shallow(<Nav />);

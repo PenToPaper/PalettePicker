@@ -35,7 +35,8 @@
                     <!-- Following https://www.w3.org/TR/wai-aria-practices/examples/listbox/listbox-collapsible.html -->
                     <label id="dropdown-color-harmony">Color Harmony</label>
                     <div class="dropdown">
-                        <button id="dropdown-color-harmony-selected" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-color-harmony dropdown-color-harmony-selected">None</button>
+                        <!-- aria-expanded="true" if dropdown expanded, aria-expanded is not present when dropdown is in default state -->
+                        <button id="dropdown-color-harmony-selected" aria-haspopup="listbox" aria-labelledby="dropdown-color-harmony dropdown-color-harmony-selected">None</button>
                         <ul role="listbox" aria-labelledby="dropdown-color-harmony" tabindex="-1" aria-activedescendant="dropdown-color-harmony-0">
                             <li id="dropdown-color-harmony-0" role="option" aria-selected="true">None</li>
                             <li id="dropdown-color-harmony-1" role="option">Complementary</li>
