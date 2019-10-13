@@ -16,22 +16,19 @@ it("Renders navigation menu default properly.", () => {
         navWrapper
             .children("button")
             .first()
-            .getDOMNode()
-            .hasAttribute("aria-label")
-    ).toEqual(true);
+            .prop("aria-label")
+    ).toBeTruthy();
     expect(
         navWrapper
             .children("button")
             .first()
-            .getDOMNode()
-            .getAttribute("aria-expanded")
+            .prop("aria-expanded")
     ).toEqual("false");
     expect(
         navWrapper
             .children("button")
             .first()
-            .getDOMNode()
-            .getAttribute("aria-controls")
+            .prop("aria-controls")
     ).toEqual("hamburger-menu-body");
 
     // Expects aria attributes per https://www.w3.org/WAI/tutorials/menus/flyout/
@@ -40,18 +37,16 @@ it("Renders navigation menu default properly.", () => {
         navWrapper
             .children("#hamburger-menu-body")
             .first()
-            .getDOMNode()
-            .hasAttribute("aria-label")
-    ).toEqual(true);
+            .prop("aria-label")
+    ).toBeTruthy();
 
     // Expects hamburger-menu-body to be hidden at first
     expect(
         navWrapper
             .children("#hamburger-menu-body")
             .first()
-            .getDOMNode()
-            .getAttribute("hidden")
-    ).toEqual("true");
+            .prop("hidden")
+    ).toBeTruthy();
 
     // Expects first item in hamburger-menu-body to be selected with aria and class
     expect(
@@ -64,50 +59,51 @@ it("Renders navigation menu default properly.", () => {
         navWrapper
             .find("li")
             .first()
-            .getAttribute("aria-selected")
+            .prop("aria-selected")
     ).toEqual("true");
 
     // Expects 2nd item in hamburger-menu-body to not be selected with aria and class
     expect(
         navWrapper
             .find("li")
-            .first()
+            .last()
             .hasClass("project-selected")
     ).toEqual(false);
     expect(
         navWrapper
             .find("li")
-            .first()
-            .getAttribute("aria-selected")
+            .last()
+            .prop("aria-selected")
     ).toEqual("false");
+
+    // Expects root nav not to have hamburger-menu-expanded class
+    expect(navWrapper.find("nav").hasClass("hamburger-menu-expanded")).toEqual(false);
 });
 
 it("Changes render after navigation toggle button pressed", () => {
     // Simulate button press
-    const navWrapper = shallow(<Nav />);
+    const navWrapper = mount(<Nav />);
     navWrapper
-        .children("button")
+        .find("button")
         .first()
         .simulate("click");
 
     // Checks that button aria attribute updates
     expect(
         navWrapper
-            .children("button")
+            .find("button")
             .first()
-            .getDOMNode()
-            .getAttribute("aria-expanded")
+            .prop("aria-expanded")
     ).toEqual("true");
 
     // Checks that hamburger menu is visible
     expect(
         navWrapper
-            .children("#hamburger-menu-body")
+            .find("#hamburger-menu-body")
             .first()
-            .getDOMNode()
-            .getAttribute("hidden")
-    ).toEqual("false");
+            .prop("hidden")
+    ).toEqual(false);
 
     // Checks that nav has correct class
-    expect(navWrapper.hasClass("hamburger-menu-expanded")).toEqual(true);
+    expect(navWrapper.find("nav").hasClass("hamburger-menu-expanded")).toEqual(true);
 });
