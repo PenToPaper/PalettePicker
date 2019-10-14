@@ -1,9 +1,10 @@
 import React from "react";
 import Dropdown from "../src/Dropdown";
 import { shallow, mount } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 it("Renders dropdown menu correctly based on props", () => {
-    const dropdownWrapper = shallow(<Dropdown lablelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
+    const dropdownWrapper = shallow(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
 
     // Validates html structure, default aria attributes
     expect(dropdownWrapper.children("button#dropdown-color-harmony-selected")).toHaveLength(1);
@@ -12,11 +13,11 @@ it("Renders dropdown menu correctly based on props", () => {
 
     expect(dropdownWrapper.find("button").prop("aria-haspopup")).toEqual("listbox");
     expect(dropdownWrapper.find("button").prop("aria-expanded")).toEqual(undefined);
-    expect(dropdownWrapper.find("button").prop("aria-labeledby")).toEqual("dropdown-color-harmony dropdown-color-harmony-selected");
+    expect(dropdownWrapper.find("button").prop("aria-labelledby")).toEqual("dropdown-color-harmony dropdown-color-harmony-selected");
 
     expect(dropdownWrapper.find("ul").prop("role")).toEqual("listbox");
-    expect(dropdownWrapper.find("ul").prop("aria-labeledby")).toEqual("dropdown-color-harmony");
-    expect(dropdownWrapper.find("ul").prop("tabindex")).toEqual("-1");
+    expect(dropdownWrapper.find("ul").prop("aria-labelledby")).toEqual("dropdown-color-harmony");
+    expect(dropdownWrapper.find("ul").prop("tabIndex")).toEqual("-1");
     expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-0");
 
     // Expects all li elements in dropdown to have role="option", id and key = "${labelId}-${index}"
@@ -30,27 +31,36 @@ it("Renders dropdown menu correctly based on props", () => {
 });
 
 it("Controls dropdown with w3 accessible keyboard interaction", () => {
-    const dropdownWrapper = mount(<Dropdown lablelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
+    const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
 
     const simulateKeyDown = (elementName, key) => {
         let keyCode = 0;
         switch (key) {
             case "enter":
                 keyCode = 13;
+                break;
             case "end":
                 keyCode = 35;
+                break;
             case "home":
                 keyCode = 36;
+                break;
             case "arrow_down":
                 keyCode = 40;
+                break;
             case "arrow_up":
                 keyCode = 38;
+                break;
             case "escape":
                 keyCode = 27;
+                break;
             case "t":
                 keyCode = 84;
+                break;
         }
-        dropdownWrapper.find(elementName).prop("onKeyDown")({ keyCode });
+        act(() => {
+            dropdownWrapper.find(elementName).simulate("keydown", { keyCode, key });
+        });
     };
 
     const expectMenuOpen = menuOpen => {
@@ -59,10 +69,10 @@ it("Controls dropdown with w3 accessible keyboard interaction", () => {
     };
 
     const expectLiSelected = index => {
-        let expectedAriaSelected = [].fill(undefined, 0, 6);
+        let expectedAriaSelected = new Array(6).fill(undefined);
         expectedAriaSelected[index] = "true";
 
-        let expectedDropdownSelected = [].fill(false, 0, 6);
+        let expectedDropdownSelected = new Array(6).fill(false);
         expectedDropdownSelected[index] = true;
 
         expect(dropdownWrapper.find("li").map(li => li.prop("aria-selected"))).toEqual(expectedAriaSelected);
@@ -70,8 +80,8 @@ it("Controls dropdown with w3 accessible keyboard interaction", () => {
             dropdownWrapper
                 .find("li")
                 .get(index)
-                .hasClass("dropdown-selected")
-        ).toEqual(expectedDropdownSelected);
+                .props.className.includes("dropdown-selected")
+        ).toEqual(true);
     };
 
     // Focus button
@@ -82,20 +92,24 @@ it("Controls dropdown with w3 accessible keyboard interaction", () => {
 
     simulateKeyDown("button", "enter");
 
+    dropdownWrapper.update();
+
     // Menu is visible and aria expanded
     expectMenuOpen(true);
 
     // Focus is moved to ul
-    expect(dropdownWrapper.find("ul:focus")).toHaveLength(1);
+    expect(dropdownWrapper.find("ul").is(":focus")).toEqual(true);
 
     simulateKeyDown("ul", "end");
 
     // Bottom li is selected
+    dropdownWrapper.update();
     expectLiSelected(5);
 
     simulateKeyDown("ul", "home");
 
     // Top li is selected
+    dropdownWrapper.update();
     expectLiSelected(0);
 
     simulateKeyDown("ul", "arrow_down");
@@ -103,22 +117,25 @@ it("Controls dropdown with w3 accessible keyboard interaction", () => {
     simulateKeyDown("ul", "arrow_up");
 
     // 2nd li is selected
+    dropdownWrapper.update();
     expectLiSelected(1);
 
     simulateKeyDown("ul", "enter");
 
     // Menu is NOT visible and aria NOT expanded
+    dropdownWrapper.update();
     expectMenuOpen(false);
 
     // Button text is replaced by the 2nd li option
     expect(dropdownWrapper.find("button").text()).toEqual("Complementary");
 
     // Focus is returned to the button
-    expect(dropdownWrapper.find("button:focus")).toHaveLength(1);
+    expect(dropdownWrapper.find("button").is(":focus")).toEqual(true);
 
     simulateKeyDown("button", "arrow_down");
 
     // Menu is visible and aria expanded
+    dropdownWrapper.update();
     expectMenuOpen(true);
 
     // 3rd li is selected
@@ -127,14 +144,16 @@ it("Controls dropdown with w3 accessible keyboard interaction", () => {
     simulateKeyDown("ul", "escape");
 
     // Menu is NOT visible and aria NOT expanded
+    dropdownWrapper.update();
     expectMenuOpen(false);
 
     // Button text is replaced by the 2nd li option
-    expect(dropdownWrapper.find("button").text()).toEqual("Complementary");
+    expect(dropdownWrapper.find("button").text()).toEqual("Analogous");
 
-    simulateKeyDown("button", "arrow_down");
+    simulateKeyDown("button", "arrow_up");
     simulateKeyDown("ul", "t");
 
     // 4th li is selected
-    expectLiSelected(4);
+    dropdownWrapper.update();
+    expectLiSelected(3);
 });
