@@ -85,9 +85,26 @@ export default function Dropdown(props) {
         }
     };
 
+    const handleButtonClick = event => {
+        setIsOpen(prevIsOpen => !prevIsOpen);
+    };
+
+    const handleLiClick = (event, index) => {
+        setSelectedOptionIndex(index);
+        setIsOpen(false);
+    };
+
     return (
         <div className={`dropdown ${isOpen ? "dropdown-expanded" : ""}`}>
-            <button onKeyDown={handleButtonKeyDown} ref={buttonDom} id={props.labelId + "-selected"} aria-haspopup="listbox" aria-labelledby={`${props.labelId} ${props.labelId}-selected`} aria-expanded={isOpen ? "true" : undefined}>
+            <button
+                onClick={handleButtonClick}
+                onKeyDown={handleButtonKeyDown}
+                ref={buttonDom}
+                id={props.labelId + "-selected"}
+                aria-haspopup="listbox"
+                aria-labelledby={`${props.labelId} ${props.labelId}-selected`}
+                aria-expanded={isOpen ? "true" : undefined}
+            >
                 {props.options[selectedOptionIndex]}
             </button>
             <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${selectedOptionIndex}`}>
@@ -96,6 +113,9 @@ export default function Dropdown(props) {
                         <li
                             id={`${props.labelId}-${index}`}
                             key={`${props.labelId}-${index}`}
+                            onClick={event => {
+                                handleLiClick(event, index);
+                            }}
                             role="option"
                             aria-selected={index === selectedOptionIndex ? "true" : undefined}
                             className={index === selectedOptionIndex ? "dropdown-selected" : undefined}

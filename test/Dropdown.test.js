@@ -37,6 +37,28 @@ describe("Dropdown renders default state correctly based on props", () => {
     });
 });
 
+const expectMenuOpen = (dropdownWrapper, menuOpen) => {
+    expect(dropdownWrapper.find("button").prop("aria-expanded")).toEqual(menuOpen ? "true" : undefined);
+    expect(dropdownWrapper.find(".dropdown").hasClass("dropdown-expanded")).toEqual(menuOpen);
+};
+
+const expectLiSelected = (dropdownWrapper, index) => {
+    let expectedAriaSelected = new Array(6).fill(undefined);
+    expectedAriaSelected[index] = "true";
+
+    let expectedDropdownSelected = new Array(6).fill(false);
+    expectedDropdownSelected[index] = true;
+
+    expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-" + index);
+    expect(dropdownWrapper.find("li").map(li => li.prop("aria-selected"))).toEqual(expectedAriaSelected);
+    expect(
+        dropdownWrapper
+            .find("li")
+            .get(index)
+            .props.className.includes("dropdown-selected")
+    ).toEqual(true);
+};
+
 describe("Dropdown renders updated states properly based on keyboard input", () => {
     const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
 
@@ -70,28 +92,6 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
         });
     };
 
-    const expectMenuOpen = menuOpen => {
-        expect(dropdownWrapper.find("button").prop("aria-expanded")).toEqual(menuOpen ? "true" : undefined);
-        expect(dropdownWrapper.find(".dropdown").hasClass("dropdown-expanded")).toEqual(menuOpen);
-    };
-
-    const expectLiSelected = index => {
-        let expectedAriaSelected = new Array(6).fill(undefined);
-        expectedAriaSelected[index] = "true";
-
-        let expectedDropdownSelected = new Array(6).fill(false);
-        expectedDropdownSelected[index] = true;
-
-        expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-" + index);
-        expect(dropdownWrapper.find("li").map(li => li.prop("aria-selected"))).toEqual(expectedAriaSelected);
-        expect(
-            dropdownWrapper
-                .find("li")
-                .get(index)
-                .props.className.includes("dropdown-selected")
-        ).toEqual(true);
-    };
-
     it("Opens the dropdown menu with button focused and enter keypress", () => {
         // Focus button
         dropdownWrapper
@@ -104,7 +104,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
         dropdownWrapper.update();
 
         // Menu is visible and aria expanded
-        expectMenuOpen(true);
+        expectMenuOpen(dropdownWrapper, true);
 
         // Focus is moved to ul
         expect(dropdownWrapper.find("ul").is(":focus")).toEqual(true);
@@ -115,13 +115,13 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // Bottom li is selected
         dropdownWrapper.update();
-        expectLiSelected(5);
+        expectLiSelected(dropdownWrapper, 5);
 
         simulateKeyDown("ul", "home");
 
         // Top li is selected
         dropdownWrapper.update();
-        expectLiSelected(0);
+        expectLiSelected(dropdownWrapper, 0);
     });
 
     it("Changes active li element based on arrow up and arrow down keypress", () => {
@@ -131,7 +131,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // 2nd li is selected
         dropdownWrapper.update();
-        expectLiSelected(1);
+        expectLiSelected(dropdownWrapper, 1);
     });
 
     it("Changes selected element and closes menu on enter keypress", () => {
@@ -139,7 +139,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // Menu is NOT visible and aria NOT expanded
         dropdownWrapper.update();
-        expectMenuOpen(false);
+        expectMenuOpen(dropdownWrapper, false);
 
         // Button text is replaced by the 2nd li option
         expect(dropdownWrapper.find("button").text()).toEqual("Complementary");
@@ -153,10 +153,10 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // Menu is visible and aria expanded
         dropdownWrapper.update();
-        expectMenuOpen(true);
+        expectMenuOpen(dropdownWrapper, true);
 
         // 3rd li is selected
-        expectLiSelected(2);
+        expectLiSelected(dropdownWrapper, 2);
     });
 
     it("Changes selected element and closes menu on escape keypress", () => {
@@ -164,7 +164,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // Menu is NOT visible and aria NOT expanded
         dropdownWrapper.update();
-        expectMenuOpen(false);
+        expectMenuOpen(dropdownWrapper, false);
 
         // Button text is replaced by the 2nd li option
         expect(dropdownWrapper.find("button").text()).toEqual("Analogous");
@@ -176,6 +176,30 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // 4th li is selected
         dropdownWrapper.update();
-        expectLiSelected(3);
+        expectLiSelected(dropdownWrapper, 3);
+    });
+});
+
+describe("Dropdown renders updated states properly based on mouse input", () => {
+    const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
+
+    it("Expands the dropdown menu on button click", () => {
+        dropdownWrapper.find("button").simulate("click");
+
+        expectMenuOpen(dropdownWrapper, true);
+    });
+
+    it("Retracts the dropdown menu on 2nd button click", () => {
+        dropdownWrapper.find("button").simulate("click");
+
+        expectMenuOpen(dropdownWrapper, false);
+    });
+
+    it("Changes li selection based on li click", () => {
+        dropdownWrapper.find("button").simulate("click");
+        dropdownWrapper.find("#dropdown-color-harmony-2").simulate("click");
+
+        expectLiSelected(dropdownWrapper, 2);
+        expectMenuOpen(dropdownWrapper, false);
     });
 });
