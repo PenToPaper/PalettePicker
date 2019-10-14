@@ -82,6 +82,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
         let expectedDropdownSelected = new Array(6).fill(false);
         expectedDropdownSelected[index] = true;
 
+        expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-" + index);
         expect(dropdownWrapper.find("li").map(li => li.prop("aria-selected"))).toEqual(expectedAriaSelected);
         expect(
             dropdownWrapper

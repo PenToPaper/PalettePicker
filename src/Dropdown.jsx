@@ -90,7 +90,7 @@ export default function Dropdown(props) {
             <button onKeyDown={handleButtonKeyDown} ref={buttonDom} id={props.labelId + "-selected"} aria-haspopup="listbox" aria-labelledby={`${props.labelId} ${props.labelId}-selected`} aria-expanded={isOpen ? "true" : undefined}>
                 {props.options[selectedOptionIndex]}
             </button>
-            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${props.selectedOptionIndex}`}>
+            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${selectedOptionIndex}`}>
                 {props.options.map((option, index) => {
                     return (
                         <li
