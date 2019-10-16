@@ -1,9 +1,10 @@
 import React from "react";
 import Slider from "../src/Slider";
 import { shallow, mount } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 describe("Slider renders default state properly based on props", () => {
-    const sliderWrapper = shallow(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" />);
+    const sliderWrapper = shallow(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" onChange={() => {}} />);
 
     it("Assigns the correct class to the root div", () => {
         expect(sliderWrapper.find(".hue-modifier")).toHaveLength(1);
@@ -16,12 +17,13 @@ describe("Slider renders default state properly based on props", () => {
         expect(sliderWrapper.find(".modifier-thumb").prop("aria-valuemax")).toEqual("360");
         expect(sliderWrapper.find(".modifier-thumb").prop("aria-valuemin")).toEqual("0");
         expect(sliderWrapper.find(".modifier-thumb").prop("aria-valuenow")).toEqual("0");
-        expect(sliderWrapper.find(".modifier-thumb").prop("aria-label")).toEqual("0");
+        expect(sliderWrapper.find(".modifier-thumb").prop("aria-label")).toEqual("Hue");
     });
 });
 
 describe("Slider changes inner value based on keyboard interactions", () => {
-    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" />);
+    const callback = jest.fn();
+    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" onChange={callback} />);
 
     const simulateKeyDown = (elementName, key) => {
         let keyCode = 0;
@@ -57,7 +59,8 @@ describe("Slider changes inner value based on keyboard interactions", () => {
     };
 
     const expectSliderValue = expectedValue => {
-        expect(sliderWrapper.find(".modifier-thumb").get(0).style).toHaveProperty("left");
+        expect(callback).toHaveBeenCalled();
+        expect(sliderWrapper.find(".modifier-thumb").prop("style")).toHaveProperty("left");
         expect(sliderWrapper.find(".modifier-thumb").prop("aria-valuenow")).toEqual(String(expectedValue));
     };
 
@@ -119,33 +122,6 @@ describe("Slider changes inner value based on keyboard interactions", () => {
         simulateKeyDown(".modifier-thumb", "home");
         sliderWrapper.update();
 
-        expectSliderValue(0);
-    });
-});
-
-describe("Slider changes inner value based on mouse interactions", () => {
-    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" />);
-
-    const expectSliderValue = expectedValue => {
-        expect(sliderWrapper.find(".modifier-thumb").get(0).style).toHaveProperty("left");
-        expect(sliderWrapper.find(".modifier-thumb").prop("aria-valuenow")).toEqual(String(expectedValue));
-    };
-
-    it("Increases slider value when dragged to right", () => {
-        sliderWrapper.find(".modifier-thumb").prop("onMouseDown")({ clientX: 0, clientY: 0 });
-        sliderWrapper.find(".modifier-thumb").prop("onMouseMove")({ clientX: 10, clientY: 0 });
-        sliderWrapper.find(".modifier-thumb").prop("onMouseUp")({ clientX: 10, clientY: 0 });
-
-        sliderWrapper.update();
-        expectSliderValue(360);
-    });
-
-    it("Decreases slider value when dragged to left", () => {
-        sliderWrapper.find(".modifier-thumb").prop("onMouseDown")({ clientX: 10, clientY: 0 });
-        sliderWrapper.find(".modifier-thumb").prop("onMouseMove")({ clientX: 0, clientY: 0 });
-        sliderWrapper.find(".modifier-thumb").prop("onMouseUp")({ clientX: 0, clientY: 0 });
-
-        sliderWrapper.update();
         expectSliderValue(0);
     });
 });
