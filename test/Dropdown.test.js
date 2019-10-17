@@ -1,7 +1,7 @@
 import React from "react";
 import Dropdown from "../src/Dropdown";
 import { shallow, mount } from "enzyme";
-import { act } from "react-dom/test-utils";
+import simulateKeyDown from "./SimulateKeyDown";
 
 describe("Dropdown renders default state correctly based on props", () => {
     const dropdownWrapper = shallow(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
@@ -62,36 +62,6 @@ const expectLiSelected = (dropdownWrapper, index) => {
 describe("Dropdown renders updated states properly based on keyboard input", () => {
     const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
 
-    const simulateKeyDown = (elementName, key) => {
-        let keyCode = 0;
-        switch (key) {
-            case "enter":
-                keyCode = 13;
-                break;
-            case "end":
-                keyCode = 35;
-                break;
-            case "home":
-                keyCode = 36;
-                break;
-            case "arrow_down":
-                keyCode = 40;
-                break;
-            case "arrow_up":
-                keyCode = 38;
-                break;
-            case "escape":
-                keyCode = 27;
-                break;
-            case "t":
-                keyCode = 84;
-                break;
-        }
-        act(() => {
-            dropdownWrapper.find(elementName).simulate("keydown", { keyCode, key });
-        });
-    };
-
     it("Opens the dropdown menu with button focused and enter keypress", () => {
         // Focus button
         dropdownWrapper
@@ -99,7 +69,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
             .getDOMNode()
             .focus();
 
-        simulateKeyDown("button", "enter");
+        simulateKeyDown(dropdownWrapper, "button", "enter");
 
         dropdownWrapper.update();
 
@@ -111,13 +81,13 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
     });
 
     it("Changes active li element based on home and end keypress", () => {
-        simulateKeyDown("ul", "end");
+        simulateKeyDown(dropdownWrapper, "ul", "end");
 
         // Bottom li is selected
         dropdownWrapper.update();
         expectLiSelected(dropdownWrapper, 5);
 
-        simulateKeyDown("ul", "home");
+        simulateKeyDown(dropdownWrapper, "ul", "home");
 
         // Top li is selected
         dropdownWrapper.update();
@@ -125,9 +95,9 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
     });
 
     it("Changes active li element based on arrow up and arrow down keypress", () => {
-        simulateKeyDown("ul", "arrow_down");
-        simulateKeyDown("ul", "arrow_down");
-        simulateKeyDown("ul", "arrow_up");
+        simulateKeyDown(dropdownWrapper, "ul", "arrow_down");
+        simulateKeyDown(dropdownWrapper, "ul", "arrow_down");
+        simulateKeyDown(dropdownWrapper, "ul", "arrow_up");
 
         // 2nd li is selected
         dropdownWrapper.update();
@@ -135,7 +105,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
     });
 
     it("Changes selected element and closes menu on enter keypress", () => {
-        simulateKeyDown("ul", "enter");
+        simulateKeyDown(dropdownWrapper, "ul", "enter");
 
         // Menu is NOT visible and aria NOT expanded
         dropdownWrapper.update();
@@ -149,7 +119,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
     });
 
     it("Makes the menu visible on button focus arrow down keypress", () => {
-        simulateKeyDown("button", "arrow_down");
+        simulateKeyDown(dropdownWrapper, "button", "arrow_down");
 
         // Menu is visible and aria expanded
         dropdownWrapper.update();
@@ -160,7 +130,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
     });
 
     it("Changes selected element and closes menu on escape keypress", () => {
-        simulateKeyDown("ul", "escape");
+        simulateKeyDown(dropdownWrapper, "ul", "escape");
 
         // Menu is NOT visible and aria NOT expanded
         dropdownWrapper.update();
@@ -171,8 +141,8 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
     });
 
     it("Moves selected li element based on text typing", () => {
-        simulateKeyDown("button", "arrow_up");
-        simulateKeyDown("ul", "t");
+        simulateKeyDown(dropdownWrapper, "button", "arrow_up");
+        simulateKeyDown(dropdownWrapper, "ul", "t");
 
         // 4th li is selected
         dropdownWrapper.update();
