@@ -125,3 +125,37 @@ describe("Slider changes inner value based on keyboard interactions", () => {
         expectSliderValue(0);
     });
 });
+
+describe("Slider changes value based on mouse interactions", () => {
+    const callback = jest.fn();
+    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" onChange={callback} />);
+
+    const map = {};
+    document.addEventListener = jest.fn((event, cb) => {
+        map[event] = cb;
+    });
+    document.removeEventListener = jest.fn((event, cb) => {
+        if (map[event] === cb) {
+            delete map[event];
+        }
+    });
+
+    it("Increases slider value based on click and drag", () => {
+        act(() => {
+            sliderWrapper.find(".modifier-thumb").prop("onMouseDown")({ clientX: 0 });
+            map.mousemove({ clientX: 10 });
+            map.mouseup({ clientX: 10 });
+        });
+
+        sliderWrapper.update();
+        // Cannot expect certain slider value, because element width = 0, and the handleDrag formula requires dividing by that
+        // in order to compute the % of the slider that has been dragged to.
+
+        expect(callback).toHaveBeenCalled();
+    });
+
+    it("Unbinds event handlers from the dom after mouseup", () => {
+        expect(map).not.toHaveProperty("mousemove");
+        expect(map).not.toHaveProperty("mouseup");
+    });
+});
