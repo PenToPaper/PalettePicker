@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "color-convert": "^2.0.1",
         "enzyme": "^3.10.0",
         "enzyme-adapter-react-16": "^1.15.1",
         "react": "^16.10.1",

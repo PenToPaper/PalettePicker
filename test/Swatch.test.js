@@ -4,16 +4,16 @@ import { shallow, mount } from "enzyme";
 import simulateKeyDown from "./SimulateKeyDown";
 
 describe("Swatch renders default state correctly based on props", () => {
-    const swatchWrapper = shallow(<Swatch selected={false} color="#ffffff" onColorChange={() => {}} handleDelete={() => {}} colorMode={"hsb"} />);
+    const swatchWrapper = shallow(<Swatch selected={false} color="#663333" onColorChange={() => {}} handleDelete={() => {}} colorMode={"hsb"} />);
 
     it("Renders proper child elements", () => {
         // Swatch itself has aria-compatible attributes
         expect(swatchWrapper.find(".swatch").prop("tabIndex")).toEqual("0");
-        expect(swatchWrapper.find(".swatch").props()).not.toHaveProperty("aria-selected");
+        expect(swatchWrapper.find(".swatch").prop("aria-selected")).toEqual(undefined);
 
         // h6
         expect(swatchWrapper.find("h6")).toHaveLength(1);
-        expect(swatchWrapper.find("h6").html()).toEqual("#FFFFFF");
+        expect(swatchWrapper.find("h6").text()).toEqual("#663333");
 
         // Delete swatch button
         expect(swatchWrapper.find("button")).toHaveLength(1);
@@ -23,14 +23,15 @@ describe("Swatch renders default state correctly based on props", () => {
     it("Renders proper color values for hsb on load", () => {
         // Swatch modifier
         expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".hue-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".saturation-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".brightness-modifier")).toHaveLength(1);
+        expect(swatchWrapper.find("Slider")).toHaveLength(3);
+        expect(swatchWrapper.find({ wrapperClass: "hue-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "saturation-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "brightness-modifier" })).toHaveLength(1);
 
         // Displays correct hsb color code
-        expect(swatchWrapper.find(".hue-modifier modifier-thumb").prop("aria-valuenow")).toEqual("0");
-        expect(swatchWrapper.find(".saturation-modifier modifier-thumb").prop("aria-valuenow")).toEqual("50");
-        expect(swatchWrapper.find(".brightness-modifier modifier-thumb").prop("aria-valuenow")).toEqual("40");
+        expect(swatchWrapper.find({ wrapperClass: "hue-modifier" }).prop("default")).toEqual(0);
+        expect(swatchWrapper.find({ wrapperClass: "saturation-modifier" }).prop("default")).toEqual(50);
+        expect(swatchWrapper.find({ wrapperClass: "brightness-modifier" }).prop("default")).toEqual(40);
     });
 
     it("Changes to aria-selected=true when selected prop changes", () => {
@@ -45,15 +46,17 @@ describe("Swatch renders default state correctly based on props", () => {
 
         // Displays correct color sliders
         swatchWrapper.setProps({ colorMode: "rgb", color: "#663333" });
+
         expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".red-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".green-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".blue-modifier")).toHaveLength(1);
+        expect(swatchWrapper.find("Slider")).toHaveLength(3);
+        expect(swatchWrapper.find({ wrapperClass: "red-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "green-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "blue-modifier" })).toHaveLength(1);
 
         // Displays correct rgb color code
-        expect(swatchWrapper.find(".red-modifier modifier-thumb").prop("aria-valuenow")).toEqual("102");
-        expect(swatchWrapper.find(".green-modifier modifier-thumb").prop("aria-valuenow")).toEqual("51");
-        expect(swatchWrapper.find(".blue-modifier modifier-thumb").prop("aria-valuenow")).toEqual("51");
+        expect(swatchWrapper.find({ wrapperClass: "red-modifier" }).prop("default")).toEqual(102);
+        expect(swatchWrapper.find({ wrapperClass: "green-modifier" }).prop("default")).toEqual(51);
+        expect(swatchWrapper.find({ wrapperClass: "blue-modifier" }).prop("default")).toEqual(51);
     });
 
     it("Displays new sliders and converts correctly to hsl", () => {
@@ -61,16 +64,18 @@ describe("Swatch renders default state correctly based on props", () => {
         // hsl = 0, 33, 30
 
         // Displays correct color sliders
-        swatchWrapper.setProps({ colorMode: "rgb", color: "#663333" });
-        expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".hue-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".saturation-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".lightness-modifier")).toHaveLength(1);
+        swatchWrapper.setProps({ colorMode: "hsl", color: "#663333" });
 
-        // Displays correct rgb color code
-        expect(swatchWrapper.find(".hue-modifier modifier-thumb").prop("aria-valuenow")).toEqual("0");
-        expect(swatchWrapper.find(".saturation-modifier modifier-thumb").prop("aria-valuenow")).toEqual("33");
-        expect(swatchWrapper.find(".lightness-modifier modifier-thumb").prop("aria-valuenow")).toEqual("30");
+        expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
+        expect(swatchWrapper.find("Slider")).toHaveLength(3);
+        expect(swatchWrapper.find({ wrapperClass: "hue-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "saturation-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "lightness-modifier" })).toHaveLength(1);
+
+        // Displays correct hsl color code
+        expect(swatchWrapper.find({ wrapperClass: "hue-modifier" }).prop("default")).toEqual(0);
+        expect(swatchWrapper.find({ wrapperClass: "saturation-modifier" }).prop("default")).toEqual(33);
+        expect(swatchWrapper.find({ wrapperClass: "lightness-modifier" }).prop("default")).toEqual(30);
     });
 
     it("Displays new sliders and converts correctly to cmyk", () => {
@@ -78,18 +83,20 @@ describe("Swatch renders default state correctly based on props", () => {
         // cmyk = 102, 51, 51
 
         // Displays correct color sliders
-        swatchWrapper.setProps({ colorMode: "rgb", color: "#663333" });
-        expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".cyan-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".magenta-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".yellow-modifier")).toHaveLength(1);
-        expect(swatchWrapper.find(".black-modifier")).toHaveLength(1);
+        swatchWrapper.setProps({ colorMode: "cmyk", color: "#663333" });
 
-        // Displays correct rgb color code
-        expect(swatchWrapper.find(".cyan-modifier modifier-thumb").prop("aria-valuenow")).toEqual("0");
-        expect(swatchWrapper.find(".magenta-modifier modifier-thumb").prop("aria-valuenow")).toEqual("20");
-        expect(swatchWrapper.find(".yellow-modifier modifier-thumb").prop("aria-valuenow")).toEqual("20");
-        expect(swatchWrapper.find(".black-modifier modifier-thumb").prop("aria-valuenow")).toEqual("60");
+        expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
+        expect(swatchWrapper.find("Slider")).toHaveLength(4);
+        expect(swatchWrapper.find({ wrapperClass: "cyan-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "magenta-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "yellow-modifier" })).toHaveLength(1);
+        expect(swatchWrapper.find({ wrapperClass: "black-modifier" })).toHaveLength(1);
+
+        // Displays correct cmyk color code
+        expect(swatchWrapper.find({ wrapperClass: "cyan-modifier" }).prop("default")).toEqual(0);
+        expect(swatchWrapper.find({ wrapperClass: "magenta-modifier" }).prop("default")).toEqual(50);
+        expect(swatchWrapper.find({ wrapperClass: "yellow-modifier" }).prop("default")).toEqual(50);
+        expect(swatchWrapper.find({ wrapperClass: "black-modifier" }).prop("default")).toEqual(60);
     });
 });
 
@@ -114,17 +121,20 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
         swatchWrapper.update();
 
         expect(setColor).toHaveBeenCalled();
-        expect(color).toEqual("#663C33");
+        expect(color).toEqual("#663B33");
 
-        expect(swatchWrapper.find("h6").html()).toEqual("#663C33");
+        swatchWrapper.setProps({ colorMode: "hsb", color });
+
+        expect(swatchWrapper.find("h6").text()).toEqual("#663B33");
+        // Would normally be 10, but there is no hex color to properly represent hsb(9, 0.5, 0.4)
         expect(
             swatchWrapper
                 .find("span")
                 .first()
-                .html()
-        ).toEqual("10");
+                .text()
+        ).toEqual("9");
 
         expect(swatchWrapper.find(".swatch").prop("style")).toHaveProperty("backgroundColor");
-        expect(swatchWrapper.find(".swatch").prop("style").backgroundColor).toEqual("#663C33");
+        expect(swatchWrapper.find(".swatch").prop("style").backgroundColor).toEqual("#663B33");
     });
 });
