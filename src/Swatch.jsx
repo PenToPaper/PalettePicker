@@ -262,9 +262,12 @@ export default function Swatch(props) {
     return (
         <div className="swatch" tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color }}>
             <h6>{props.color}</h6>
-            <button aria-label="Delete Swatch">
-                <img src="/assets/materialicons/material_delete_offblack.svg" alt="" />
-            </button>
+            {props.deleteButton && (
+                <button aria-label="Delete Swatch" onClick={props.onDeleteSwatch}>
+                    <img src="/assets/materialicons/material_delete_offblack.svg" alt="" />
+                </button>
+            )}
+
             <div className="swatch-modifier">{getCorrectModifier()}</div>
         </div>
     );

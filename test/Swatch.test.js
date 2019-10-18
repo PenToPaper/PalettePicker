@@ -4,7 +4,7 @@ import { shallow, mount } from "enzyme";
 import simulateKeyDown from "./SimulateKeyDown";
 
 describe("Swatch renders default state correctly based on props", () => {
-    const swatchWrapper = shallow(<Swatch selected={false} color="#663333" onColorChange={() => {}} handleDelete={() => {}} colorMode={"hsb"} />);
+    const swatchWrapper = shallow(<Swatch selected={false} color="#663333" onColorChange={() => {}} colorMode={"hsb"} />);
 
     it("Renders proper child elements", () => {
         // Swatch itself has aria-compatible attributes
@@ -14,10 +14,6 @@ describe("Swatch renders default state correctly based on props", () => {
         // h6
         expect(swatchWrapper.find("h6")).toHaveLength(1);
         expect(swatchWrapper.find("h6").text()).toEqual("#663333");
-
-        // Delete swatch button
-        expect(swatchWrapper.find("button")).toHaveLength(1);
-        expect(swatchWrapper.find("button").prop("aria-label")).toEqual("Delete Swatch");
     });
 
     it("Renders proper color values for hsb on load", () => {
@@ -107,7 +103,7 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
     const setColor = jest.fn(newColor => {
         color = newColor;
     });
-    const swatchWrapper = mount(<Swatch selected={true} color={color} onColorChange={setColor} handleDelete={() => {}} colorMode={"hsb"} />);
+    const swatchWrapper = mount(<Swatch selected={true} color={color} onColorChange={setColor} colorMode={"hsb"} />);
 
     it("Properly recalculates hex color code based on hue slider change", () => {
         swatchWrapper
@@ -136,5 +132,28 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
 
         expect(swatchWrapper.find(".swatch").prop("style")).toHaveProperty("backgroundColor");
         expect(swatchWrapper.find(".swatch").prop("style").backgroundColor).toEqual("#663B33");
+    });
+});
+
+describe("Swatch properly handles optional delete swatch functionality", () => {
+    const swatchWrapper = mount(<Swatch selected={true} color={"#663333"} onColorChange={() => {}} colorMode={"hsb"} />);
+
+    it("Does not render the button if deleteButton is false or not present", () => {
+        expect(swatchWrapper.find("button")).toHaveLength(0);
+    });
+
+    it("Does render the button if deleteButton is true", () => {
+        const callback = jest.fn();
+
+        swatchWrapper.setProps({ deleteButton: true, onDeleteSwatch: callback });
+
+        // Delete swatch button appears
+        expect(swatchWrapper.find("button")).toHaveLength(1);
+        expect(swatchWrapper.find("button").prop("aria-label")).toEqual("Delete Swatch");
+
+        // Delete swatch button is clickable
+        swatchWrapper.find("button").simulate("click");
+
+        expect(callback).toHaveBeenCalled();
     });
 });
