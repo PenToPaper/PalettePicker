@@ -4,12 +4,14 @@ import { shallow, mount } from "enzyme";
 
 describe("Swatch Section properly renders elements based on props", () => {
     const callback = jest.fn();
+    // Key in production should probably be a timestamp and a random number, so as to minimize risk of duplicate keys
     const swatchData = {
-        "1#aaaaaa": { color: "#aaaaaa", selected: false },
-        "2#aaabbb": { color: "#aaabbb", selected: true },
-        "3#aaaccc": { color: "#aaaccc", selected: false }
+        10: "#aaaaaa",
+        2: "#aaabbb",
+        13: "#aaaccc"
     };
-    const swatchSectionWrapper = shallow(<SwatchSection sectionName="Section Title" swatches={swatchData} onAddSwatch={callback} />);
+    const selection = 2;
+    const swatchSectionWrapper = shallow(<SwatchSection sectionName="Section Title" swatches={swatchData} selection={selection} onAddSwatch={callback} />);
 
     it("Renders a header", () => {
         expect(
@@ -35,13 +37,13 @@ describe("Swatch Section properly renders elements based on props", () => {
 
 describe("Swatch Section calls onAddSwatch callback, and renders more swatches after initial load if added to props", () => {
     let swatchData = {
-        "1#aaaaaa": { color: "#aaaaaa", selected: false },
-        "2#aaabbb": { color: "#aaabbb", selected: false },
-        "3#aaaccc": { color: "#aaaccc", selected: false }
+        10: "#aaaaaa",
+        2: "#aaabbb",
+        13: "#aaaccc"
     };
     const callback = jest.fn(() => {
         const newSwatchData = Object.assign({}, swatchData);
-        newSwatchData["4#aaaddd"] = { color: "#aaaddd", selected: false };
+        newSwatchData[4] = "#aaaddd";
         swatchData = newSwatchData;
     });
 
@@ -52,7 +54,7 @@ describe("Swatch Section calls onAddSwatch callback, and renders more swatches a
 
         expect(callback).toHaveBeenCalled();
         expect(Object.keys(swatchData).length).toEqual(4);
-        expect(swatchData["4#aaaddd"].color).toEqual("#aaaddd");
+        expect(swatchData["4"]).toEqual("#aaaddd");
 
         swatchSectionWrapper.setProps({ swatches: swatchData });
 

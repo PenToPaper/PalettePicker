@@ -7,12 +7,13 @@ export default function SwatchSection(props) {
         <section>
             <h1>{props.sectionName}</h1>
             {Object.keys(props.swatches).map(swatchKey => {
+                console.log(props.selection, swatchKey);
                 return (
                     <Swatch
-                        key={swatchKey}
-                        selected={props.swatches[swatchKey].selected}
+                        key={`${swatchKey}-${props.swatches[swatchKey]}`}
+                        selected={props.selection == swatchKey}
                         colorMode={props.colorMode}
-                        color={props.swatches[swatchKey].color}
+                        color={props.swatches[swatchKey]}
                         onColorChange={newColor => {
                             return props.onColorChange(swatchKey, newColor);
                         }}
