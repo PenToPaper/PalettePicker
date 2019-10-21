@@ -7,7 +7,6 @@ export default function SwatchSection(props) {
         <section>
             <h1>{props.sectionName}</h1>
             {Object.keys(props.swatches).map(swatchKey => {
-                console.log(props.selection, swatchKey);
                 return (
                     <Swatch
                         key={`${swatchKey}-${props.swatches[swatchKey]}`}
