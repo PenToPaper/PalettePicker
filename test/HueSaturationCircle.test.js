@@ -1,7 +1,7 @@
 import React from "react";
 import { shallow, mount } from "enzyme";
 import HueSaturationCircle, { getSaturation, getHue, getOffsetFromCenter } from "../src/HueSaturationCircle";
-import HueSaturationNode from "../src/HueSaturationNode";
+import HueSaturationNode, { getCoordinateFromHueSaturation } from "../src/HueSaturationNode";
 
 describe("HueSaturationCircle is able to calculate the hue and saturation of a given point on the circle", () => {
     it("Correctly calculates offset from center based on offset from element and size of element", () => {
@@ -46,22 +46,13 @@ describe("HueSaturationCircle calls callback function on click and generates cir
 
     it("Calls callback onPickColor", () => {
         circleWrapper.find(".hue-saturation-circle").simulate("click");
-        expect(callback).hasBeenCalled();
+        expect(callback).toHaveBeenCalled();
     });
 
     it("Creates 3 circle elements when supplied with the swatch data", () => {
         expect(circleWrapper.find("HueSaturationNode")).toHaveLength(3);
-        expect(circleWrapper.find({ hex: "#aaaaaa" })).toHaveLength(1);
-        expect(circleWrapper.find({ hex: "#aaabbb" })).toHaveLength(1);
-        expect(circleWrapper.find({ hex: "#aaaccc" })).toHaveLength(1);
-    });
-
-    it("Properly positions the circle nodes within the circle", () => {
-        const circleNodeOne = shallow(<HueSaturationNode circleRadius={100} color={"#aaaccc"} />);
-        // #aaaccc = hsb(236, 17, 80)
-        // hsb(236, 17, 80), radius 100 = (-14, -10) on a coordinate plane
-        // (-14, -9.5) on a coordinate plane = (100 - 14, 100 - (-10)) with css coordinates with origin in top left
-        expect(circleNodeOne.find(".hue-saturation-node").prop("style").left).toEqual("86px");
-        expect(circleNodeOne.find(".hue-saturation-node").prop("style").top).toEqual("110px");
+        expect(circleWrapper.find({ color: "#aaaaaa" })).toHaveLength(1);
+        expect(circleWrapper.find({ color: "#aaabbb" })).toHaveLength(1);
+        expect(circleWrapper.find({ color: "#aaaccc" })).toHaveLength(1);
     });
 });
