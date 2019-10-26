@@ -3,7 +3,6 @@ import React, { useState, useRef } from "react";
 export default function Slider(props) {
     const [value, setValue] = useState(props.default);
     const containerDom = useRef(null);
-    const startDragMousePos = { clientX: 0 };
 
     const setAndUpdateValue = newValue => {
         setValue(newValue);
@@ -79,21 +78,18 @@ export default function Slider(props) {
     };
 
     const handleDrag = event => {
-        const newValue = ((event.clientX - startDragMousePos.clientX) / getElementWidth()) * props.max;
+        const newValue = ((event.clientX - containerDom.current ? containerDom.current.getBoundingClientRect().left : 0) / getElementWidth()) * props.max;
         setAndUpdateValue(newValue);
     };
 
     const handleStartDrag = event => {
-        startDragMousePos.clientX = event.clientX;
-
         document.addEventListener("mousemove", handleDrag);
         document.addEventListener("mouseup", handleMouseUp);
     };
 
     return (
-        <div className={props.wrapperClass} ref={containerDom}>
+        <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleStartDrag}>
             <div
-                onMouseDown={handleStartDrag}
                 onKeyDown={handleKeyDown}
                 style={{ left: getSliderOffsetPx() }}
                 className={props.innerClass}

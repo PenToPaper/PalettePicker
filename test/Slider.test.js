@@ -110,7 +110,7 @@ describe("Slider changes value based on mouse interactions", () => {
 
     it("Increases slider value based on click and drag", () => {
         act(() => {
-            sliderWrapper.find(".modifier-thumb").prop("onMouseDown")({ clientX: 0 });
+            sliderWrapper.find(".hue-modifier").prop("onMouseDown")({ clientX: 0 });
             map.mousemove({ clientX: 10 });
             map.mouseup({ clientX: 10 });
         });
