@@ -7,15 +7,20 @@ export default function Dropdown(props) {
     const buttonDom = useRef(null);
     const ulDom = useRef(null);
 
+    const setSelectedOption = index => {
+        setSelectedOptionIndex(index);
+        props.onChange(props.options[index]);
+    };
+
     let search = "";
     let lastAlphanumericKeypress = Date.now() - 300;
 
     const selectPreviousOption = () => {
-        setSelectedOptionIndex(prevSelectedOptionIndex => (prevSelectedOptionIndex < 1 ? 0 : prevSelectedOptionIndex - 1));
+        setSelectedOption(selectedOptionIndex < 1 ? 0 : selectedOptionIndex - 1);
     };
 
     const selectNextOption = () => {
-        setSelectedOptionIndex(prevSelectedOptionIndex => (prevSelectedOptionIndex >= props.options.length - 1 ? props.options.length - 1 : prevSelectedOptionIndex + 1));
+        setSelectedOption(selectedOptionIndex >= props.options.length - 1 ? props.options.length - 1 : selectedOptionIndex + 1);
     };
 
     const handleButtonKeyDown = event => {
@@ -43,7 +48,7 @@ export default function Dropdown(props) {
     const filterSearch = () => {
         for (let i = selectedOptionIndex; i < props.options.length; i++) {
             if (props.options[i].toLowerCase().indexOf(search) === 0) {
-                setSelectedOptionIndex(i);
+                setSelectedOption(i);
                 return;
             }
         }
@@ -53,11 +58,11 @@ export default function Dropdown(props) {
         switch (event.keyCode) {
             // home
             case 36:
-                setSelectedOptionIndex(0);
+                setSelectedOption(0);
                 break;
             // end
             case 35:
-                setSelectedOptionIndex(props.options.length - 1);
+                setSelectedOption(props.options.length - 1);
                 break;
             // arrow up
             case 38:
@@ -90,7 +95,7 @@ export default function Dropdown(props) {
     };
 
     const handleLiClick = (event, index) => {
-        setSelectedOptionIndex(index);
+        setSelectedOption(index);
         setIsOpen(false);
     };
 
