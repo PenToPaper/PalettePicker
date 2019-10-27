@@ -124,7 +124,9 @@ export default function Dropdown(props) {
                             role="option"
                             aria-selected={index === selectedOptionIndex ? "true" : undefined}
                             className={index === selectedOptionIndex ? "dropdown-selected" : undefined}
-                        ></li>
+                        >
+                            {option}
+                        </li>
                     );
                 })}
             </ul>
