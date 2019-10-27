@@ -99,7 +99,7 @@ export default function Slider(props) {
         <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleStartDrag}>
             <div
                 onKeyDown={handleKeyDown}
-                style={{ left: getSliderOffsetPx() }}
+                style={{ left: (value / props.max) * 100 + "%" }}
                 className={props.innerClass}
                 role="slider"
                 tabIndex="0"
