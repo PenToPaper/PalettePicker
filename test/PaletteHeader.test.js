@@ -8,7 +8,16 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
     const contrastChecker = jest.fn();
     const colorMode = jest.fn();
     const colorHarmony = jest.fn();
-    const headerWrapper = shallow(<PaletteHeader onChange={change} swatchData={{}} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={colorMode} onColorHarmony={colorHarmony} />);
+    const swatchData = {
+        Main: {
+            1: "#ffffff",
+            2: "#ffffff",
+            3: "#ffffff",
+            4: "#ffffff"
+        }
+    };
+    const selection = { sectionName: "Main", index: 1 };
+    const headerWrapper = shallow(<PaletteHeader onChange={change} selection={selection} swatches={swatchData} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={colorMode} onColorHarmony={colorHarmony} />);
 
     it("Includes proper elements", () => {
         expect(headerWrapper.find("HueSaturationCircle")).toHaveLength(1);
@@ -40,10 +49,12 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
     });
 
     it("Calls proper callback methods on HueSaturationCircle and lightness-vertical elements change", () => {
-        headerWrapper.find("HueSaturationCircle").prop("onPickColor")(1, 2);
-        expect(change).toHaveBeenCalledWith("hue", 1);
-        expect(change).toHaveBeenCalledWith("saturation", 2);
-        headerWrapper.find("VerticalSlider").prop("onChange")(3);
-        expect(change).toHaveBeenCalledWith("lightness", 3);
+        const newSwatchData = Object.assign({}, swatchData);
+        headerWrapper.find("VerticalSlider").prop("onChange")(50);
+        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, "#808080");
+        newSwatchData[selection.sectionName][selection.index] = "#808080";
+        headerWrapper.setProps({ swatchData: newSwatchData });
+        headerWrapper.find("HueSaturationCircle").prop("onPickColor")(5, 10);
+        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, "#8C7573");
     });
 });

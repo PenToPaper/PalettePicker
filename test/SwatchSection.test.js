@@ -11,7 +11,8 @@ describe("Swatch Section properly renders elements based on props", () => {
         13: "#aaaccc"
     };
     const selection = 2;
-    const swatchSectionWrapper = shallow(<SwatchSection sectionName="Section Title" swatches={swatchData} selection={selection} onAddSwatch={callback} />);
+    const onChangeCallback = jest.fn();
+    const swatchSectionWrapper = shallow(<SwatchSection sectionName="Section Title" swatches={swatchData} selection={selection} onAddSwatch={callback} onChange={onChangeCallback} />);
 
     it("Renders a header", () => {
         expect(
@@ -32,6 +33,12 @@ describe("Swatch Section properly renders elements based on props", () => {
         expect(swatchSectionWrapper.find({ color: "#aaabbb", selected: true })).toHaveLength(1);
         expect(swatchSectionWrapper.find({ color: "#aaaccc", selected: false })).toHaveLength(1);
         expect(swatchSectionWrapper.find({ color: "#aaaddd" })).toHaveLength(0);
+    });
+
+    it("Passes onChange method to swatches", () => {
+        expect(swatchSectionWrapper.find("Swatch").map(swatch => typeof swatch.prop("onChange") === "function")).toEqual([true, true, true]);
+        swatchSectionWrapper.find({ color: "#aaaaaa", selected: false }).prop("onChange")("#fffccc");
+        expect(onChangeCallback).toHaveBeenLastCalledWith("10", "#fffccc");
     });
 });
 

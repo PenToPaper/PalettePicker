@@ -13,6 +13,10 @@ export default function PaletteBody(props) {
                         onAddSwatch={() => {
                             props.onAddSwatch(swatchKey);
                         }}
+                        onChange={(index, newColor) => {
+                            props.onChange(swatchKey, index, newColor);
+                        }}
+                        selection={props.selection.sectionName === swatchKey ? props.selection.index : undefined}
                     />
                 );
             })}
