@@ -1,261 +1,314 @@
-import React from "react";
+import React, { useState } from "react";
 import Slider from "./Slider";
 import convert from "color-convert";
 
+const getColorDataFromHex = (hex, colorMode) => {
+    switch (colorMode) {
+        case "rgb":
+            return convert.hex.rgb(hex);
+        case "hsb":
+            return convert.hex.hsv(hex);
+        case "hsl":
+            return convert.hex.hsl(hex);
+        case "cmyk":
+            return convert.hex.cmyk(hex);
+    }
+};
+
+export function HsbModifier(props) {
+    const realHsb = convert.hex.hsv(props.color);
+    const [userFriendlyHsb, setUserFriendlyHsb] = useState(getColorDataFromHex(props.color, "hsb"));
+    return (
+        <>
+            <Slider
+                wrapperClass="hue-modifier"
+                innerClass="modifier-thumb"
+                max={360}
+                min={0}
+                default={userFriendlyHsb[0]}
+                pageIncrement={10}
+                innerLabel="Hue"
+                onChange={newValue => {
+                    setUserFriendlyHsb(prevUserFriendlyHsb => {
+                        prevUserFriendlyHsb[0] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsb));
+                        return prevUserFriendlyHsb;
+                    });
+                }}
+            />
+            <span className="hue-label" aria-hidden="true">
+                {realHsb[0]}
+            </span>
+            <Slider
+                wrapperClass="saturation-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyHsb[1]}
+                pageIncrement={5}
+                innerLabel="Saturation"
+                onChange={newValue => {
+                    setUserFriendlyHsb(prevUserFriendlyHsb => {
+                        prevUserFriendlyHsb[1] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsb));
+                        return prevUserFriendlyHsb;
+                    });
+                }}
+            />
+            <span className="saturation-label" aria-hidden="true">
+                {realHsb[1]}
+            </span>
+            <Slider
+                wrapperClass="brightness-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyHsb[2]}
+                pageIncrement={5}
+                innerLabel="Brightness"
+                onChange={newValue => {
+                    setUserFriendlyHsb(prevUserFriendlyHsb => {
+                        prevUserFriendlyHsb[2] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsb));
+                        return prevUserFriendlyHsb;
+                    });
+                }}
+            />
+            <span className="brightness-label" aria-hidden="true">
+                {realHsb[2]}
+            </span>
+        </>
+    );
+}
+
+export function RgbModifier(props) {
+    const realRgb = convert.hex.rgb(props.color);
+    const [userFriendlyRgb, setUserFriendlyRgb] = useState(getColorDataFromHex(props.color, "rgb"));
+    return (
+        <>
+            <Slider
+                wrapperClass="red-modifier"
+                innerClass="modifier-thumb"
+                max={360}
+                min={0}
+                default={userFriendlyRgb[0]}
+                pageIncrement={10}
+                innerLabel="Red"
+                onChange={newValue => {
+                    setUserFriendlyRgb(prevUserFriendlyRgb => {
+                        prevUserFriendlyRgb[0] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyRgb));
+                        return prevUserFriendlyRgb;
+                    });
+                }}
+            />
+            <span className="red-label" aria-hidden="true">
+                {realRgb[0]}
+            </span>
+            <Slider
+                wrapperClass="green-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyRgb[1]}
+                pageIncrement={5}
+                innerLabel="Green"
+                onChange={newValue => {
+                    setUserFriendlyRgb(prevUserFriendlyRgb => {
+                        prevUserFriendlyRgb[1] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyRgb));
+                        return prevUserFriendlyRgb;
+                    });
+                }}
+            />
+            <span className="green-label" aria-hidden="true">
+                {realRgb[1]}
+            </span>
+            <Slider
+                wrapperClass="blue-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyRgb[2]}
+                pageIncrement={5}
+                innerLabel="Blue"
+                onChange={newValue => {
+                    setUserFriendlyRgb(prevUserFriendlyRgb => {
+                        prevUserFriendlyRgb[2] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyRgb));
+                        return prevUserFriendlyRgb;
+                    });
+                }}
+            />
+            <span className="blue-label" aria-hidden="true">
+                {realRgb[2]}
+            </span>
+        </>
+    );
+}
+
+export function HslModifier(props) {
+    const realHsl = convert.hex.hsl(props.color);
+    const [userFriendlyHsl, setUserFriendlyHsl] = useState(getColorDataFromHex(props.color, "hsl"));
+    return (
+        <>
+            <Slider
+                wrapperClass="hue-modifier"
+                innerClass="modifier-thumb"
+                max={360}
+                min={0}
+                default={userFriendlyHsl[0]}
+                pageIncrement={10}
+                innerLabel="Hue"
+                onChange={newValue => {
+                    setUserFriendlyHsl(prevUserFriendlyHsl => {
+                        prevUserFriendlyHsl[0] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsl));
+                        return prevUserFriendlyHsl;
+                    });
+                }}
+            />
+            <span className="hue-label" aria-hidden="true">
+                {realHsl[0]}
+            </span>
+            <Slider
+                wrapperClass="saturation-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyHsl[1]}
+                pageIncrement={5}
+                innerLabel="Saturation"
+                onChange={newValue => {
+                    setUserFriendlyHsl(prevUserFriendlyHsl => {
+                        prevUserFriendlyHsl[1] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsl));
+                        return prevUserFriendlyHsl;
+                    });
+                }}
+            />
+            <span className="saturation-label" aria-hidden="true">
+                {realHsl[1]}
+            </span>
+            <Slider
+                wrapperClass="lightness-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyHsl[2]}
+                pageIncrement={5}
+                innerLabel="Lightness"
+                onChange={newValue => {
+                    setUserFriendlyHsl(prevUserFriendlyHsl => {
+                        prevUserFriendlyHsl[2] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsl));
+                        return prevUserFriendlyHsl;
+                    });
+                }}
+            />
+            <span className="lightness-label" aria-hidden="true">
+                {realHsl[2]}
+            </span>
+        </>
+    );
+}
+
+export function CmykModifier(props) {
+    const realCmyk = convert.hex.cmyk(props.color);
+    const [userFriendlyCmyk, setUserFriendlyCmyk] = useState(getColorDataFromHex(props.color, "cmyk"));
+    return (
+        <>
+            <Slider
+                wrapperClass="cyan-modifier"
+                innerClass="modifier-thumb"
+                max={360}
+                min={0}
+                default={userFriendlyCmyk[0]}
+                pageIncrement={10}
+                innerLabel="Cyan"
+                onChange={newValue => {
+                    setUserFriendlyCmyk(prevUserFriendlyCmyk => {
+                        prevUserFriendlyCmyk[0] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        return prevUserFriendlyCmyk;
+                    });
+                }}
+            />
+            <span className="cyan-label" aria-hidden="true">
+                {realCmyk[0]}
+            </span>
+            <Slider
+                wrapperClass="magenta-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyCmyk[1]}
+                pageIncrement={5}
+                innerLabel="Magenta"
+                onChange={newValue => {
+                    setUserFriendlyCmyk(prevUserFriendlyCmyk => {
+                        prevUserFriendlyCmyk[1] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        return prevUserFriendlyCmyk;
+                    });
+                }}
+            />
+            <span className="magenta-label" aria-hidden="true">
+                {realCmyk[1]}
+            </span>
+            <Slider
+                wrapperClass="yellow-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyCmyk[2]}
+                pageIncrement={5}
+                innerLabel="Yellow"
+                onChange={newValue => {
+                    setUserFriendlyCmyk(prevUserFriendlyCmyk => {
+                        prevUserFriendlyCmyk[2] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        return prevUserFriendlyCmyk;
+                    });
+                }}
+            />
+            <span className="yellow-label" aria-hidden="true">
+                {realCmyk[2]}
+            </span>
+            <Slider
+                wrapperClass="key-modifier"
+                innerClass="modifier-thumb"
+                max={100}
+                min={0}
+                default={userFriendlyCmyk[3]}
+                pageIncrement={5}
+                innerLabel="Key"
+                onChange={newValue => {
+                    setUserFriendlyCmyk(prevUserFriendlyCmyk => {
+                        prevUserFriendlyCmyk[3] = newValue;
+                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        return prevUserFriendlyCmyk;
+                    });
+                }}
+            />
+            <span className="key-label" aria-hidden="true">
+                {realCmyk[3]}
+            </span>
+        </>
+    );
+}
+
 export default function Swatch(props) {
-    const onChangeToHexWrapper = (newValue, colorIndex, prevColorArray, colorMode) => {
-        // Duplicates array, replaces array[colorIndex] with newValue
-        const newColorArray = prevColorArray.concat();
-        newColorArray[colorIndex] = newValue;
-
-        // Converts hsb which I like to hsv which color-convert likes
-        if (colorMode === "hsb") {
-            colorMode = "hsv";
-        }
-
-        // Calls props.onColorChange callback with new color, formatted with # prefix, returns new color as well
-        const newColorHex = "#" + convert[colorMode].hex(newColorArray);
-        props.onChange(newColorHex);
-        return newColorHex;
-    };
-
-    const getRgbModifier = () => {
-        const rgb = convert.hex.rgb(props.color);
-        return (
-            <>
-                <Slider
-                    wrapperClass="red-modifier"
-                    innerClass="modifier-thumb"
-                    max={255}
-                    min={0}
-                    default={rgb[0]}
-                    pageIncrement={5}
-                    innerLabel="Red"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 0, rgb, "rgb");
-                    }}
-                />
-                <span className="hue-label" aria-hidden="true">
-                    {rgb[0]}
-                </span>
-                <Slider
-                    wrapperClass="green-modifier"
-                    innerClass="modifier-thumb"
-                    max={255}
-                    min={0}
-                    default={rgb[1]}
-                    pageIncrement={5}
-                    innerLabel="Green"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 1, rgb, "rgb");
-                    }}
-                />
-                <span className="saturation-label" aria-hidden="true">
-                    {rgb[1]}
-                </span>
-                <Slider
-                    wrapperClass="blue-modifier"
-                    innerClass="modifier-thumb"
-                    max={255}
-                    min={0}
-                    default={rgb[2]}
-                    pageIncrement={5}
-                    innerLabel="Blue"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 2, rgb, "rgb");
-                    }}
-                />
-                <span className="brightness-label" aria-hidden="true">
-                    {rgb[2]}
-                </span>
-            </>
-        );
-    };
-
-    const getHsbModifier = () => {
-        const hsb = convert.hex.hsv(props.color);
-        return (
-            <>
-                <Slider
-                    wrapperClass="hue-modifier"
-                    innerClass="modifier-thumb"
-                    max={360}
-                    min={0}
-                    default={hsb[0]}
-                    pageIncrement={10}
-                    innerLabel="Hue"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 0, hsb, "hsb");
-                    }}
-                />
-                <span className="hue-label" aria-hidden="true">
-                    {hsb[0]}
-                </span>
-                <Slider
-                    wrapperClass="saturation-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={hsb[1]}
-                    pageIncrement={5}
-                    innerLabel="Saturation"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 1, hsb, "hsb");
-                    }}
-                />
-                <span className="saturation-label" aria-hidden="true">
-                    {hsb[1]}
-                </span>
-                <Slider
-                    wrapperClass="brightness-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={hsb[2]}
-                    pageIncrement={5}
-                    innerLabel="Brightness"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 2, hsb, "hsb");
-                    }}
-                />
-                <span className="brightness-label" aria-hidden="true">
-                    {hsb[2]}
-                </span>
-            </>
-        );
-    };
-
-    const getHslModifier = () => {
-        const hsl = convert.hex.hsl(props.color);
-        return (
-            <>
-                <Slider
-                    wrapperClass="hue-modifier"
-                    innerClass="modifier-thumb"
-                    max={360}
-                    min={0}
-                    default={hsl[0]}
-                    pageIncrement={10}
-                    innerLabel="Hue"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 0, hsl, "hsl");
-                    }}
-                />
-                <span className="hue-label" aria-hidden="true">
-                    {hsl[0]}
-                </span>
-                <Slider
-                    wrapperClass="saturation-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={hsl[1]}
-                    pageIncrement={5}
-                    innerLabel="Saturation"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 1, hsl, "hsl");
-                    }}
-                />
-                <span className="saturation-label" aria-hidden="true">
-                    {hsl[1]}
-                </span>
-                <Slider
-                    wrapperClass="lightness-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={hsl[2]}
-                    pageIncrement={5}
-                    innerLabel="Lightness"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 2, hsl, "hsl");
-                    }}
-                />
-                <span className="brightness-label" aria-hidden="true">
-                    {hsl[2]}
-                </span>
-            </>
-        );
-    };
-
-    const getCmykModifier = () => {
-        const cmyk = convert.hex.cmyk(props.color);
-        return (
-            <>
-                <Slider
-                    wrapperClass="cyan-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={cmyk[0]}
-                    pageIncrement={10}
-                    innerLabel="Cyan"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 0, cmyk, "cmyk");
-                    }}
-                />
-                <span className="cyan-label" aria-hidden="true">
-                    {cmyk[0]}
-                </span>
-                <Slider
-                    wrapperClass="magenta-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={cmyk[1]}
-                    pageIncrement={5}
-                    innerLabel="Magenta"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 1, cmyk, "cmyk");
-                    }}
-                />
-                <span className="magenta-label" aria-hidden="true">
-                    {cmyk[1]}
-                </span>
-                <Slider
-                    wrapperClass="yellow-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={cmyk[2]}
-                    pageIncrement={5}
-                    innerLabel="Yellow"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 2, cmyk, "cmyk");
-                    }}
-                />
-                <span className="yellow-label" aria-hidden="true">
-                    {cmyk[2]}
-                </span>
-                <Slider
-                    wrapperClass="black-modifier"
-                    innerClass="modifier-thumb"
-                    max={100}
-                    min={0}
-                    default={cmyk[3]}
-                    pageIncrement={5}
-                    innerLabel="Key"
-                    onChange={newValue => {
-                        onChangeToHexWrapper(newValue, 3, cmyk, "cmyk");
-                    }}
-                />
-                <span className="black-label" aria-hidden="true">
-                    {cmyk[3]}
-                </span>
-            </>
-        );
-    };
-
     const getCorrectModifier = () => {
         switch (props.colorMode) {
             case "rgb":
-                return getRgbModifier();
+                return <RgbModifier color={props.color} onChange={props.onChange} />;
             case "hsb":
-                return getHsbModifier();
+                return <HsbModifier color={props.color} onChange={props.onChange} />;
             case "hsl":
-                return getHslModifier();
+                return <HslModifier color={props.color} onChange={props.onChange} />;
             case "cmyk":
-                return getCmykModifier();
+                return <CmykModifier color={props.color} onChange={props.onChange} />;
         }
     };
 
