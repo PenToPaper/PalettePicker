@@ -35,6 +35,7 @@ export default function VerticalSlider(props) {
     };
 
     const handleStartDrag = event => {
+        handleDrag(event);
         document.addEventListener("mousemove", handleDrag);
         document.addEventListener("mouseup", handleMouseUp);
     };

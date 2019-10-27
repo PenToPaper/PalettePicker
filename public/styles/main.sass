@@ -88,14 +88,14 @@ header
         background-image: linear-gradient(hsl(0, 0, 0), hsl(0, 0, 100))
         position: relative
         margin-right: 48px
-        &::after
+        div
             content: " "
             position: absolute
             left: -8px
             right: -8px
-            border-radius: 4px
-            top: 25px
             height: 8px
+            border-radius: 1px
+            transform: translateY(-50%)
             background-color: $back-dark
     
     .hue-saturation-circle
