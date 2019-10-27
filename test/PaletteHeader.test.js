@@ -10,10 +10,10 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
     const colorHarmony = jest.fn();
     const swatchData = {
         Main: {
-            1: "#ffffff",
-            2: "#ffffff",
-            3: "#ffffff",
-            4: "#ffffff"
+            1: "#FFFFFF",
+            2: "#FFFFFF",
+            3: "#FFFFFF",
+            4: "#FFFFFF"
         }
     };
     const selection = { sectionName: "Main", index: 1 };

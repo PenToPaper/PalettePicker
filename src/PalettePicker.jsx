@@ -6,10 +6,10 @@ import PaletteBody from "./PaletteBody";
 export default function PalettePicker() {
     const [swatches, setSwatches] = useState({
         Main: {
-            1: "#ffffff",
-            2: "#ffffff",
-            3: "#ffffff",
-            4: "#ffffff"
+            1: "#FFFFFF",
+            2: "#FFFFFF",
+            3: "#FFFFFF",
+            4: "#FFFFFF"
         }
     });
     const [colorMode, setColorMode] = useState("hsb");
@@ -33,7 +33,7 @@ export default function PalettePicker() {
 
     const addSwatch = sectionName => {
         setSwatches(prevSwatches => {
-            prevSwatches[sectionName][generateUniqueIndex(sectionName)] = "#ffffff";
+            prevSwatches[sectionName][generateUniqueIndex(sectionName)] = "#FFFFFF";
             return prevSwatches;
         });
     };

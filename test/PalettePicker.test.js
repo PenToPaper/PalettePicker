@@ -5,10 +5,10 @@ import { shallow } from "enzyme";
 describe("PalettePicker renders default state properly", () => {
     const defaultSwatches = {
         Main: {
-            1: "#ffffff",
-            2: "#ffffff",
-            3: "#ffffff",
-            4: "#ffffff"
+            1: "#FFFFFF",
+            2: "#FFFFFF",
+            3: "#FFFFFF",
+            4: "#FFFFFF"
         }
     };
     const defaultSelection = {
@@ -52,6 +52,6 @@ describe("PalettePicker renders default state properly", () => {
         expect(Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main)).toHaveLength(5);
         let newKey = Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main).filter(item => !(item in defaultSwatches.Main));
         newKey = newKey[0];
-        expect(appWrapper.find("PaletteBody").prop("swatches").Main[newKey]).toEqual("#ffffff");
+        expect(appWrapper.find("PaletteBody").prop("swatches").Main[newKey]).toEqual("#FFFFFF");
     });
 });
