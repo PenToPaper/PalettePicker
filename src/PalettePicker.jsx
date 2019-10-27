@@ -17,8 +17,9 @@ export default function PalettePicker() {
 
     const changeColor = (sectionName, index, newColorHex) => {
         setSwatches(prevSwatches => {
-            prevSwatches[sectionName][index] = newColorHex;
-            return prevSwatches;
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches[sectionName][index] = newColorHex;
+            return newSwatches;
         });
     };
 

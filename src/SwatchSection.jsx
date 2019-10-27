@@ -9,12 +9,12 @@ export default function SwatchSection(props) {
             {Object.keys(props.swatches).map(swatchKey => {
                 return (
                     <Swatch
-                        key={`${swatchKey}-${props.swatches[swatchKey]}`}
+                        key={swatchKey}
                         selected={props.selection == swatchKey}
                         colorMode={props.colorMode}
                         color={props.swatches[swatchKey]}
                         onChange={newColor => {
-                            return props.onChange(swatchKey, newColor);
+                            props.onChange(swatchKey, newColor);
                         }}
                         onSelect={() => {
                             props.onSelectSwatch(swatchKey);

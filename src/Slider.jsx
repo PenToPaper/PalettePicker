@@ -37,34 +37,42 @@ export default function Slider(props) {
         switch (event.keyCode) {
             // home
             case 36:
+                event.preventDefault();
                 setAndUpdateValue(props.min);
                 break;
             // end
             case 35:
+                event.preventDefault();
                 setAndUpdateValue(props.max);
                 break;
             // arrow up
             case 38:
+                event.preventDefault();
                 incrementValue(1);
                 break;
             // arrow down
             case 40:
+                event.preventDefault();
                 decrementValue(1);
                 break;
             // arrow left
             case 37:
+                event.preventDefault();
                 decrementValue(1);
                 break;
             // arrow right
             case 39:
+                event.preventDefault();
                 incrementValue(1);
                 break;
             // page up
             case 33:
+                event.preventDefault();
                 incrementValue(props.pageIncrement);
                 break;
             // page down
             case 34:
+                event.preventDefault();
                 decrementValue(props.pageIncrement);
                 break;
         }
