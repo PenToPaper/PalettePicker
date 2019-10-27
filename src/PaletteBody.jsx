@@ -7,6 +7,7 @@ export default function PaletteBody(props) {
             {Object.keys(props.swatches).map(swatchKey => {
                 return (
                     <SwatchSection
+                        colorMode={props.colorMode}
                         key={swatchKey}
                         sectionName={swatchKey}
                         swatches={props.swatches[swatchKey]}

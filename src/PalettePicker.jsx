@@ -12,6 +12,7 @@ export default function PalettePicker() {
             4: "#ffffff"
         }
     });
+    const [colorMode, setColorMode] = useState("hsb");
     const [selection, setSelection] = useState({ sectionName: "Main", index: 1 });
 
     const changeColor = (sectionName, index, newColorHex) => {
@@ -38,15 +39,14 @@ export default function PalettePicker() {
 
     const compareColors = () => {};
     const contrastChecker = () => {};
-    const colorMode = () => {};
     const colorHarmony = () => {};
 
     return (
         <div className="body">
             <Nav />
             <main>
-                <PaletteHeader swatches={swatches} selection={selection} onChange={changeColor} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={colorMode} onColorHarmony={colorHarmony} />
-                <PaletteBody swatches={swatches} selection={selection} onSelectSwatch={setSelection} onAddSwatch={addSwatch} onChange={changeColor} />
+                <PaletteHeader swatches={swatches} selection={selection} onChange={changeColor} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={setColorMode} onColorHarmony={colorHarmony} />
+                <PaletteBody swatches={swatches} colorMode={colorMode} selection={selection} onSelectSwatch={setSelection} onAddSwatch={addSwatch} onChange={changeColor} />
             </main>
         </div>
     );

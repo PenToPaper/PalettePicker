@@ -15,7 +15,7 @@ export default function Swatch(props) {
 
         // Calls props.onColorChange callback with new color, formatted with # prefix, returns new color as well
         const newColorHex = "#" + convert[colorMode].hex(newColorArray);
-        props.onColorChange(newColorHex);
+        props.onChange(newColorHex);
         return newColorHex;
     };
 

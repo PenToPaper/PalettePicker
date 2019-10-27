@@ -103,7 +103,7 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
     const setColor = jest.fn(newColor => {
         color = newColor;
     });
-    const swatchWrapper = mount(<Swatch selected={true} color={color} onColorChange={setColor} colorMode={"hsb"} />);
+    const swatchWrapper = mount(<Swatch selected={true} color={color} onChange={setColor} colorMode={"hsb"} />);
 
     it("Properly recalculates hex color code based on hue slider change", () => {
         swatchWrapper

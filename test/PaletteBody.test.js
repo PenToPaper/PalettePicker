@@ -26,7 +26,7 @@ describe("Palette body translates props into swatch sections", () => {
 
     const onChange = jest.fn();
     const onSelectSwatch = jest.fn();
-    const bodyWrapper = shallow(<PaletteBody swatches={swatchData} selection={selection} onSelectSwatch={onSelectSwatch} onAddSwatch={addSwatch} onChange={onChange} />);
+    const bodyWrapper = shallow(<PaletteBody swatches={swatchData} colorMode="hsb" selection={selection} onSelectSwatch={onSelectSwatch} onAddSwatch={addSwatch} onChange={onChange} />);
 
     it("Contains boilerplate structure", () => {
         expect(bodyWrapper.find("article")).toHaveLength(1);
@@ -36,11 +36,13 @@ describe("Palette body translates props into swatch sections", () => {
         expect(bodyWrapper.find({ sectionName: "Main" })).toHaveLength(1);
         expect(bodyWrapper.find({ sectionName: "Main" }).prop("swatches")).toEqual(swatchData.Main);
         expect(bodyWrapper.find({ sectionName: "Main" }).prop("selection")).toEqual(selection.index);
+        expect(bodyWrapper.find({ sectionName: "Main" }).prop("colorMode")).toEqual("hsb");
         expect(bodyWrapper.find({ sectionName: "Main" }).key()).toEqual("Main");
         expect(bodyWrapper.find({ sectionName: "Body" })).toHaveLength(1);
         expect(bodyWrapper.find({ sectionName: "Body" }).prop("swatches")).toEqual(swatchData.Body);
         expect(bodyWrapper.find({ sectionName: "Body" }).prop("selection")).toEqual(undefined);
         expect(bodyWrapper.find({ sectionName: "Body" }).key()).toEqual("Body");
+        expect(bodyWrapper.find({ sectionName: "Body" }).prop("colorMode")).toEqual("hsb");
     });
 
     it("Calls the onAddSwatch callback with the sectionName as first argument", () => {
