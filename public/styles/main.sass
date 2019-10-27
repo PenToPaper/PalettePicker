@@ -104,6 +104,15 @@ header
         background-image: url("../assets/ColorWheel.svg")
         background-size: contain
         margin-right: 48px
+        position: relative
+    
+    .hue-saturation-node
+        position: absolute
+        width: 22px
+        height: 22px
+        border-radius: 50%
+        border: 2px solid $back-dark
+        transform: translate(-50%, -50%)
     
     .header-tool
         @include focus-outline($back-dark)

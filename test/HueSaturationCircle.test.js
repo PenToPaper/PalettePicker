@@ -38,9 +38,11 @@ describe("HueSaturationCircle is able to calculate the hue and saturation of a g
 describe("HueSaturationCircle calls callback function on click and generates circle elements when supplied with swatches", () => {
     const callback = jest.fn();
     const swatchData = {
-        10: "#aaaaaa",
-        2: "#aaabbb",
-        13: "#aaaccc"
+        Main: {
+            10: "#aaaaaa",
+            2: "#aaabbb",
+            13: "#aaaccc"
+        }
     };
     const circleWrapper = mount(<HueSaturationCircle onPickColor={callback} swatches={swatchData} />);
 

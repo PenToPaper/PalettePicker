@@ -28,4 +28,9 @@ describe("HueSaturationNode calculates its position properly", () => {
         expect(circleNodeOne.find(".hue-saturation-node").prop("style").left).toEqual("181px");
         expect(circleNodeOne.find(".hue-saturation-node").prop("style").top).toEqual("228px");
     });
+
+    it("Displays current color in background-color css property", () => {
+        const circleNodeOne = shallow(<HueSaturationNode circleRadius={200} color={"#aaaccc"} />);
+        expect(circleNodeOne.find(".hue-saturation-node").prop("style").backgroundColor).toEqual("#aaaccc");
+    });
 });

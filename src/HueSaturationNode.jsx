@@ -13,5 +13,5 @@ export function getCoordinateFromHueSaturation(circleRadius, hue, saturation) {
 export default function HueSaturationNode(props) {
     const [hue, saturation, brightness] = convert.hex.hsv(props.color);
     const coordinates = getCoordinateFromHueSaturation(props.circleRadius, hue, saturation);
-    return <div className="hue-saturation-node" style={{ left: `${props.circleRadius + coordinates[0]}px`, top: `${props.circleRadius - coordinates[1]}px` }} />;
+    return <div className="hue-saturation-node" style={{ left: `${props.circleRadius + coordinates[0]}px`, top: `${props.circleRadius - coordinates[1]}px`, backgroundColor: props.color }} />;
 }

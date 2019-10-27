@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import HueSaturationNode from "./HueSaturationNode";
 
 export function getOffsetFromCenter(radius, xOffset, yOffset) {
@@ -19,25 +19,25 @@ export function getSaturation(radius, xOffset, yOffset) {
 }
 
 export default function HueSaturationCircle(props) {
-    const circleRef = useRef(null);
-
-    const getCircleRadius = () => {
-        if (circleRef.current === null) {
-            return 0;
+    const [circleRadius, setCircleRadius] = useState(0);
+    const updateSize = element => {
+        if (element) {
+            setCircleRadius(element.getBoundingClientRect().width / 2);
         }
-        return circleRef.offsetWidth / 2;
     };
 
     const handleClick = event => {
         const x = event.nativeEvent.offsetX,
             y = event.nativeEvent.offsetY;
-        props.onPickColor(getHue(getCircleRadius(), ...getOffsetFromCenter(getCircleRadius(), x, y)), getSaturation(getCircleRadius(), ...getOffsetFromCenter(getCircleRadius(), x, y)));
+        props.onPickColor(getHue(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), getSaturation(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)));
     };
 
     return (
-        <div className="hue-saturation-circle" ref={circleRef} onClick={handleClick} aria-hidden="true">
-            {Object.keys(props.swatches).map(swatchKey => {
-                return <HueSaturationNode key={`${swatchKey}-${props.swatches[swatchKey]}`} circleRadius={getCircleRadius()} color={props.swatches[swatchKey]} />;
+        <div className="hue-saturation-circle" ref={updateSize} onClick={handleClick} aria-hidden="true">
+            {Object.keys(props.swatches).map(swatchCategory => {
+                return Object.keys(props.swatches[swatchCategory]).map(swatchKey => {
+                    return <HueSaturationNode key={`${swatchCategory}-${swatchKey}`} circleRadius={circleRadius} color={props.swatches[swatchCategory][swatchKey]} />;
+                });
             })}
         </div>
     );
