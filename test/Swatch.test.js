@@ -152,8 +152,20 @@ describe("Swatch properly handles optional delete swatch functionality", () => {
         expect(swatchWrapper.find("button").prop("aria-label")).toEqual("Delete Swatch");
 
         // Delete swatch button is clickable
-        swatchWrapper.find("button").simulate("click");
+        const clickEvent = { stopPropagation: jest.fn() };
+        swatchWrapper.find("button").prop("onClick")(clickEvent);
 
+        expect(clickEvent.stopPropagation).toHaveBeenCalled();
+        expect(callback).toHaveBeenCalled();
+    });
+});
+
+describe("Swatch calls onSelect prop onClick", () => {
+    const callback = jest.fn();
+    const swatchWrapper = mount(<Swatch selected={true} color={"#663333"} onColorChange={() => {}} colorMode={"hsb"} onSelect={callback} />);
+
+    it("Calls onSelect", () => {
+        swatchWrapper.find(".swatch").prop("onClick")();
         expect(callback).toHaveBeenCalled();
     });
 });

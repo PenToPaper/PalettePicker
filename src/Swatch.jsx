@@ -260,10 +260,16 @@ export default function Swatch(props) {
     };
 
     return (
-        <div className="swatch" tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color }}>
+        <div className="swatch" tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color }} onClick={props.onSelect}>
             <h6>{props.color}</h6>
             {props.deleteButton && (
-                <button aria-label="Delete Swatch" onClick={props.onDeleteSwatch}>
+                <button
+                    aria-label="Delete Swatch"
+                    onClick={event => {
+                        event.stopPropagation();
+                        props.onDeleteSwatch(event);
+                    }}
+                >
                     <img src="/assets/materialicons/material_delete_offblack.svg" alt="" />
                 </button>
             )}

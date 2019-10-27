@@ -17,6 +17,9 @@ export default function PaletteBody(props) {
                             props.onChange(swatchKey, index, newColor);
                         }}
                         selection={props.selection.sectionName === swatchKey ? props.selection.index : undefined}
+                        onSelectSwatch={index => {
+                            props.onSelectSwatch({ sectionName: swatchKey, index });
+                        }}
                     />
                 );
             })}

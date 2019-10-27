@@ -25,7 +25,8 @@ describe("Palette body translates props into swatch sections", () => {
     });
 
     const onChange = jest.fn();
-    const bodyWrapper = shallow(<PaletteBody swatches={swatchData} selection={selection} onSelectSwatch={() => {}} onAddSwatch={addSwatch} onChange={onChange} />);
+    const onSelectSwatch = jest.fn();
+    const bodyWrapper = shallow(<PaletteBody swatches={swatchData} selection={selection} onSelectSwatch={onSelectSwatch} onAddSwatch={addSwatch} onChange={onChange} />);
 
     it("Contains boilerplate structure", () => {
         expect(bodyWrapper.find("article")).toHaveLength(1);
@@ -55,5 +56,12 @@ describe("Palette body translates props into swatch sections", () => {
         expect(onChange).toHaveBeenLastCalledWith("Main", 1, "#fffaaa");
         bodyWrapper.find({ sectionName: "Body" }).prop("onChange")(2, "#fffbbb");
         expect(onChange).toHaveBeenLastCalledWith("Body", 2, "#fffbbb");
+    });
+
+    it("Passes proper onSelectSwatch to each SwatchSection", () => {
+        bodyWrapper.find({ sectionName: "Main" }).prop("onSelectSwatch")(1);
+        expect(onSelectSwatch).toHaveBeenLastCalledWith({ sectionName: "Main", index: 1 });
+        bodyWrapper.find({ sectionName: "Body" }).prop("onSelectSwatch")(1);
+        expect(onSelectSwatch).toHaveBeenLastCalledWith({ sectionName: "Body", index: 1 });
     });
 });

@@ -16,6 +16,9 @@ export default function SwatchSection(props) {
                         onChange={newColor => {
                             return props.onChange(swatchKey, newColor);
                         }}
+                        onSelect={() => {
+                            props.onSelectSwatch(swatchKey);
+                        }}
                     />
                 );
             })}
