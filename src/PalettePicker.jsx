@@ -42,12 +42,12 @@ export default function PalettePicker() {
     const colorHarmony = () => {};
 
     return (
-        <body>
+        <div className="body">
             <Nav />
             <main>
                 <PaletteHeader swatches={swatches} selection={selection} onChange={changeColor} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={colorMode} onColorHarmony={colorHarmony} />
                 <PaletteBody swatches={swatches} selection={selection} onSelectSwatch={setSelection} onAddSwatch={addSwatch} onChange={changeColor} />
             </main>
-        </body>
+        </div>
     );
 }
