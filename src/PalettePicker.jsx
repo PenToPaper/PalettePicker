@@ -12,7 +12,7 @@ export default function PalettePicker() {
             4: "#FFFFFF"
         }
     });
-    const [colorMode, setColorMode] = useState("hsb");
+    const [colorMode, setColorMode] = useState("HSB");
     const [selection, setSelection] = useState({ sectionName: "Main", index: 1 });
 
     const changeColor = (sectionName, index, newColorHex) => {

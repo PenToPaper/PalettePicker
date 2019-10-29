@@ -4,7 +4,7 @@ import { shallow, mount } from "enzyme";
 import simulateKeyDown from "./SimulateKeyDown";
 
 describe("Swatch renders default state correctly based on props", () => {
-    const swatchWrapper = shallow(<Swatch selected={false} color="#663333" onChange={() => {}} colorMode={"hsb"} />);
+    const swatchWrapper = shallow(<Swatch selected={false} color="#663333" onChange={() => {}} colorMode={"HSB"} />);
 
     it("Renders proper child elements", () => {
         // Swatch itself has aria-compatible attributes
@@ -50,7 +50,7 @@ describe("Swatch renders default state correctly based on props", () => {
     });
 
     it("Renders proper color values for rgb", () => {
-        swatchWrapper.setProps({ colorMode: "rgb", color: "#663333" });
+        swatchWrapper.setProps({ colorMode: "RGB", color: "#663333" });
 
         // Swatch modifier
         expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
@@ -80,7 +80,7 @@ describe("Swatch renders default state correctly based on props", () => {
     });
 
     it("Renders proper color values for hsl", () => {
-        swatchWrapper.setProps({ colorMode: "hsl", color: "#663333" });
+        swatchWrapper.setProps({ colorMode: "HSL", color: "#663333" });
 
         // Swatch modifier
         expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
@@ -109,7 +109,7 @@ describe("Swatch renders default state correctly based on props", () => {
     });
 
     it("Renders proper color values for cmyk", () => {
-        swatchWrapper.setProps({ colorMode: "cmyk", color: "#663333" });
+        swatchWrapper.setProps({ colorMode: "CMYK", color: "#663333" });
 
         // Swatch modifier
         expect(swatchWrapper.find(".swatch-modifier")).toHaveLength(1);
@@ -149,7 +149,7 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
     const setColor = jest.fn(newColor => {
         color = newColor;
     });
-    const swatchWrapper = mount(<Swatch selected={true} color={color} onChange={setColor} colorMode={"hsb"} />);
+    const swatchWrapper = mount(<Swatch selected={true} color={color} onChange={setColor} colorMode={"HSB"} />);
 
     it("Properly recalculates hex color code based on hue slider change", () => {
         swatchWrapper
@@ -165,7 +165,7 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
         expect(setColor).toHaveBeenCalled();
         expect(color).toEqual("#663B33");
 
-        swatchWrapper.setProps({ colorMode: "hsb", color });
+        swatchWrapper.setProps({ colorMode: "HSB", color });
 
         expect(swatchWrapper.find("h6").text()).toEqual("#663B33");
         // Would normally be 10, but there is no hex color to properly represent hsb(9, 0.5, 0.4)
@@ -182,7 +182,7 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
 });
 
 describe("Swatch properly handles optional delete swatch functionality", () => {
-    const swatchWrapper = mount(<Swatch selected={true} color={"#663333"} onColorChange={() => {}} colorMode={"hsb"} />);
+    const swatchWrapper = mount(<Swatch selected={true} color={"#663333"} onColorChange={() => {}} colorMode={"HSB"} />);
 
     it("Does not render the button if deleteButton is false or not present", () => {
         expect(swatchWrapper.find("button")).toHaveLength(0);
@@ -208,7 +208,7 @@ describe("Swatch properly handles optional delete swatch functionality", () => {
 
 describe("Swatch calls onSelect prop onClick", () => {
     const callback = jest.fn();
-    const swatchWrapper = mount(<Swatch selected={true} color={"#663333"} onColorChange={() => {}} colorMode={"hsb"} onSelect={callback} />);
+    const swatchWrapper = mount(<Swatch selected={true} color={"#663333"} onColorChange={() => {}} colorMode={"HSB"} onSelect={callback} />);
 
     it("Calls onSelect", () => {
         swatchWrapper.find(".swatch").prop("onClick")();

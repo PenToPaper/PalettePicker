@@ -10,20 +10,20 @@ const arrayCopyAndReplace = (originalArray, index, newValue) => {
 
 const getColorDataFromHex = (hex, colorMode) => {
     switch (colorMode) {
-        case "rgb":
+        case "RGB":
             return convert.hex.rgb(hex);
-        case "hsb":
+        case "HSB":
             return convert.hex.hsv(hex);
-        case "hsl":
+        case "HSL":
             return convert.hex.hsl(hex);
-        case "cmyk":
+        case "CMYK":
             return convert.hex.cmyk(hex);
     }
 };
 
 export function HsbModifier(props) {
     const realHsb = convert.hex.hsv(props.color);
-    const [userFriendlyHsb, setUserFriendlyHsb] = useState(getColorDataFromHex(props.color, "hsb"));
+    const [userFriendlyHsb, setUserFriendlyHsb] = useState(getColorDataFromHex(props.color, "HSB"));
 
     const hueSaturated = "#" + convert.hsv.hex(arrayCopyAndReplace(userFriendlyHsb, 1, 100));
     const hueDesaturated = "#" + convert.hsv.hex(arrayCopyAndReplace(userFriendlyHsb, 1, 0));
@@ -96,7 +96,7 @@ export function HsbModifier(props) {
 
 export function RgbModifier(props) {
     const realRgb = convert.hex.rgb(props.color);
-    const [userFriendlyRgb, setUserFriendlyRgb] = useState(getColorDataFromHex(props.color, "rgb"));
+    const [userFriendlyRgb, setUserFriendlyRgb] = useState(getColorDataFromHex(props.color, "RGB"));
 
     const redNone = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 0, 0));
     const redFull = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 0, 255));
@@ -173,7 +173,7 @@ export function RgbModifier(props) {
 
 export function HslModifier(props) {
     const realHsl = convert.hex.hsl(props.color);
-    const [userFriendlyHsl, setUserFriendlyHsl] = useState(getColorDataFromHex(props.color, "hsl"));
+    const [userFriendlyHsl, setUserFriendlyHsl] = useState(getColorDataFromHex(props.color, "HSL"));
 
     const hueSaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(userFriendlyHsl, 1, 100));
     const hueDesaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(userFriendlyHsl, 1, 0));
@@ -245,7 +245,7 @@ export function HslModifier(props) {
 
 export function CmykModifier(props) {
     const realCmyk = convert.hex.cmyk(props.color);
-    const [userFriendlyCmyk, setUserFriendlyCmyk] = useState(getColorDataFromHex(props.color, "cmyk"));
+    const [userFriendlyCmyk, setUserFriendlyCmyk] = useState(getColorDataFromHex(props.color, "CMYK"));
 
     const cyanNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 0, 0));
     const cyanFull = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 0, 100));
@@ -344,13 +344,13 @@ export function CmykModifier(props) {
 export default function Swatch(props) {
     const getCorrectModifier = () => {
         switch (props.colorMode) {
-            case "rgb":
+            case "RGB":
                 return <RgbModifier color={props.color} onChange={props.onChange} />;
-            case "hsb":
+            case "HSB":
                 return <HsbModifier color={props.color} onChange={props.onChange} />;
-            case "hsl":
+            case "HSL":
                 return <HslModifier color={props.color} onChange={props.onChange} />;
-            case "cmyk":
+            case "CMYK":
                 return <CmykModifier color={props.color} onChange={props.onChange} />;
         }
     };

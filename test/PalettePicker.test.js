@@ -36,7 +36,7 @@ describe("PalettePicker renders default state properly", () => {
         expect(appWrapper.find("PaletteBody").prop("swatches")).toEqual(defaultSwatches);
         expect(typeof appWrapper.find("PaletteBody").prop("onAddSwatch")).toEqual("function");
         expect(appWrapper.find("PaletteBody").prop("selection")).toEqual(defaultSelection);
-        expect(appWrapper.find("PaletteBody").prop("colorMode")).toEqual("hsb");
+        expect(appWrapper.find("PaletteBody").prop("colorMode")).toEqual("HSB");
     });
 
     it("Supplies child components with changeColor method", () => {
