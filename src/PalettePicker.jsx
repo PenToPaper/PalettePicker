@@ -33,8 +33,9 @@ export default function PalettePicker() {
 
     const addSwatch = sectionName => {
         setSwatches(prevSwatches => {
-            prevSwatches[sectionName][generateUniqueIndex(sectionName)] = "#FFFFFF";
-            return prevSwatches;
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches[sectionName][generateUniqueIndex(sectionName)] = "#FFFFFF";
+            return newSwatches;
         });
     };
 
