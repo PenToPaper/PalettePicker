@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import Slider from "./Slider";
 import convert from "color-convert";
 
+const arrayCopyAndReplace = (originalArray, index, newValue) => {
+    const newArray = originalArray.concat();
+    newArray[index] = newValue;
+    return newArray;
+};
+
 const getColorDataFromHex = (hex, colorMode) => {
     switch (colorMode) {
         case "rgb":
@@ -18,6 +24,11 @@ const getColorDataFromHex = (hex, colorMode) => {
 export function HsbModifier(props) {
     const realHsb = convert.hex.hsv(props.color);
     const [userFriendlyHsb, setUserFriendlyHsb] = useState(getColorDataFromHex(props.color, "hsb"));
+
+    const hueSaturated = "#" + convert.hsv.hex(arrayCopyAndReplace(userFriendlyHsb, 1, 100));
+    const hueDesaturated = "#" + convert.hsv.hex(arrayCopyAndReplace(userFriendlyHsb, 1, 0));
+    const hueBright = "#" + convert.hsv.hex(arrayCopyAndReplace(userFriendlyHsb, 2, 100));
+
     return (
         <>
             <Slider
@@ -47,6 +58,7 @@ export function HsbModifier(props) {
                 default={userFriendlyHsb[1]}
                 pageIncrement={5}
                 innerLabel="Saturation"
+                style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
                 onChange={newValue => {
                     setUserFriendlyHsb(prevUserFriendlyHsb => {
                         prevUserFriendlyHsb[1] = newValue;
@@ -66,6 +78,7 @@ export function HsbModifier(props) {
                 default={userFriendlyHsb[2]}
                 pageIncrement={5}
                 innerLabel="Brightness"
+                style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueBright})` }}
                 onChange={newValue => {
                     setUserFriendlyHsb(prevUserFriendlyHsb => {
                         prevUserFriendlyHsb[2] = newValue;
@@ -84,16 +97,25 @@ export function HsbModifier(props) {
 export function RgbModifier(props) {
     const realRgb = convert.hex.rgb(props.color);
     const [userFriendlyRgb, setUserFriendlyRgb] = useState(getColorDataFromHex(props.color, "rgb"));
+
+    const redNone = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 0, 0));
+    const redFull = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 0, 255));
+    const greenNone = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 1, 0));
+    const greenFull = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 1, 255));
+    const blueNone = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 2, 0));
+    const blueFull = "#" + convert.rgb.hex(arrayCopyAndReplace(userFriendlyRgb, 2, 255));
+
     return (
         <>
             <Slider
                 wrapperClass="red-modifier"
                 innerClass="modifier-thumb"
-                max={360}
+                max={255}
                 min={0}
                 default={userFriendlyRgb[0]}
                 pageIncrement={10}
                 innerLabel="Red"
+                style={{ backgroundImage: `linear-gradient(to right, ${redNone}, ${redFull})` }}
                 onChange={newValue => {
                     setUserFriendlyRgb(prevUserFriendlyRgb => {
                         prevUserFriendlyRgb[0] = newValue;
@@ -108,11 +130,12 @@ export function RgbModifier(props) {
             <Slider
                 wrapperClass="green-modifier"
                 innerClass="modifier-thumb"
-                max={100}
+                max={255}
                 min={0}
                 default={userFriendlyRgb[1]}
                 pageIncrement={5}
                 innerLabel="Green"
+                style={{ backgroundImage: `linear-gradient(to right, ${greenNone}, ${greenFull})` }}
                 onChange={newValue => {
                     setUserFriendlyRgb(prevUserFriendlyRgb => {
                         prevUserFriendlyRgb[1] = newValue;
@@ -127,11 +150,12 @@ export function RgbModifier(props) {
             <Slider
                 wrapperClass="blue-modifier"
                 innerClass="modifier-thumb"
-                max={100}
+                max={255}
                 min={0}
                 default={userFriendlyRgb[2]}
                 pageIncrement={5}
                 innerLabel="Blue"
+                style={{ backgroundImage: `linear-gradient(to right, ${blueNone}, ${blueFull})` }}
                 onChange={newValue => {
                     setUserFriendlyRgb(prevUserFriendlyRgb => {
                         prevUserFriendlyRgb[2] = newValue;
@@ -150,6 +174,10 @@ export function RgbModifier(props) {
 export function HslModifier(props) {
     const realHsl = convert.hex.hsl(props.color);
     const [userFriendlyHsl, setUserFriendlyHsl] = useState(getColorDataFromHex(props.color, "hsl"));
+
+    const hueSaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(userFriendlyHsl, 1, 100));
+    const hueDesaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(userFriendlyHsl, 1, 0));
+
     return (
         <>
             <Slider
@@ -179,6 +207,7 @@ export function HslModifier(props) {
                 default={userFriendlyHsl[1]}
                 pageIncrement={5}
                 innerLabel="Saturation"
+                style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
                 onChange={newValue => {
                     setUserFriendlyHsl(prevUserFriendlyHsl => {
                         prevUserFriendlyHsl[1] = newValue;
@@ -198,6 +227,7 @@ export function HslModifier(props) {
                 default={userFriendlyHsl[2]}
                 pageIncrement={5}
                 innerLabel="Lightness"
+                style={{ backgroundImage: `linear-gradient(to right, #000000, #FFFFFF)` }}
                 onChange={newValue => {
                     setUserFriendlyHsl(prevUserFriendlyHsl => {
                         prevUserFriendlyHsl[2] = newValue;
@@ -216,16 +246,26 @@ export function HslModifier(props) {
 export function CmykModifier(props) {
     const realCmyk = convert.hex.cmyk(props.color);
     const [userFriendlyCmyk, setUserFriendlyCmyk] = useState(getColorDataFromHex(props.color, "cmyk"));
+
+    const cyanNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 0, 0));
+    const cyanFull = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 0, 100));
+    const magentaNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 1, 0));
+    const magentaFull = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 1, 100));
+    const yellowNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 2, 0));
+    const yellowFull = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 2, 100));
+    const keyNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(userFriendlyCmyk, 3, 0));
+
     return (
         <>
             <Slider
                 wrapperClass="cyan-modifier"
                 innerClass="modifier-thumb"
-                max={360}
+                max={100}
                 min={0}
                 default={userFriendlyCmyk[0]}
                 pageIncrement={10}
                 innerLabel="Cyan"
+                style={{ backgroundImage: `linear-gradient(to right, ${cyanNone}, ${cyanFull})` }}
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[0] = newValue;
@@ -245,6 +285,7 @@ export function CmykModifier(props) {
                 default={userFriendlyCmyk[1]}
                 pageIncrement={5}
                 innerLabel="Magenta"
+                style={{ backgroundImage: `linear-gradient(to right, ${magentaNone}, ${magentaFull})` }}
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[1] = newValue;
@@ -264,6 +305,7 @@ export function CmykModifier(props) {
                 default={userFriendlyCmyk[2]}
                 pageIncrement={5}
                 innerLabel="Yellow"
+                style={{ backgroundImage: `linear-gradient(to right, ${yellowNone}, ${yellowFull})` }}
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[2] = newValue;
@@ -283,6 +325,7 @@ export function CmykModifier(props) {
                 default={userFriendlyCmyk[3]}
                 pageIncrement={5}
                 innerLabel="Key"
+                style={{ backgroundImage: `linear-gradient(to right, ${keyNone}, #000000)` }}
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[3] = newValue;

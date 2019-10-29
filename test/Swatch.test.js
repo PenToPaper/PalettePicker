@@ -36,6 +36,13 @@ describe("Swatch renders default state correctly based on props", () => {
         expect(hsbWrapper.find({ wrapperClass: "brightness-modifier" }).prop("default")).toEqual(40);
     });
 
+    it("Renders proper hsb slider gradients on load", () => {
+        const hsbWrapper = shallow(<HsbModifier color="#663333" onChange={() => {}} />);
+
+        expect(hsbWrapper.find({ wrapperClass: "saturation-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #666666, #660000)");
+        expect(hsbWrapper.find({ wrapperClass: "brightness-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #000000, #FF8080)");
+    });
+
     it("Changes to aria-selected=true when selected prop changes", () => {
         // Swatch itself has aria-compatible attributes
         swatchWrapper.setProps({ selected: true });
@@ -64,6 +71,14 @@ describe("Swatch renders default state correctly based on props", () => {
         expect(rgbWrapper.find({ wrapperClass: "blue-modifier" }).prop("default")).toEqual(51);
     });
 
+    it("Renders proper rgb slider gradients", () => {
+        const hsbWrapper = shallow(<RgbModifier color="#663333" onChange={() => {}} />);
+
+        expect(hsbWrapper.find({ wrapperClass: "red-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #003333, #FF3333)");
+        expect(hsbWrapper.find({ wrapperClass: "green-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #660033, #66FF33)");
+        expect(hsbWrapper.find({ wrapperClass: "blue-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #663300, #6633FF)");
+    });
+
     it("Renders proper color values for hsl", () => {
         swatchWrapper.setProps({ colorMode: "hsl", color: "#663333" });
 
@@ -84,6 +99,13 @@ describe("Swatch renders default state correctly based on props", () => {
         expect(hslWrapper.find({ wrapperClass: "hue-modifier" }).prop("default")).toEqual(0);
         expect(hslWrapper.find({ wrapperClass: "saturation-modifier" }).prop("default")).toEqual(33);
         expect(hslWrapper.find({ wrapperClass: "lightness-modifier" }).prop("default")).toEqual(30);
+    });
+
+    it("Renders proper hsl slider gradients", () => {
+        const hsbWrapper = shallow(<HslModifier color="#663333" onChange={() => {}} />);
+
+        expect(hsbWrapper.find({ wrapperClass: "saturation-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #4D4D4D, #990000)");
+        expect(hsbWrapper.find({ wrapperClass: "lightness-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #000000, #FFFFFF)");
     });
 
     it("Renders proper color values for cmyk", () => {
@@ -108,6 +130,15 @@ describe("Swatch renders default state correctly based on props", () => {
         expect(cmykWrapper.find({ wrapperClass: "magenta-modifier" }).prop("default")).toEqual(50);
         expect(cmykWrapper.find({ wrapperClass: "yellow-modifier" }).prop("default")).toEqual(50);
         expect(cmykWrapper.find({ wrapperClass: "key-modifier" }).prop("default")).toEqual(60);
+    });
+
+    it("Renders proper cmyk slider gradients", () => {
+        const hsbWrapper = shallow(<CmykModifier color="#663333" onChange={() => {}} />);
+
+        expect(hsbWrapper.find({ wrapperClass: "cyan-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #663333, #003333)");
+        expect(hsbWrapper.find({ wrapperClass: "magenta-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #666633, #660033)");
+        expect(hsbWrapper.find({ wrapperClass: "yellow-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #663366, #663300)");
+        expect(hsbWrapper.find({ wrapperClass: "key-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #FF8080, #000000)");
     });
 });
 

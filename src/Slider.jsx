@@ -96,7 +96,7 @@ export default function Slider(props) {
     };
 
     return (
-        <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleStartDrag}>
+        <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleStartDrag} style={props.style}>
             <div
                 onKeyDown={handleKeyDown}
                 style={{ left: (value / props.max) * 100 + "%" }}
