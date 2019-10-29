@@ -1,5 +1,5 @@
 import React from "react";
-import Slider from "../src/Slider";
+import Slider, { getPercentFilled } from "../src/Slider";
 import { shallow, mount } from "enzyme";
 import { act } from "react-dom/test-utils";
 import simulateKeyDown from "./SimulateKeyDown";
@@ -20,6 +20,13 @@ describe("Slider renders default state properly based on props", () => {
         expect(sliderWrapper.find(".modifier-thumb").prop("aria-valuenow")).toEqual("0");
         expect(sliderWrapper.find(".modifier-thumb").prop("aria-label")).toEqual("Hue");
     });
+});
+
+describe("Click and drag calculations are made correctly", () => {
+    expect(getPercentFilled(100, 50)).toEqual(0.5);
+    expect(getPercentFilled(230, 50)).toEqual(50 / 230);
+    expect(getPercentFilled(212, 236)).toEqual(1);
+    expect(getPercentFilled(100, -1)).toEqual(0);
 });
 
 describe("Slider changes inner value based on keyboard interactions", () => {

@@ -1,20 +1,26 @@
 import React, { useState, useRef } from "react";
 
+export function getPercentFilled(sliderWidth, relativeMouseX) {
+    let percentNum = relativeMouseX / sliderWidth;
+    if (percentNum > 1) {
+        percentNum = 1;
+    } else if (percentNum < 0) {
+        percentNum = 0;
+    }
+    return percentNum;
+}
+
 export default function Slider(props) {
     const [value, setValue] = useState(props.default);
     const containerDom = useRef(null);
 
+    const getRelativeMouseX = absoluteMouseX => {
+        return containerDom.current ? absoluteMouseX - containerDom.current.getBoundingClientRect().left : 0;
+    };
+
     const setAndUpdateValue = newValue => {
         setValue(newValue);
         props.onChange(newValue);
-    };
-
-    const getElementWidth = () => {
-        return containerDom.current ? containerDom.current.offsetWidth : 0;
-    };
-
-    const getSliderOffsetPx = () => {
-        return String((value / (props.max - props.min)) * getElementWidth()) + "px";
     };
 
     const incrementValue = incrementBy => {
@@ -86,11 +92,11 @@ export default function Slider(props) {
     };
 
     const handleDrag = event => {
-        const newValue = ((event.clientX - containerDom.current ? containerDom.current.getBoundingClientRect().left : 0) / getElementWidth()) * props.max;
-        setAndUpdateValue(newValue);
+        setAndUpdateValue(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().width : 0, getRelativeMouseX(event.clientX)) * props.max);
     };
 
     const handleStartDrag = event => {
+        handleDrag(event);
         document.addEventListener("mousemove", handleDrag);
         document.addEventListener("mouseup", handleMouseUp);
     };
