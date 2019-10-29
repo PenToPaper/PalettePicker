@@ -49,14 +49,27 @@ export default function HueSaturationCircle(props) {
         return absoluteMouseY - offsetTop;
     };
 
-    const handleClick = event => {
+    const handleMouseUp = event => {
+        handleDrag(event);
+
+        document.removeEventListener("mousemove", handleDrag);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleDrag = event => {
         const x = getRelativeMouseX(event.clientX),
             y = getRelativeMouseY(event.clientY);
         props.onPickColor(getHue(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), getSaturation(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)));
     };
 
+    const handleMouseDown = event => {
+        handleDrag(event);
+        document.addEventListener("mousemove", handleDrag);
+        document.addEventListener("mouseup", handleMouseUp);
+    };
+
     return (
-        <div className="hue-saturation-circle" ref={updateSize} onClick={handleClick} aria-hidden="true">
+        <div className="hue-saturation-circle" ref={updateSize} onMouseDown={handleMouseDown} aria-hidden="true">
             {Object.keys(props.swatches).map(swatchCategory => {
                 return Object.keys(props.swatches[swatchCategory]).map(swatchKey => {
                     return <HueSaturationNode key={`${swatchCategory}-${swatchKey}`} circleRadius={circleRadius} color={props.swatches[swatchCategory][swatchKey]} />;
