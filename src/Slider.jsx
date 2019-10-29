@@ -111,7 +111,7 @@ export default function Slider(props) {
                 tabIndex="0"
                 aria-valuemax={String(props.max)}
                 aria-valuemin={String(props.min)}
-                aria-valuenow={String(value)}
+                aria-valuenow={String(Math.round(value))}
                 aria-label={props.innerLabel}
             ></div>
         </div>
