@@ -10,21 +10,12 @@ export function getHue(radius, xOffset, yOffset) {
     let triangleAngle = (Math.atan(yOffset / xOffset) * 180) / Math.PI;
     let ret = triangleAngle;
     if (xOffset > 0) {
-        if (yOffset > 0) {
-            // Q1
-            ret = triangleAngle;
-        } else if (yOffset < 0) {
+        if (yOffset < 0) {
             // Q4
             ret = triangleAngle + 360;
         }
-    } else if (xOffset < 0) {
-        if (yOffset > 0) {
-            // Q2
-            ret = triangleAngle + 180;
-        } else if (yOffset < 0) {
-            // Q3
-            ret = triangleAngle + 180;
-        }
+    } else if (xOffset < 0 && yOffset !== 0) {
+        ret = triangleAngle + 180;
     }
     return Math.round(ret);
 }
