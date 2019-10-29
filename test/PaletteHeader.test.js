@@ -48,7 +48,7 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
         expect(colorMode).toHaveBeenCalled();
     });
 
-    it("Calls proper callback methods on HueSaturationCircle and lightness-vertical elements change", () => {
+    it("Calls proper callback methods on HueSaturationCircle and brightness-vertical elements change", () => {
         const newSwatchData = Object.assign({}, swatchData);
         headerWrapper.find("VerticalSlider").prop("onChange")(50);
         expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, "#808080");

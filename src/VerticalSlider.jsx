@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
 
 export function getPercentFilled(sliderHeight, relativeMouseY) {
-    let percentNum = Math.round((relativeMouseY / sliderHeight) * 10000) / 100;
-    if (percentNum > 100) {
-        percentNum = 100;
+    let percentNum = relativeMouseY / sliderHeight;
+    if (percentNum > 1) {
+        percentNum = 1;
     } else if (percentNum < 0) {
         percentNum = 0;
     }
-    return percentNum + "%";
+    return percentNum;
 }
 
 export default function VerticalSlider(props) {
@@ -31,7 +31,7 @@ export default function VerticalSlider(props) {
     };
 
     const handleDrag = event => {
-        setAndUpdateValue(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().height : 0, getRelativeMouseY(event.clientY)));
+        setAndUpdateValue(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().height : 0, getRelativeMouseY(event.clientY)) * 100);
     };
 
     const handleStartDrag = event => {
@@ -42,7 +42,7 @@ export default function VerticalSlider(props) {
 
     return (
         <div ref={containerDom} className={props.divClass} onMouseDown={handleStartDrag}>
-            <div className={props.thumbClass} style={{ top: percentFilled }} />
+            <div className={props.thumbClass} style={{ top: percentFilled + "%" }} />
         </div>
     );
 }

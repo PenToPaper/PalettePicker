@@ -5,10 +5,10 @@ import Dropdown from "./Dropdown";
 import convert from "color-convert";
 
 export default function PaletteHeader(props) {
-    const onLightnessChange = newLightness => {
-        let oldHsl = convert.hex.hsl(props.swatches[props.selection.sectionName][props.selection.index]);
-        oldHsl[2] = newLightness;
-        const newHex = convert.hsl.hex(oldHsl);
+    const onBrightnessChange = newBrightness => {
+        let oldHsb = convert.hex.hsv(props.swatches[props.selection.sectionName][props.selection.index]);
+        oldHsb[2] = newBrightness;
+        const newHex = convert.hsv.hex(oldHsb);
         props.onChange(props.selection.sectionName, props.selection.index, "#" + newHex);
     };
 
@@ -22,7 +22,7 @@ export default function PaletteHeader(props) {
 
     return (
         <header>
-            <VerticalSlider divClass="lightness-vertical" thumbClass="lightness-thumb" onChange={onLightnessChange} />
+            <VerticalSlider divClass="brightness-vertical" thumbClass="brightness-thumb" onChange={onBrightnessChange} />
             <HueSaturationCircle onPickColor={onHueSaturationChange} swatches={props.swatches} />
             <div className="header-toolbars">
                 <label id="dropdown-color-harmony">Color Harmony</label>
