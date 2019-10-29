@@ -46,7 +46,16 @@ export default function PalettePicker() {
         <div className="body">
             <Nav />
             <main>
-                <PaletteHeader swatches={swatches} selection={selection} onChange={changeColor} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={setColorMode} onColorHarmony={colorHarmony} />
+                <PaletteHeader
+                    swatches={swatches}
+                    selection={selection}
+                    onChange={changeColor}
+                    onSelectSwatch={setSelection}
+                    onCompareColors={compareColors}
+                    onContrastChecker={contrastChecker}
+                    onColorMode={setColorMode}
+                    onColorHarmony={colorHarmony}
+                />
                 <PaletteBody swatches={swatches} colorMode={colorMode} selection={selection} onSelectSwatch={setSelection} onAddSwatch={addSwatch} onChange={changeColor} />
             </main>
         </div>

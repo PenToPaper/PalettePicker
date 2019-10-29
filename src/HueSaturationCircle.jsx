@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import HueSaturationNode from "./HueSaturationNode";
+import { getCoordinateFromHueSaturation } from "./HueSaturationNode";
+import convert from "color-convert";
 
 export function getOffsetFromCenter(radius, xOffset, yOffset) {
     return [xOffset - radius, radius - yOffset];
@@ -49,6 +51,8 @@ export default function HueSaturationCircle(props) {
         return absoluteMouseY - offsetTop;
     };
 
+    const dragSelection = Object.assign({}, props.selection);
+
     const handleMouseUp = event => {
         handleDrag(event);
 
@@ -57,13 +61,35 @@ export default function HueSaturationCircle(props) {
     };
 
     const handleDrag = event => {
-        const x = getRelativeMouseX(event.clientX),
-            y = getRelativeMouseY(event.clientY);
-        props.onPickColor(getHue(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), getSaturation(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)));
+        const x = getRelativeMouseX(event.clientX);
+        const y = getRelativeMouseY(event.clientY);
+        props.onPickColor(getHue(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), getSaturation(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), dragSelection);
+    };
+
+    const coordinatesAreWithin = (x, y, x1, y1, distance) => {
+        return Math.sqrt(Math.pow(x1 - x, 2) + Math.pow(y1 - y, 2)) <= distance;
     };
 
     const handleMouseDown = event => {
+        const x = getRelativeMouseX(event.clientX);
+        const y = getRelativeMouseY(event.clientY);
+        dragSelection.sectionName = props.selection.sectionName;
+        dragSelection.index = props.selection.index;
+
+        Object.keys(props.swatches).forEach(swatchCategory => {
+            Object.keys(props.swatches[swatchCategory]).forEach(swatchKey => {
+                const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey]);
+                const coordinates = getCoordinateFromHueSaturation(circleRadius, hue, saturation);
+                if (coordinatesAreWithin(...getOffsetFromCenter(circleRadius, x, y), ...coordinates, 26)) {
+                    dragSelection.sectionName = swatchCategory;
+                    dragSelection.index = swatchKey;
+                    props.onSelectSwatch({ sectionName: swatchCategory, index: swatchKey });
+                }
+            });
+        });
+
         handleDrag(event);
+
         document.addEventListener("mousemove", handleDrag);
         document.addEventListener("mouseup", handleMouseUp);
     };

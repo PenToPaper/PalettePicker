@@ -12,18 +12,18 @@ export default function PaletteHeader(props) {
         props.onChange(props.selection.sectionName, props.selection.index, "#" + newHex);
     };
 
-    const onHueSaturationChange = (hue, saturation) => {
-        let oldHsb = convert.hex.hsv(props.swatches[props.selection.sectionName][props.selection.index]);
+    const onHueSaturationChange = (hue, saturation, selection) => {
+        let oldHsb = convert.hex.hsv(props.swatches[selection.sectionName][selection.index]);
         oldHsb[0] = hue;
         oldHsb[1] = saturation;
         const newHex = convert.hsv.hex(oldHsb);
-        props.onChange(props.selection.sectionName, props.selection.index, "#" + newHex);
+        props.onChange(selection.sectionName, selection.index, "#" + newHex);
     };
 
     return (
         <header>
             <VerticalSlider divClass="brightness-vertical" thumbClass="brightness-thumb" onChange={onBrightnessChange} />
-            <HueSaturationCircle onPickColor={onHueSaturationChange} swatches={props.swatches} />
+            <HueSaturationCircle onSelectSwatch={props.onSelectSwatch} onPickColor={onHueSaturationChange} selection={props.selection} swatches={props.swatches} />
             <div className="header-toolbars">
                 <label id="dropdown-color-harmony">Color Harmony</label>
                 <Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} onChange={props.onColorHarmony} />
