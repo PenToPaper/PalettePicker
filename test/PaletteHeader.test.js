@@ -55,6 +55,6 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
         newSwatchData[selection.sectionName][selection.index] = "#808080";
         headerWrapper.setProps({ swatchData: newSwatchData });
         headerWrapper.find("HueSaturationCircle").prop("onPickColor")(5, 10);
-        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, "#8C7573");
+        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, "#807473");
     });
 });

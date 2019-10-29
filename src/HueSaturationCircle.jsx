@@ -7,7 +7,26 @@ export function getOffsetFromCenter(radius, xOffset, yOffset) {
 
 export function getHue(radius, xOffset, yOffset) {
     // Math.atan finds degree of hue in radians, Math.round * 180/Math.PI converts this to degrees
-    return Math.round((Math.atan(yOffset / xOffset) * 180) / Math.PI);
+    let triangleAngle = (Math.atan(yOffset / xOffset) * 180) / Math.PI;
+    let ret = triangleAngle;
+    if (xOffset > 0) {
+        if (yOffset > 0) {
+            // Q1
+            ret = triangleAngle;
+        } else if (yOffset < 0) {
+            // Q4
+            ret = triangleAngle + 360;
+        }
+    } else if (xOffset < 0) {
+        if (yOffset > 0) {
+            // Q2
+            ret = triangleAngle + 180;
+        } else if (yOffset < 0) {
+            // Q3
+            ret = triangleAngle + 180;
+        }
+    }
+    return Math.round(ret);
 }
 
 export function getSaturation(radius, xOffset, yOffset) {
@@ -20,15 +39,28 @@ export function getSaturation(radius, xOffset, yOffset) {
 
 export default function HueSaturationCircle(props) {
     const [circleRadius, setCircleRadius] = useState(0);
+    let offsetTop = 0;
+    let offsetLeft = 0;
+
     const updateSize = element => {
         if (element) {
             setCircleRadius(element.getBoundingClientRect().width / 2);
+            offsetTop = element.getBoundingClientRect().top;
+            offsetLeft = element.getBoundingClientRect().left;
         }
     };
 
+    const getRelativeMouseX = absoluteMouseX => {
+        return absoluteMouseX - offsetLeft;
+    };
+
+    const getRelativeMouseY = absoluteMouseY => {
+        return absoluteMouseY - offsetTop;
+    };
+
     const handleClick = event => {
-        const x = event.nativeEvent.offsetX,
-            y = event.nativeEvent.offsetY;
+        const x = getRelativeMouseX(event.clientX),
+            y = getRelativeMouseY(event.clientY);
         props.onPickColor(getHue(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), getSaturation(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)));
     };
 

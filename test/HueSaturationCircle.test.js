@@ -19,8 +19,9 @@ describe("HueSaturationCircle is able to calculate the hue and saturation of a g
         expect(getHue(100, 50, 50)).toEqual(45);
         expect(getHue(100, 32, 60)).toEqual(62);
         expect(getHue(100, 100, 0)).toEqual(0);
-        expect(getHue(100, -10, 40)).toEqual(-76);
-        expect(getHue(100, -50, 20)).toEqual(-22);
+        expect(getHue(100, -10, 40)).toEqual(104);
+        expect(getHue(100, -50, 20)).toEqual(158);
+        expect(getHue(100, -50, -50)).toEqual(225);
     });
 
     it("Correctly calculates saturation based on radius = 100", () => {

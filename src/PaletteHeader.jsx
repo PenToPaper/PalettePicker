@@ -13,10 +13,10 @@ export default function PaletteHeader(props) {
     };
 
     const onHueSaturationChange = (hue, saturation) => {
-        let oldHsl = convert.hex.hsl(props.swatches[props.selection.sectionName][props.selection.index]);
-        oldHsl[0] = hue;
-        oldHsl[1] = saturation;
-        const newHex = convert.hsl.hex(oldHsl);
+        let oldHsb = convert.hex.hsv(props.swatches[props.selection.sectionName][props.selection.index]);
+        oldHsb[0] = hue;
+        oldHsb[1] = saturation;
+        const newHex = convert.hsv.hex(oldHsb);
         props.onChange(props.selection.sectionName, props.selection.index, "#" + newHex);
     };
 
