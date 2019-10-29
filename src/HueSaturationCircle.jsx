@@ -16,7 +16,7 @@ export function getHue(radius, xOffset, yOffset) {
             // Q4
             ret = triangleAngle + 360;
         }
-    } else if (xOffset < 0 && yOffset !== 0) {
+    } else if (xOffset < 0) {
         ret = triangleAngle + 180;
     }
     return Math.round(ret);
