@@ -119,7 +119,7 @@ export function RgbModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyRgb(prevUserFriendlyRgb => {
                         prevUserFriendlyRgb[0] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyRgb));
+                        props.onChange("#" + convert.rgb.hex(prevUserFriendlyRgb));
                         return prevUserFriendlyRgb;
                     });
                 }}
@@ -139,7 +139,7 @@ export function RgbModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyRgb(prevUserFriendlyRgb => {
                         prevUserFriendlyRgb[1] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyRgb));
+                        props.onChange("#" + convert.rgb.hex(prevUserFriendlyRgb));
                         return prevUserFriendlyRgb;
                     });
                 }}
@@ -159,7 +159,7 @@ export function RgbModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyRgb(prevUserFriendlyRgb => {
                         prevUserFriendlyRgb[2] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyRgb));
+                        props.onChange("#" + convert.rgb.hex(prevUserFriendlyRgb));
                         return prevUserFriendlyRgb;
                     });
                 }}
@@ -177,6 +177,7 @@ export function HslModifier(props) {
 
     const hueSaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(userFriendlyHsl, 1, 100));
     const hueDesaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(userFriendlyHsl, 1, 0));
+    const hueMediumLightness = "#" + convert.hsl.hex(arrayCopyAndReplace(userFriendlyHsl, 2, 50));
 
     return (
         <>
@@ -191,7 +192,7 @@ export function HslModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyHsl(prevUserFriendlyHsl => {
                         prevUserFriendlyHsl[0] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsl));
+                        props.onChange("#" + convert.hsl.hex(prevUserFriendlyHsl));
                         return prevUserFriendlyHsl;
                     });
                 }}
@@ -211,7 +212,7 @@ export function HslModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyHsl(prevUserFriendlyHsl => {
                         prevUserFriendlyHsl[1] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsl));
+                        props.onChange("#" + convert.hsl.hex(prevUserFriendlyHsl));
                         return prevUserFriendlyHsl;
                     });
                 }}
@@ -227,11 +228,11 @@ export function HslModifier(props) {
                 default={userFriendlyHsl[2]}
                 pageIncrement={5}
                 innerLabel="Lightness"
-                style={{ backgroundImage: `linear-gradient(to right, #000000, #FFFFFF)` }}
+                style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueMediumLightness}, #FFFFFF)` }}
                 onChange={newValue => {
                     setUserFriendlyHsl(prevUserFriendlyHsl => {
                         prevUserFriendlyHsl[2] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyHsl));
+                        props.onChange("#" + convert.hsl.hex(prevUserFriendlyHsl));
                         return prevUserFriendlyHsl;
                     });
                 }}
@@ -269,7 +270,7 @@ export function CmykModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[0] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        props.onChange("#" + convert.cmyk.hex(prevUserFriendlyCmyk));
                         return prevUserFriendlyCmyk;
                     });
                 }}
@@ -289,7 +290,7 @@ export function CmykModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[1] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        props.onChange("#" + convert.cmyk.hex(prevUserFriendlyCmyk));
                         return prevUserFriendlyCmyk;
                     });
                 }}
@@ -309,7 +310,7 @@ export function CmykModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[2] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        props.onChange("#" + convert.cmyk.hex(prevUserFriendlyCmyk));
                         return prevUserFriendlyCmyk;
                     });
                 }}
@@ -329,7 +330,7 @@ export function CmykModifier(props) {
                 onChange={newValue => {
                     setUserFriendlyCmyk(prevUserFriendlyCmyk => {
                         prevUserFriendlyCmyk[3] = newValue;
-                        props.onChange("#" + convert.hsv.hex(prevUserFriendlyCmyk));
+                        props.onChange("#" + convert.cmyk.hex(prevUserFriendlyCmyk));
                         return prevUserFriendlyCmyk;
                     });
                 }}

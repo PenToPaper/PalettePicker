@@ -105,7 +105,7 @@ describe("Swatch renders default state correctly based on props", () => {
         const hsbWrapper = shallow(<HslModifier color="#663333" onChange={() => {}} />);
 
         expect(hsbWrapper.find({ wrapperClass: "saturation-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #4D4D4D, #990000)");
-        expect(hsbWrapper.find({ wrapperClass: "lightness-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #000000, #FFFFFF)");
+        expect(hsbWrapper.find({ wrapperClass: "lightness-modifier" }).prop("style").backgroundImage).toEqual("linear-gradient(to right, #000000, #AA5555, #FFFFFF)");
     });
 
     it("Renders proper color values for cmyk", () => {
