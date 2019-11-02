@@ -88,6 +88,9 @@ header
         background-image: linear-gradient(hsl(0, 0, 0), hsl(0, 0, 100))
         position: relative
         margin-right: 48px
+        cursor: pointer
+        user-drag: none
+        user-select: none
         div
             content: " "
             position: absolute
@@ -105,6 +108,9 @@ header
         background-size: contain
         margin-right: 48px
         position: relative
+        cursor: pointer
+        user-drag: none
+        user-select: none
     
     .hue-saturation-node
         position: absolute
@@ -113,6 +119,8 @@ header
         border-radius: 50%
         border: 2px solid $back-dark
         transform: translate(-50%, -50%)
+        user-drag: none
+        user-select: none
     
     .header-tool
         @include focus-outline($back-dark)
@@ -240,6 +248,9 @@ section
         z-index: 3
         transform: translateY(0%)
         opacity: 1
+    &.swatch-selected
+        outline: 1px solid $back-dark
+        z-index: 5
     h6
         color: $back-dark
         position: absolute
@@ -273,6 +284,9 @@ section
         right: 0
         padding: 16px
         background-color: rgba(255, 255, 255, 0.8)
+        cursor: pointer
+        user-drag: none
+        user-select: none
         span
             float: left
             height: 40px

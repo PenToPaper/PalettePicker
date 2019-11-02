@@ -357,7 +357,7 @@ export default function Swatch(props) {
     };
 
     return (
-        <div className="swatch" tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color }} onClick={props.onSelect}>
+        <div className={`swatch ${props.selected ? "swatch-selected" : ""}`} tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color }} onClick={props.onSelect}>
             <h6>{props.color}</h6>
             {props.deleteButton && (
                 <button
