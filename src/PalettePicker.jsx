@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Nav from "./Nav";
 import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
+import convert from "color-convert";
 
 export default function PalettePicker() {
     const [swatches, setSwatches] = useState({
@@ -14,6 +15,30 @@ export default function PalettePicker() {
     });
     const [colorMode, setColorMode] = useState("HSB");
     const [selection, setSelection] = useState({ sectionName: "Main", index: 1 });
+    const [harmony, setHarmony] = useState("None");
+
+    const getColorRotated = (colorHex, degreeClockwise) => {
+        let hsl = convert.hex.hsl(colorHex);
+        hsl[0] = hsl[0] + degreeClockwise;
+        return convert.hsl.hex(hsl);
+    };
+
+    const startComplementaryColorHarmony = () => {
+        setSwatches(prevSwatches => {
+            let newMainSwatches = {};
+            if (prevSwatches.Main[1] === "#FFFFFF") {
+                // First swatch is white, make it purple, so the line of complementary colors is straight up and down
+                newMainSwatches[1] = "#9830FF";
+                newMainSwatches[2] = "#9EFF3B";
+            } else {
+                newMainSwatches[1] = prevSwatches.Main[1];
+                newMainSwatches[2] = getColorRotated(prevSwatches.Main[1]);
+            }
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches.Main = newMainSwatches;
+            return newSwatches;
+        });
+    };
 
     const changeColor = (sectionName, index, newColorHex) => {
         setSwatches(prevSwatches => {
@@ -41,7 +66,17 @@ export default function PalettePicker() {
 
     const compareColors = () => {};
     const contrastChecker = () => {};
-    const colorHarmony = () => {};
+    const colorHarmony = harmonyName => {
+        switch (harmonyName) {
+            case "Complementary":
+                startComplementaryColorHarmony();
+                break;
+            default:
+                break;
+        }
+
+        setHarmony(harmonyName);
+    };
 
     return (
         <div className="body">
