@@ -32,23 +32,27 @@ export function getSaturation(radius, xOffset, yOffset) {
 
 export default function HueSaturationCircle(props) {
     const [circleRadius, setCircleRadius] = useState(0);
-    let offsetTop = 0;
-    let offsetLeft = 0;
+    let instance = null;
 
     const updateSize = (element) => {
         if (element) {
             setCircleRadius(element.getBoundingClientRect().width / 2);
-            offsetTop = element.getBoundingClientRect().top;
-            offsetLeft = element.getBoundingClientRect().left;
+            instance = element;
         }
     };
 
     const getRelativeMouseX = (absoluteMouseX) => {
-        return absoluteMouseX - offsetLeft;
+        if (instance !== null) {
+            return absoluteMouseX - instance.getBoundingClientRect().left;
+        }
+        return 0;
     };
 
     const getRelativeMouseY = (absoluteMouseY) => {
-        return absoluteMouseY - offsetTop;
+        if (instance !== null) {
+            return absoluteMouseY - instance.getBoundingClientRect().top;
+        }
+        return 0;
     };
 
     const dragSelection = Object.assign({}, props.selection);
