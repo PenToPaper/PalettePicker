@@ -35,7 +35,7 @@ export default function HueSaturationCircle(props) {
     let offsetTop = 0;
     let offsetLeft = 0;
 
-    const updateSize = element => {
+    const updateSize = (element) => {
         if (element) {
             setCircleRadius(element.getBoundingClientRect().width / 2);
             offsetTop = element.getBoundingClientRect().top;
@@ -43,24 +43,24 @@ export default function HueSaturationCircle(props) {
         }
     };
 
-    const getRelativeMouseX = absoluteMouseX => {
+    const getRelativeMouseX = (absoluteMouseX) => {
         return absoluteMouseX - offsetLeft;
     };
 
-    const getRelativeMouseY = absoluteMouseY => {
+    const getRelativeMouseY = (absoluteMouseY) => {
         return absoluteMouseY - offsetTop;
     };
 
     const dragSelection = Object.assign({}, props.selection);
 
-    const handleMouseUp = event => {
+    const handleMouseUp = (event) => {
         handleDrag(event);
 
         document.removeEventListener("mousemove", handleDrag);
         document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    const handleDrag = event => {
+    const handleDrag = (event) => {
         const x = getRelativeMouseX(event.clientX);
         const y = getRelativeMouseY(event.clientY);
         props.onPickColor(getHue(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), getSaturation(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), dragSelection);
@@ -70,15 +70,15 @@ export default function HueSaturationCircle(props) {
         return Math.sqrt(Math.pow(x1 - x, 2) + Math.pow(y1 - y, 2)) <= distance;
     };
 
-    const handleMouseDown = event => {
+    const handleMouseDown = (event) => {
         const x = getRelativeMouseX(event.clientX);
         const y = getRelativeMouseY(event.clientY);
         dragSelection.sectionName = props.selection.sectionName;
         dragSelection.index = props.selection.index;
 
-        Object.keys(props.swatches).forEach(swatchCategory => {
-            Object.keys(props.swatches[swatchCategory]).forEach(swatchKey => {
-                const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey]);
+        Object.keys(props.swatches).forEach((swatchCategory) => {
+            Object.keys(props.swatches[swatchCategory]).forEach((swatchKey) => {
+                const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey].hex);
                 const coordinates = getCoordinateFromHueSaturation(circleRadius, hue, saturation);
                 if (coordinatesAreWithin(...getOffsetFromCenter(circleRadius, x, y), ...coordinates, 26)) {
                     dragSelection.sectionName = swatchCategory;
@@ -96,9 +96,9 @@ export default function HueSaturationCircle(props) {
 
     return (
         <div className="hue-saturation-circle" ref={updateSize} onMouseDown={handleMouseDown} aria-hidden="true">
-            {Object.keys(props.swatches).map(swatchCategory => {
-                return Object.keys(props.swatches[swatchCategory]).map(swatchKey => {
-                    return <HueSaturationNode key={`${swatchCategory}-${swatchKey}`} circleRadius={circleRadius} color={props.swatches[swatchCategory][swatchKey]} />;
+            {Object.keys(props.swatches).map((swatchCategory) => {
+                return Object.keys(props.swatches[swatchCategory]).map((swatchKey) => {
+                    return <HueSaturationNode colorMode={props.colorMode} key={`${swatchCategory}-${swatchKey}`} circleRadius={circleRadius} color={props.swatches[swatchCategory][swatchKey]} />;
                 });
             })}
         </div>

@@ -3,27 +3,46 @@ import VerticalSlider from "./VerticalSlider";
 import HueSaturationCircle from "./HueSaturationCircle";
 import Dropdown from "./Dropdown";
 import convert from "color-convert";
+import getColorDataFromHex from "./ColorUtils";
 
 export default function PaletteHeader(props) {
-    const onBrightnessChange = newBrightness => {
-        let oldHsb = convert.hex.hsv(props.swatches[props.selection.sectionName][props.selection.index]);
-        oldHsb[2] = newBrightness;
-        const newHex = convert.hsv.hex(oldHsb);
-        props.onChange(props.selection.sectionName, props.selection.index, "#" + newHex);
+    const onBrightnessChange = (newBrightness) => {
+        // More accurate representation if colorMode is already HSB
+        let newHex;
+        let newColorData;
+        if (props.colorMode === "HSB") {
+            newColorData = [props.swatches[props.selection.sectionName][props.selection.index].colorData[0], props.swatches[props.selection.sectionName][props.selection.index].colorData[1], newBrightness];
+            newHex = "#" + convert.hsv.hex(newColorData);
+        } else {
+            let hsvColor = convert.hex.hsv(props.swatches[props.selection.sectionName][props.selection.index].hex);
+            hsvColor[2] = newBrightness;
+            newHex = "#" + convert.hsv.hex(hsvColor);
+            newColorData = getColorDataFromHex(newHex, props.colorMode);
+        }
+        props.onChange(props.selection.sectionName, props.selection.index, { hex: newHex, colorData: newColorData });
     };
 
     const onHueSaturationChange = (hue, saturation, selection) => {
-        let oldHsb = convert.hex.hsv(props.swatches[selection.sectionName][selection.index]);
-        oldHsb[0] = hue;
-        oldHsb[1] = saturation;
-        const newHex = convert.hsv.hex(oldHsb);
-        props.onChange(selection.sectionName, selection.index, "#" + newHex);
+        // More accurate representation if colorMode is already HSB
+        let newHex;
+        let newColorData;
+        if (props.colorMode === "HSB") {
+            newColorData = [hue, saturation, props.swatches[selection.sectionName][selection.index].colorData[2]];
+            newHex = "#" + convert.hsv.hex(newColorData);
+        } else {
+            let hsvColor = convert.hex.hsv(props.swatches[selection.sectionName][selection.index].hex);
+            hsvColor[0] = hue;
+            hsvColor[1] = saturation;
+            newHex = "#" + convert.hsv.hex(hsvColor);
+            newColorData = getColorDataFromHex(newHex, props.colorMode);
+        }
+        props.onChange(selection.sectionName, selection.index, { hex: newHex, colorData: newColorData });
     };
 
     return (
         <header>
             <VerticalSlider divClass="brightness-vertical" thumbClass="brightness-thumb" onChange={onBrightnessChange} />
-            <HueSaturationCircle onSelectSwatch={props.onSelectSwatch} onPickColor={onHueSaturationChange} selection={props.selection} swatches={props.swatches} />
+            <HueSaturationCircle colorMode={props.colorMode} onSelectSwatch={props.onSelectSwatch} onPickColor={onHueSaturationChange} selection={props.selection} swatches={props.swatches} />
             <div className="header-toolbars">
                 <label id="dropdown-color-harmony">Color Harmony</label>
                 <Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} onChange={props.onColorHarmony} />

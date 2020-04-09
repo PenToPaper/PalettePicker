@@ -40,22 +40,22 @@ describe("HueSaturationCircle calls callback function on click and generates cir
     const callback = jest.fn();
     const swatchData = {
         Main: {
-            10: "#aaaaaa",
-            2: "#aaabbb",
-            13: "#aaaccc"
-        }
+            10: { hex: "#aaaaaa", colorData: [0, 0, 67] },
+            2: { hex: "#aaabbb", colorData: [236, 9, 73] },
+            13: { hex: "#aaaccc", colorData: [236, 17, 80] },
+        },
     };
-    const circleWrapper = mount(<HueSaturationCircle onPickColor={callback} swatches={swatchData} />);
+    const circleWrapper = mount(<HueSaturationCircle onSelectSwatch={callback} selection={{ sectionName: "Main", index: 2 }} colorMode={"HSB"} onPickColor={callback} swatches={swatchData} />);
 
     it("Calls callback onPickColor", () => {
-        circleWrapper.find(".hue-saturation-circle").simulate("click");
-        expect(callback).toHaveBeenCalled();
+        circleWrapper.find(".hue-saturation-circle").prop("onMouseDown")({ clientX: 1, clientY: 1 });
+        expect(callback).toHaveBeenCalledTimes(4);
     });
 
     it("Creates 3 circle elements when supplied with the swatch data", () => {
         expect(circleWrapper.find("HueSaturationNode")).toHaveLength(3);
-        expect(circleWrapper.find({ color: "#aaaaaa" })).toHaveLength(1);
-        expect(circleWrapper.find({ color: "#aaabbb" })).toHaveLength(1);
-        expect(circleWrapper.find({ color: "#aaaccc" })).toHaveLength(1);
+        expect(circleWrapper.find("HueSaturationNode").get(0).props.color.hex).toEqual("#aaabbb");
+        expect(circleWrapper.find("HueSaturationNode").get(1).props.color.hex).toEqual("#aaaaaa");
+        expect(circleWrapper.find("HueSaturationNode").get(2).props.color.hex).toEqual("#aaaccc");
     });
 });

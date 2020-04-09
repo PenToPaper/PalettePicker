@@ -11,45 +11,39 @@ export function getPercentFilled(sliderWidth, relativeMouseX) {
 }
 
 export default function Slider(props) {
-    const [value, setValue] = useState(props.default);
     const containerDom = useRef(null);
 
-    const getRelativeMouseX = absoluteMouseX => {
+    const getRelativeMouseX = (absoluteMouseX) => {
         return containerDom.current ? absoluteMouseX - containerDom.current.getBoundingClientRect().left : 0;
     };
 
-    const setAndUpdateValue = newValue => {
-        setValue(newValue);
-        props.onChange(newValue);
-    };
-
-    const incrementValue = incrementBy => {
-        if (value + incrementBy <= props.max) {
-            setAndUpdateValue(value + incrementBy);
-        } else if (value !== props.max) {
-            setAndUpdateValue(props.max);
+    const incrementValue = (incrementBy) => {
+        if (props.value + incrementBy <= props.max) {
+            props.onChange(props.value + incrementBy);
+        } else if (props.value !== props.max) {
+            props.onChange(props.max);
         }
     };
 
-    const decrementValue = decrementBy => {
-        if (value - decrementBy >= props.min) {
-            setAndUpdateValue(value - decrementBy);
-        } else if (value !== props.min) {
-            setAndUpdateValue(props.min);
+    const decrementValue = (decrementBy) => {
+        if (props.value - decrementBy >= props.min) {
+            props.onChange(props.value - decrementBy);
+        } else if (props.value !== props.min) {
+            props.onChange(props.min);
         }
     };
 
-    const handleKeyDown = event => {
+    const handleKeyDown = (event) => {
         switch (event.keyCode) {
             // home
             case 36:
                 event.preventDefault();
-                setAndUpdateValue(props.min);
+                props.onChange(props.min);
                 break;
             // end
             case 35:
                 event.preventDefault();
-                setAndUpdateValue(props.max);
+                props.onChange(props.max);
                 break;
             // arrow up
             case 38:
@@ -84,18 +78,18 @@ export default function Slider(props) {
         }
     };
 
-    const handleMouseUp = event => {
+    const handleMouseUp = (event) => {
         handleDrag(event);
 
         document.removeEventListener("mousemove", handleDrag);
         document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    const handleDrag = event => {
-        setAndUpdateValue(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().width : 0, getRelativeMouseX(event.clientX)) * props.max);
+    const handleDrag = (event) => {
+        props.onChange(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().width : 0, getRelativeMouseX(event.clientX)) * props.max);
     };
 
-    const handleStartDrag = event => {
+    const handleStartDrag = (event) => {
         handleDrag(event);
         document.addEventListener("mousemove", handleDrag);
         document.addEventListener("mouseup", handleMouseUp);
@@ -105,13 +99,13 @@ export default function Slider(props) {
         <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleStartDrag} style={props.style}>
             <div
                 onKeyDown={handleKeyDown}
-                style={{ left: (value / props.max) * 100 + "%" }}
+                style={{ left: (props.value / props.max) * 100 + "%" }}
                 className={props.innerClass}
                 role="slider"
                 tabIndex="0"
                 aria-valuemax={String(props.max)}
                 aria-valuemin={String(props.min)}
-                aria-valuenow={String(Math.round(value))}
+                aria-valuenow={String(Math.round(props.value))}
                 aria-label={props.innerLabel}
             ></div>
         </div>

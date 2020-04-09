@@ -5,7 +5,7 @@ import { act } from "react-dom/test-utils";
 import simulateKeyDown from "./SimulateKeyDown";
 
 describe("Slider renders default state properly based on props", () => {
-    const sliderWrapper = shallow(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" onChange={() => {}} />);
+    const sliderWrapper = shallow(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} value={0} pageIncrement={10} innerLabel="Hue" onChange={() => {}} />);
 
     it("Assigns the correct class to the root div", () => {
         expect(sliderWrapper.find(".hue-modifier")).toHaveLength(1);
@@ -30,19 +30,20 @@ describe("Click and drag calculations are made correctly", () => {
 });
 
 describe("Slider changes inner value based on keyboard interactions", () => {
-    const callback = jest.fn();
-    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" onChange={callback} />);
+    let value = 0;
+    const callback = jest.fn((newValue) => {
+        value = newValue;
+        sliderWrapper.setProps({ value: value });
+    });
+    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} value={value} pageIncrement={10} innerLabel="Hue" onChange={callback} />);
 
-    const expectSliderValue = expectedValue => {
+    const expectSliderValue = (expectedValue) => {
         expect(callback).toHaveBeenCalled();
         expect(sliderWrapper.find(".modifier-thumb").prop("style")).toHaveProperty("left");
         expect(sliderWrapper.find(".modifier-thumb").prop("aria-valuenow")).toEqual(String(expectedValue));
     };
 
-    sliderWrapper
-        .find(".modifier-thumb")
-        .getDOMNode()
-        .focus();
+    sliderWrapper.find(".modifier-thumb").getDOMNode().focus();
 
     it("Increments slider value one step using right arrow key", () => {
         simulateKeyDown(sliderWrapper, ".modifier-thumb", "arrow_right");
@@ -103,7 +104,7 @@ describe("Slider changes inner value based on keyboard interactions", () => {
 
 describe("Slider changes value based on mouse interactions", () => {
     const callback = jest.fn();
-    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} default={0} pageIncrement={10} innerLabel="Hue" onChange={callback} />);
+    const sliderWrapper = mount(<Slider wrapperClass="hue-modifier" innerClass="modifier-thumb" max={360} min={0} value={0} pageIncrement={10} innerLabel="Hue" onChange={callback} />);
 
     const map = {};
     document.addEventListener = jest.fn((event, cb) => {

@@ -10,14 +10,16 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
     const colorHarmony = jest.fn();
     const swatchData = {
         Main: {
-            1: "#FFFFFF",
-            2: "#FFFFFF",
-            3: "#FFFFFF",
-            4: "#FFFFFF"
-        }
+            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+        },
     };
     const selection = { sectionName: "Main", index: 1 };
-    const headerWrapper = shallow(<PaletteHeader onChange={change} selection={selection} swatches={swatchData} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={colorMode} onColorHarmony={colorHarmony} />);
+    const headerWrapper = shallow(
+        <PaletteHeader onChange={change} colorMode={"HSB"} selection={selection} swatches={swatchData} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={colorMode} onColorHarmony={colorHarmony} />
+    );
 
     it("Includes proper elements", () => {
         expect(headerWrapper.find("HueSaturationCircle")).toHaveLength(1);
@@ -51,10 +53,10 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
     it("Calls proper callback methods on HueSaturationCircle and brightness-vertical elements change", () => {
         const newSwatchData = Object.assign({}, swatchData);
         headerWrapper.find("VerticalSlider").prop("onChange")(50);
-        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, "#808080");
-        newSwatchData[selection.sectionName][selection.index] = "#808080";
+        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, { hex: "#808080", colorData: [0, 0, 50] });
+        newSwatchData[selection.sectionName][selection.index] = { hex: "#808080", colorData: [0, 0, 50] };
         headerWrapper.setProps({ swatchData: newSwatchData });
-        headerWrapper.find("HueSaturationCircle").prop("onPickColor")(5, 10);
-        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, "#807473");
+        headerWrapper.find("HueSaturationCircle").prop("onPickColor")(5, 10, { sectionName: "Main", index: 1 });
+        expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, { hex: "#807473", colorData: [5, 10, 50] });
     });
 });

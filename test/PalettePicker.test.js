@@ -5,15 +5,15 @@ import { shallow } from "enzyme";
 describe("PalettePicker renders default state properly", () => {
     const defaultSwatches = {
         Main: {
-            1: "#FFFFFF",
-            2: "#FFFFFF",
-            3: "#FFFFFF",
-            4: "#FFFFFF"
-        }
+            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+        },
     };
     const defaultSelection = {
         sectionName: "Main",
-        index: 1
+        index: 1,
     };
     const appWrapper = shallow(<PalettePicker />);
 
@@ -50,7 +50,7 @@ describe("PalettePicker renders default state properly", () => {
     it("Supplies child components with addSwatch method", () => {
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
         expect(Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main)).toHaveLength(5);
-        let newKey = Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main).filter(item => !(item in defaultSwatches.Main));
+        let newKey = Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main).filter((item) => !(item in defaultSwatches.Main));
         newKey = newKey[0];
         expect(appWrapper.find("PaletteBody").prop("swatches").Main[newKey]).toEqual("#FFFFFF");
     });
