@@ -1,6 +1,7 @@
 import React from "react";
 import PalettePicker from "../src/PalettePicker";
-import { shallow } from "enzyme";
+import { shallow, mount } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 describe("PalettePicker renders default state properly", () => {
     const defaultSwatches = {
@@ -53,5 +54,64 @@ describe("PalettePicker renders default state properly", () => {
         let newKey = Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main).filter((item) => !(item in defaultSwatches.Main));
         newKey = newKey[0];
         expect(appWrapper.find("PaletteBody").prop("swatches").Main[newKey]).toEqual("#FFFFFF");
+    });
+});
+
+describe("PalletePicker color harmony functions work properly", () => {
+    const defaultSwatches = {
+        Main: {
+            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+        },
+    };
+
+    const defaultSelection = {
+        sectionName: "Main",
+        index: 1,
+    };
+
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Changes swatches properly on complementary color initilization", () => {
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Complementary");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(getSwatches().Main[1].hex).toEqual("#9A33FF");
+    });
+
+    it("Restricts swatch color changes to complementary color scheme while active", () => {
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 2, { hex: "#8000FF", colorData: [270, 100, 100] });
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+        expect(getSwatches().Main[2].hex).toEqual("#8000FF");
+        expect(getSwatches().Main[2].colorData).toEqual([270, 100, 100]);
+
+        expect(getSwatches().Main[1].hex).toEqual("#80FF00");
+        expect(getSwatches().Main[1].colorData).toEqual([90, 100, 100]);
+    });
+
+    it("No longer restricts to color schemes when not active", () => {
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+
+        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+
+        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
+        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+
+        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });

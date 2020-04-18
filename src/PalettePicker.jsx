@@ -3,7 +3,7 @@ import Nav from "./Nav";
 import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
 import convert from "color-convert";
-import getColorDataFromHex from "./ColorUtils";
+import { getHSBComplementaryColor, getColorDataFromHex, getComplementaryColorFromHex, getComplementaryColorFromColorData } from "./ColorUtils";
 
 export default function PalettePicker() {
     const [swatches, setSwatches] = useState({
@@ -36,30 +36,43 @@ export default function PalettePicker() {
         setColorMode(newColorMode);
     };
 
-    const getColorRotated = (colorHex, degreeClockwise) => {
-        let hsl = convert.hex.hsl(colorHex);
-        hsl[0] = hsl[0] + degreeClockwise;
-        return convert.hsl.hex(hsl);
-    };
-
     const startComplementaryColorHarmony = () => {
         setSwatches((prevSwatches) => {
             let newMainSwatches = {};
-            if (prevSwatches.Main[1] === "#FFFFFF") {
+            if (prevSwatches.Main[1].hex === "#FFFFFF") {
                 // First swatch is white, make it purple, so the line of complementary colors is straight up and down
-                newMainSwatches[1] = "#9830FF";
-                newMainSwatches[2] = "#9EFF3B";
+                newMainSwatches[1] = { hex: "#9A33FF", colorData: getColorDataFromHex("#9A33FF", colorMode) };
             } else {
+                // First swatch has actual color, create complementary colors from this
                 newMainSwatches[1] = prevSwatches.Main[1];
-                newMainSwatches[2] = getColorRotated(prevSwatches.Main[1]);
             }
+            newMainSwatches[2] = getHSBComplementaryColor(newMainSwatches[1], colorMode);
+
+            return { Main: newMainSwatches };
+        });
+    };
+
+    const restrictComplement = (index, newColor) => {
+        const changeIndex = index === 1 ? 2 : 1;
+        setSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches.Main = newMainSwatches;
+            newSwatches.Main[index] = newColor;
+            newSwatches.Main[changeIndex] = getHSBComplementaryColor(newColor, colorMode);
             return newSwatches;
         });
     };
 
     const changeColor = (sectionName, index, newColor) => {
+        switch (harmony) {
+            case "Complementary":
+                restrictComplement(index, newColor);
+                break;
+            default:
+                setColor(sectionName, index, newColor);
+        }
+    };
+
+    const setColor = (sectionName, index, newColor) => {
         setSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches[sectionName][index] = newColor;

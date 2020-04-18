@@ -3,7 +3,7 @@ import VerticalSlider from "./VerticalSlider";
 import HueSaturationCircle from "./HueSaturationCircle";
 import Dropdown from "./Dropdown";
 import convert from "color-convert";
-import getColorDataFromHex from "./ColorUtils";
+import { getColorDataFromHex } from "./ColorUtils";
 
 export default function PaletteHeader(props) {
     const onBrightnessChange = (newBrightness) => {
