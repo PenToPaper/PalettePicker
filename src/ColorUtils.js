@@ -91,10 +91,9 @@ export function getColorRotatedHex(colorHex, degreeClockwise) {
     return convert.hsl.hex(hsl);
 }
 
-export function getTriadColorFromHex(hex, colorMode = "HSB") {
-    const hsbColorRoot = convert.hex.hsv.raw(hex);
-    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 120);
-    const hsbRotatedTwo = getColorRotatedHSB(hsbColorRoot, 240);
+function getTriadColorFromHSBRoot(hsbRoot, colorMode = "HSB") {
+    const hsbRotatedOne = getColorRotatedHSB(hsbRoot, 120);
+    const hsbRotatedTwo = getColorRotatedHSB(hsbRoot, 240);
 
     return [
         { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) },
@@ -102,15 +101,12 @@ export function getTriadColorFromHex(hex, colorMode = "HSB") {
     ];
 }
 
-export function getTriadColorFromColorData(colorData, colorMode = "HSB") {
-    const hsbColorRoot = getHSBFromColorData(colorData, colorMode);
-    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 120);
-    const hsbRotatedTwo = getColorRotatedHSB(hsbColorRoot, 240);
+export function getTriadColorFromHex(hex, colorMode = "HSB") {
+    return getTriadColorFromHSBRoot(convert.hex.hsv.raw(hex));
+}
 
-    return [
-        { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) },
-        { hex: "#" + convert.hsv.hex(hsbRotatedTwo), colorData: getColorDataFromHSB(hsbRotatedTwo, colorMode) },
-    ];
+export function getTriadColorFromColorData(colorData, colorMode = "HSB") {
+    return getTriadColorFromHSBRoot(getHSBFromColorData(colorData, colorMode));
 }
 
 export function getHSBTriadColor(color, colorMode) {
@@ -121,16 +117,17 @@ export function getHSBTriadColor(color, colorMode) {
     }
 }
 
-export function getComplementaryColorFromHex(hex, colorMode = "HSB") {
-    const hsbColorRoot = convert.hex.hsv.raw(hex);
-    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 180);
+function getComplementaryColorFromHSBRoot(hsbRoot, colorMode = "HSB") {
+    const hsbRotatedOne = getColorRotatedHSB(hsbRoot, 180);
     return { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) };
 }
 
+export function getComplementaryColorFromHex(hex, colorMode = "HSB") {
+    return getComplementaryColorFromHSBRoot(convert.hex.hsv.raw(hex));
+}
+
 export function getComplementaryColorFromColorData(colorData, colorMode = "HSB") {
-    const hsbColorRoot = getHSBFromColorData(colorData, colorMode);
-    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 180);
-    return { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) };
+    return getComplementaryColorFromHSBRoot(getHSBFromColorData(colorData, colorMode));
 }
 
 export function getHSBComplementaryColor(color, colorMode) {
