@@ -102,7 +102,7 @@ function getTriadColorFromHSBRoot(hsbRoot, colorMode = "HSB") {
 }
 
 export function getTriadColorFromHex(hex, colorMode = "HSB") {
-    return getTriadColorFromHSBRoot(convert.hex.hsv.raw(hex));
+    return getTriadColorFromHSBRoot(convert.hex.hsv.raw(hex), colorMode);
 }
 
 export function getTriadColorFromColorData(colorData, colorMode = "HSB") {
@@ -123,7 +123,7 @@ function getComplementaryColorFromHSBRoot(hsbRoot, colorMode = "HSB") {
 }
 
 export function getComplementaryColorFromHex(hex, colorMode = "HSB") {
-    return getComplementaryColorFromHSBRoot(convert.hex.hsv.raw(hex));
+    return getComplementaryColorFromHSBRoot(convert.hex.hsv.raw(hex), colorMode);
 }
 
 export function getComplementaryColorFromColorData(colorData, colorMode = "HSB") {
