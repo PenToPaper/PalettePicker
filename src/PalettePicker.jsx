@@ -3,7 +3,7 @@ import Nav from "./Nav";
 import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
 import convert from "color-convert";
-import { getHSBComplementaryColor, getColorDataFromHex, getComplementaryColorFromHex, getComplementaryColorFromColorData } from "./ColorUtils";
+import * as colorUtils from "./ColorUtils";
 
 export default function PalettePicker() {
     const [swatches, setSwatches] = useState({
@@ -26,7 +26,7 @@ export default function PalettePicker() {
                 newSwatches[category] = {};
                 for (const color of Object.keys(prevSwatches[category])) {
                     // Change the colorData property of their object to reflect the new color mode
-                    newSwatches[category][color] = { hex: prevSwatches[category][color].hex, colorData: getColorDataFromHex(prevSwatches[category][color].hex, newColorMode) };
+                    newSwatches[category][color] = { hex: prevSwatches[category][color].hex, colorData: colorUtils.getColorDataFromHex(prevSwatches[category][color].hex, newColorMode) };
                 }
             }
             return newSwatches;
@@ -41,12 +41,63 @@ export default function PalettePicker() {
             let newMainSwatches = {};
             if (prevSwatches.Main[1].hex === "#FFFFFF") {
                 // First swatch is white, make it purple, so the line of complementary colors is straight up and down
-                newMainSwatches[1] = { hex: "#9A33FF", colorData: getColorDataFromHex("#9A33FF", colorMode) };
+                newMainSwatches[1] = { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
             } else {
                 // First swatch has actual color, create complementary colors from this
                 newMainSwatches[1] = prevSwatches.Main[1];
             }
-            newMainSwatches[2] = getHSBComplementaryColor(newMainSwatches[1], colorMode);
+            newMainSwatches[2] = colorUtils.getHSBComplementaryColor(newMainSwatches[1], colorMode);
+
+            return { Main: newMainSwatches };
+        });
+    };
+
+    const startTriadColorHarmony = () => {
+        setSwatches((prevSwatches) => {
+            let newMainSwatches = {};
+            if (prevSwatches.Main[1].hex === "#FFFFFF") {
+                // First swatch is white, make it purple, so the line of complementary colors is straight up and down
+                newMainSwatches[1] = { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
+            } else {
+                // First swatch has actual color, create complementary colors from this
+                newMainSwatches[1] = prevSwatches.Main[1];
+            }
+            const triadColors = colorUtils.getHSBTriadColor(newMainSwatches[1], colorMode);
+            newMainSwatches[2] = triadColors[0];
+            newMainSwatches[3] = triadColors[1];
+
+            return { Main: newMainSwatches };
+        });
+    };
+
+    const restrictTriad = (index, newColor) => {
+        let triadColors;
+        let indexOne;
+        if (index !== "1") {
+            // compare swatches[index] to newColor
+            const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
+            const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
+            const hueDiff = newColorHSB[0] - prevColorHSB[0];
+
+            const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
+            let indexOneColorData = indexOneHSB.concat();
+            indexOneColorData[0] = (indexOneColorData[0] + hueDiff + 360) % 360;
+            indexOneColorData[1] = newColorHSB[1];
+            indexOneColorData[2] = newColorHSB[2];
+
+            triadColors = colorUtils.getTriadColorFromColorData(indexOneColorData, "HSB");
+
+            indexOne = { hex: "#" + convert.hsv.hex(indexOneColorData), colorData: indexOneColorData };
+        } else {
+            indexOne = newColor;
+            triadColors = colorUtils.getHSBTriadColor(newColor, colorMode);
+        }
+
+        setSwatches(() => {
+            let newMainSwatches = {};
+            newMainSwatches[1] = indexOne;
+            newMainSwatches[2] = triadColors[0];
+            newMainSwatches[3] = triadColors[1];
 
             return { Main: newMainSwatches };
         });
@@ -57,7 +108,7 @@ export default function PalettePicker() {
         setSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches.Main[index] = newColor;
-            newSwatches.Main[changeIndex] = getHSBComplementaryColor(newColor, colorMode);
+            newSwatches.Main[changeIndex] = colorUtils.getHSBComplementaryColor(newColor, colorMode);
             return newSwatches;
         });
     };
@@ -66,6 +117,9 @@ export default function PalettePicker() {
         switch (harmony) {
             case "Complementary":
                 restrictComplement(index, newColor);
+                break;
+            case "Triad":
+                restrictTriad(index, newColor);
                 break;
             default:
                 setColor(sectionName, index, newColor);
@@ -102,6 +156,9 @@ export default function PalettePicker() {
         switch (harmonyName) {
             case "Complementary":
                 startComplementaryColorHarmony();
+                break;
+            case "Triad":
+                startTriadColorHarmony();
                 break;
             default:
                 break;

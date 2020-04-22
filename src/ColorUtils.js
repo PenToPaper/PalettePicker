@@ -40,62 +40,103 @@ export function getHexFromColorData(colorData, colorMode) {
     return newColorData;
 }
 
-export function getColorRotated(colorHex, degreeClockwise) {
-    let hsl = convert.hex.hsl(colorHex);
-    hsl[0] = hsl[0] + degreeClockwise;
-    return convert.hsl.hex(hsl);
-}
-
-export function getComplementaryColorFromHex(hex, colorMode = "HSB") {
-    let hsbColorData = convert.hex.hsv.raw(hex);
-    hsbColorData[0] = (hsbColorData[0] + 180) % 360;
-    const newColorHex = convert.hsv.hex(hsbColorData);
-
-    let colorData = hsbColorData;
-    if (colorMode !== "HSB") {
-        colorData = getColorDataFromHex(newColorHex, colorMode);
-    }
-
-    return { hex: "#" + newColorHex, colorData: colorData };
-}
-
-export function getComplementaryColorFromColorData(colorData, colorMode = "HSB") {
-    let convertedColorData;
-
+export function getColorDataFromHSB(hsbColorData, colorMode) {
+    let newColorData;
     // ["HSB", "HSL", "RGB", "CMYK"]
     switch (colorMode) {
         case "HSB":
-            convertedColorData = colorData.concat();
+            newColorData = hsbColorData.concat();
             break;
         case "HSL":
-            convertedColorData = convert.hsl.hsv(colorData);
+            newColorData = convert.hsl.hsv(hsbColorData);
             break;
         case "RGB":
-            convertedColorData = convert.rgb.hsv(colorData);
+            newColorData = convert.rgb.hsv(hsbColorData);
             break;
         case "CMYK":
-            convertedColorData = convert.cmyk.hsv(colorData);
+            newColorData = convert.cmyk.hsv(hsbColorData);
             break;
     }
+    return newColorData;
+}
 
-    convertedColorData[0] = (convertedColorData[0] + 180) % 360;
-
-    const newColorHex = convert.hsv.hex(convertedColorData);
-
-    let newColorData = convertedColorData;
-    if (colorMode !== "HSB") {
-        newColorData = getColorDataFromHex(newColorHex);
+export function getHSBFromColorData(colorData, colorMode) {
+    let newColorData;
+    switch (colorMode) {
+        case "HSB":
+            newColorData = colorData.concat();
+            break;
+        case "HSL":
+            newColorData = convert.hsl.hsv.raw(colorData);
+            break;
+        case "RGB":
+            newColorData = convert.rgb.hsv.raw(colorData);
+            break;
+        case "CMYK":
+            newColorData = convert.cmyk.hsv.raw(colorData);
+            break;
     }
+    return newColorData;
+}
 
-    return { hex: "#" + newColorHex, colorData: newColorData };
+export function getColorRotatedHSB(hsbColorData, degreeClockwise) {
+    let newHsb = hsbColorData.concat();
+    newHsb[0] = (newHsb[0] + degreeClockwise) % 360;
+    return newHsb;
+}
+
+export function getColorRotatedHex(colorHex, degreeClockwise) {
+    let hsl = convert.hex.hsl(colorHex);
+    hsl[0] = (hsl[0] + degreeClockwise) % 360;
+    return convert.hsl.hex(hsl);
+}
+
+export function getTriadColorFromHex(hex, colorMode = "HSB") {
+    const hsbColorRoot = convert.hex.hsv.raw(hex);
+    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 120);
+    const hsbRotatedTwo = getColorRotatedHSB(hsbColorRoot, 240);
+
+    return [
+        { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) },
+        { hex: "#" + convert.hsv.hex(hsbRotatedTwo), colorData: getColorDataFromHSB(hsbRotatedTwo, colorMode) },
+    ];
+}
+
+export function getTriadColorFromColorData(colorData, colorMode = "HSB") {
+    const hsbColorRoot = getHSBFromColorData(colorData, colorMode);
+    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 120);
+    const hsbRotatedTwo = getColorRotatedHSB(hsbColorRoot, 240);
+
+    return [
+        { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) },
+        { hex: "#" + convert.hsv.hex(hsbRotatedTwo), colorData: getColorDataFromHSB(hsbRotatedTwo, colorMode) },
+    ];
+}
+
+export function getHSBTriadColor(color, colorMode) {
+    if (colorMode === "HSB") {
+        return getTriadColorFromColorData(color.colorData, colorMode);
+    } else {
+        return getTriadColorFromHex(color.hex, colorMode);
+    }
+}
+
+export function getComplementaryColorFromHex(hex, colorMode = "HSB") {
+    const hsbColorRoot = convert.hex.hsv.raw(hex);
+    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 180);
+    return { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) };
+}
+
+export function getComplementaryColorFromColorData(colorData, colorMode = "HSB") {
+    const hsbColorRoot = getHSBFromColorData(colorData, colorMode);
+    const hsbRotatedOne = getColorRotatedHSB(hsbColorRoot, 180);
+    return { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) };
 }
 
 export function getHSBComplementaryColor(color, colorMode) {
-    let complementaryColor;
     if (colorMode === "HSB") {
-        complementaryColor = getComplementaryColorFromColorData(color.colorData, colorMode);
+        return getComplementaryColorFromColorData(color.colorData, colorMode);
     } else {
-        complementaryColor = getComplementaryColorFromHex(color.hex, colorMode);
+        return getComplementaryColorFromHex(color.hex, colorMode);
     }
-    return complementaryColor;
 }
