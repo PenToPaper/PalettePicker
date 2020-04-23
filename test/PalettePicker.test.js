@@ -155,14 +155,17 @@ describe("PalletePicker triad color functions work properly", () => {
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(3);
 
+        let roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
         expect(getSwatches().Main[1].hex).toEqual("#8000FF");
-        expect(getSwatches().Main[1].colorData).toEqual([270, 100, 100]);
+        expect(roundedColorData).toEqual([270, 100, 100]);
 
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
         expect(getSwatches().Main[2].hex).toEqual("#FF8000");
-        expect(getSwatches().Main[2].colorData).toEqual([30, 100, 100]);
+        expect(roundedColorData).toEqual([30, 100, 100]);
 
+        roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
         expect(getSwatches().Main[3].hex).toEqual("#00FF80");
-        expect(getSwatches().Main[3].colorData).toEqual([150, 100, 100]);
+        expect(roundedColorData).toEqual([150, 100, 100]);
     });
 
     it("Restricts swatch color changes to triad color scheme while active with changes to second index color", () => {
@@ -170,14 +173,102 @@ describe("PalletePicker triad color functions work properly", () => {
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(3);
 
+        let roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
         expect(getSwatches().Main[1].hex).toEqual("#00FF80");
-        expect(getSwatches().Main[1].colorData).toEqual([150, 100, 100]);
+        expect(roundedColorData).toEqual([150, 100, 100]);
 
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
         expect(getSwatches().Main[2].hex).toEqual("#8000FF");
-        expect(getSwatches().Main[2].colorData).toEqual([270, 100, 100]);
+        expect(roundedColorData).toEqual([270, 100, 100]);
 
+        roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
         expect(getSwatches().Main[3].hex).toEqual("#FF8000");
-        expect(getSwatches().Main[3].colorData).toEqual([30, 100, 100]);
+        expect(roundedColorData).toEqual([30, 100, 100]);
+    });
+
+    it("No longer restricts to color schemes when not active", () => {
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+
+        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+
+        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
+        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+
+        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+    });
+});
+
+describe("PalletePicker split complementary color functions work properly", () => {
+    const defaultSwatches = {
+        Main: {
+            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+        },
+    };
+
+    const defaultSelection = {
+        sectionName: "Main",
+        index: 1,
+    };
+
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Changes swatches properly on triad color initilization", () => {
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Split-Complementary");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+        expect(getSwatches().Main[1].hex).toEqual("#9A33FF");
+    });
+
+    it("Restricts swatch color changes to triad color scheme while active with changes to first index color", () => {
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#8000FF", colorData: [270, 100, 100] });
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+
+        let roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
+        expect(getSwatches().Main[1].hex).toEqual("#8000FF");
+        expect(roundedColorData).toEqual([270, 100, 100]);
+
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
+        expect(getSwatches().Main[2].hex).toEqual("#FFFF00");
+        expect(roundedColorData).toEqual([60, 100, 100]);
+
+        roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
+        expect(getSwatches().Main[3].hex).toEqual("#00FF00");
+        expect(roundedColorData).toEqual([120, 100, 100]);
+    });
+
+    it("Restricts swatch color changes to triad color scheme while active with changes to second index color", () => {
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 2, { hex: "#8000FF", colorData: [270, 100, 100] });
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+
+        let roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
+        expect(getSwatches().Main[3].hex).toEqual("#FF007F");
+        expect(roundedColorData).toEqual([330, 100, 100]);
+
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
+        expect(getSwatches().Main[2].hex).toEqual("#8000FF");
+        expect(roundedColorData).toEqual([270, 100, 100]);
+
+        roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
+        expect(getSwatches().Main[1].hex).toEqual("#00FF00");
+        expect(roundedColorData).toEqual([120, 100, 100]);
     });
 
     it("No longer restricts to color schemes when not active", () => {

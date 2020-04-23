@@ -70,8 +70,26 @@ export default function PalettePicker() {
         });
     };
 
-    const restrictTriad = (index, newColor) => {
-        let triadColors;
+    const startSplitComplementaryColorHarmony = () => {
+        setSwatches((prevSwatches) => {
+            let newMainSwatches = {};
+            if (prevSwatches.Main[1].hex === "#FFFFFF") {
+                // First swatch is white, make it purple, so the line of complementary colors is straight up and down
+                newMainSwatches[1] = { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
+            } else {
+                // First swatch has actual color, create complementary colors from this
+                newMainSwatches[1] = prevSwatches.Main[1];
+            }
+            const splitColors = colorUtils.getHSBSplitComplementaryColor(newMainSwatches[1], colorMode);
+            newMainSwatches[2] = splitColors[0];
+            newMainSwatches[3] = splitColors[1];
+
+            return { Main: newMainSwatches };
+        });
+    };
+
+    const restrictTriplets = (index, newColor, colorDataFunction, genericHarmonyFunction) => {
+        let tripletColors;
         let indexOne;
         if (index !== "1") {
             // compare swatches[index] to newColor
@@ -85,26 +103,37 @@ export default function PalettePicker() {
             indexOneColorData[1] = newColorHSB[1];
             indexOneColorData[2] = newColorHSB[2];
 
-            triadColors = colorUtils.getTriadColorFromColorData(indexOneColorData, "HSB");
+            tripletColors = colorDataFunction(indexOneColorData, "HSB");
+            tripletColors[0].colorData = colorUtils.getColorDataFromHex(tripletColors[0].hex, colorMode);
+            tripletColors[1].colorData = colorUtils.getColorDataFromHex(tripletColors[1].hex, colorMode);
 
-            indexOne = { hex: "#" + convert.hsv.hex(indexOneColorData), colorData: indexOneColorData };
+            const hex = colorUtils.getHexFromColorData(indexOneColorData, "HSB");
+            indexOne = { hex: "#" + hex, colorData: colorUtils.getColorDataFromHex(hex, colorMode) };
         } else {
             indexOne = newColor;
-            triadColors = colorUtils.getHSBTriadColor(newColor, colorMode);
+            tripletColors = genericHarmonyFunction(newColor, colorMode);
         }
 
         setSwatches(() => {
             let newMainSwatches = {};
             newMainSwatches[1] = indexOne;
-            newMainSwatches[2] = triadColors[0];
-            newMainSwatches[3] = triadColors[1];
+            newMainSwatches[2] = tripletColors[0];
+            newMainSwatches[3] = tripletColors[1];
 
             return { Main: newMainSwatches };
         });
     };
 
+    const restrictSplitComplementary = (index, newColor) => {
+        restrictTriplets(index, newColor, colorUtils.getSplitComplementaryColorFromColorData, colorUtils.getHSBSplitComplementaryColor);
+    };
+
+    const restrictTriad = (index, newColor) => {
+        restrictTriplets(index, newColor, colorUtils.getTriadColorFromColorData, colorUtils.getHSBTriadColor);
+    };
+
     const restrictComplement = (index, newColor) => {
-        const changeIndex = index === 1 ? 2 : 1;
+        const changeIndex = index === "1" ? 2 : 1;
         setSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches.Main[index] = newColor;
@@ -120,6 +149,9 @@ export default function PalettePicker() {
                 break;
             case "Triad":
                 restrictTriad(index, newColor);
+                break;
+            case "Split-Complementary":
+                restrictSplitComplementary(index, newColor);
                 break;
             default:
                 setColor(sectionName, index, newColor);
@@ -159,6 +191,9 @@ export default function PalettePicker() {
                 break;
             case "Triad":
                 startTriadColorHarmony();
+                break;
+            case "Split-Complementary":
+                startSplitComplementaryColorHarmony();
                 break;
             default:
                 break;

@@ -48,13 +48,13 @@ export function getColorDataFromHSB(hsbColorData, colorMode) {
             newColorData = hsbColorData.concat();
             break;
         case "HSL":
-            newColorData = convert.hsl.hsv(hsbColorData);
+            newColorData = convert.hsv.hsl.raw(hsbColorData);
             break;
         case "RGB":
-            newColorData = convert.rgb.hsv(hsbColorData);
+            newColorData = convert.hsv.rgb.raw(hsbColorData);
             break;
         case "CMYK":
-            newColorData = convert.cmyk.hsv(hsbColorData);
+            newColorData = convert.hsv.cmyk.raw(hsbColorData);
             break;
     }
     return newColorData;
@@ -89,6 +89,32 @@ export function getColorRotatedHex(colorHex, degreeClockwise) {
     let hsl = convert.hex.hsl(colorHex);
     hsl[0] = (hsl[0] + degreeClockwise) % 360;
     return convert.hsl.hex(hsl);
+}
+
+function getSplitComplementaryColorFromHSBRoot(hsbRoot, colorMode = "HSB") {
+    const hsbRotatedOne = getColorRotatedHSB(hsbRoot, 150);
+    const hsbRotatedTwo = getColorRotatedHSB(hsbRoot, 210);
+
+    return [
+        { hex: "#" + convert.hsv.hex(hsbRotatedOne), colorData: getColorDataFromHSB(hsbRotatedOne, colorMode) },
+        { hex: "#" + convert.hsv.hex(hsbRotatedTwo), colorData: getColorDataFromHSB(hsbRotatedTwo, colorMode) },
+    ];
+}
+
+export function getSplitComplementaryColorFromHex(hex, colorMode = "HSB") {
+    return getSplitComplementaryColorFromHSBRoot(convert.hex.hsv.raw(hex), colorMode);
+}
+
+export function getSplitComplementaryColorFromColorData(colorData, colorMode = "HSB") {
+    return getSplitComplementaryColorFromHSBRoot(getHSBFromColorData(colorData, colorMode));
+}
+
+export function getHSBSplitComplementaryColor(color, colorMode) {
+    if (colorMode === "HSB") {
+        return getSplitComplementaryColorFromColorData(color.colorData, colorMode);
+    } else {
+        return getSplitComplementaryColorFromHex(color.hex, colorMode);
+    }
 }
 
 function getTriadColorFromHSBRoot(hsbRoot, colorMode = "HSB") {
