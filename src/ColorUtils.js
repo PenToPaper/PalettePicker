@@ -81,7 +81,7 @@ export function getHSBFromColorData(colorData, colorMode) {
 
 export function getColorRotatedHSB(hsbColorData, degreeClockwise) {
     let newHsb = hsbColorData.concat();
-    newHsb[0] = (newHsb[0] + degreeClockwise) % 360;
+    newHsb[0] = (newHsb[0] + degreeClockwise + 360) % 360;
     return newHsb;
 }
 
@@ -162,4 +162,61 @@ export function getHSBComplementaryColor(color, colorMode) {
     } else {
         return getComplementaryColorFromHex(color.hex, colorMode);
     }
+}
+
+export function getAnalogousColorFromHSBCenter(centerColorDataHSB, hueDiff, numNodes, colorMode = "HSB") {
+    if (numNodes * hueDiff >= 360) {
+        hueDiff = 360 / numNodes;
+    }
+    let ret = {};
+    for (let i = 1; i <= numNodes; i++) {
+        // gets index difference between center (either logical or actual) and index i node. Multiplies that by hueDiff
+        const iColorData = getColorRotatedHSB(centerColorDataHSB, (i - (numNodes / 2 + 0.5)) * hueDiff);
+        ret[i] = { hex: "#" + getHexFromColorData(iColorData, "HSB"), colorData: getColorDataFromHSB(iColorData, colorMode) };
+    }
+    return ret;
+}
+
+export function getAnalogousColorFromHexCenter(hex, hueDiff, numNodes, colorMode = "HSB") {
+    return getAnalogousColorFromHSBCenter(convert.hex.hsv.raw(hex), hueDiff, numNodes, colorMode);
+}
+
+export function getAnalogousColorFromColorDataCenter(colorData, hueDiff, numNodes, colorMode = "HSB") {
+    return getAnalogousColorFromHSBCenter(getHSBFromColorData(colorData, colorMode), hueDiff, numNodes, colorMode);
+}
+
+export function getHSBAnalogousColor(color, hueDiff, numNodes, colorMode = "HSB") {
+    if (colorMode === "HSB") {
+        return getAnalogousColorFromHSBCenter(color.colorData, hueDiff, numNodes, colorMode);
+    } else {
+        return getAnalogousColorFromHexCenter(color.colorData, hueDiff, numNodes, colorMode);
+    }
+}
+
+export function getCenterColorHSB(colors, colorMode = "HSB") {
+    const numNodes = Object.keys(colors).length;
+    if (numNodes % 2 === 1) {
+        // numNodes is odd, can take center
+        return colors[Math.round(numNodes / 2 + 0.5)].colorData;
+    } else {
+        const colorOne = getHSBFromColorData(colors[numNodes / 2].colorData, colorMode);
+        const colorTwo = getHSBFromColorData(colors[numNodes / 2 + 1].colorData, colorMode);
+        return [(colorOne[0] + colorTwo[0]) / 2, colorOne[1], colorOne[2]];
+    }
+}
+
+export function getAbsoluteHueDiff(prevColorHSB, newColorHSB) {
+    let hueDiff = newColorHSB[0] - prevColorHSB[0];
+
+    // Handles when the selected node wraps around from Q4 -> Q1
+    if (Math.abs((360 + newColorHSB[0] - prevColorHSB[0]) % 360) < Math.abs(hueDiff)) {
+        hueDiff = (360 + newColorHSB[0] - prevColorHSB[0]) % 360;
+    }
+
+    // Handles when the selected node wraps around from Q1 -> Q4
+    if (Math.abs((newColorHSB[0] - 360 - prevColorHSB[0]) % 360) < Math.abs(hueDiff)) {
+        hueDiff = (newColorHSB[0] - 360 - prevColorHSB[0]) % 360;
+    }
+
+    return hueDiff;
 }

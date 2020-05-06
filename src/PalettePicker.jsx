@@ -36,16 +36,29 @@ export default function PalettePicker() {
         setColorMode(newColorMode);
     };
 
+    const colorifyStartColorHarmony = (prevSwatches) => {
+        if (prevSwatches.Main[1].hex === "#FFFFFF") {
+            // First swatch is white, make it purple, so the line of complementary colors is straight up and down
+            return { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
+        }
+        // First swatch has actual color, create complementary colors from this
+        return prevSwatches.Main[1];
+    };
+
+    const startAnalogousColorHarmony = () => {
+        setSwatches((prevSwatches) => {
+            let newMainSwatches = {};
+            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
+            newMainSwatches = colorUtils.getHSBAnalogousColor(newMainSwatches[1], 15, Object.keys(prevSwatches.Main).length, colorMode);
+
+            return { Main: newMainSwatches };
+        });
+    };
+
     const startComplementaryColorHarmony = () => {
         setSwatches((prevSwatches) => {
             let newMainSwatches = {};
-            if (prevSwatches.Main[1].hex === "#FFFFFF") {
-                // First swatch is white, make it purple, so the line of complementary colors is straight up and down
-                newMainSwatches[1] = { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
-            } else {
-                // First swatch has actual color, create complementary colors from this
-                newMainSwatches[1] = prevSwatches.Main[1];
-            }
+            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
             newMainSwatches[2] = colorUtils.getHSBComplementaryColor(newMainSwatches[1], colorMode);
 
             return { Main: newMainSwatches };
@@ -55,13 +68,9 @@ export default function PalettePicker() {
     const startTriadColorHarmony = () => {
         setSwatches((prevSwatches) => {
             let newMainSwatches = {};
-            if (prevSwatches.Main[1].hex === "#FFFFFF") {
-                // First swatch is white, make it purple, so the line of complementary colors is straight up and down
-                newMainSwatches[1] = { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
-            } else {
-                // First swatch has actual color, create complementary colors from this
-                newMainSwatches[1] = prevSwatches.Main[1];
-            }
+
+            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
+
             const triadColors = colorUtils.getHSBTriadColor(newMainSwatches[1], colorMode);
             newMainSwatches[2] = triadColors[0];
             newMainSwatches[3] = triadColors[1];
@@ -73,16 +82,77 @@ export default function PalettePicker() {
     const startSplitComplementaryColorHarmony = () => {
         setSwatches((prevSwatches) => {
             let newMainSwatches = {};
-            if (prevSwatches.Main[1].hex === "#FFFFFF") {
-                // First swatch is white, make it purple, so the line of complementary colors is straight up and down
-                newMainSwatches[1] = { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
-            } else {
-                // First swatch has actual color, create complementary colors from this
-                newMainSwatches[1] = prevSwatches.Main[1];
-            }
+            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
+
             const splitColors = colorUtils.getHSBSplitComplementaryColor(newMainSwatches[1], colorMode);
             newMainSwatches[2] = splitColors[0];
             newMainSwatches[3] = splitColors[1];
+
+            return { Main: newMainSwatches };
+        });
+    };
+
+    const restrictAnalogous = (index, newColor) => {
+        const indexInt = parseInt(index);
+
+        const colorLength = Object.keys(swatches.Main).length;
+
+        const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
+        const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
+
+        let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
+
+        // There's probably a better way of doing this but my brain can't find it.
+        // treatLike represents what colorLength the hueDiff adjustment should follow.
+        // for an array of length 4:
+        // 1 2 3 4     it returns
+        // 4 2 2 4
+        let treatLike = Math.ceil(Math.abs(colorLength / 2 + 0.5 - indexInt)) * 2;
+        // If the number of nodes is odd, add one to the treatLike formula and it'll fit into the below formula exactly as if it were even.
+        if (colorLength % 2 === 1) {
+            treatLike++;
+        }
+        // this adjusts the real hue difference to actually follow the cursor's position
+        // formula derived from:
+        // o  o  |  o  o
+        // (distance to next node)
+        // 1  .5   .5  1
+        // by just adding the difference, the calculation would not follow the cursor, because the hueDiff for the purposes of the analogous calculation scales by more than the cursor actually moved
+        // ex:
+        // in a 4 node analogous harmony, with hue values:
+        // 100, 120, 140, 160 (logical center = 130)
+        // moving the 160 node by +2 hue, would otherwise cause hueDiff to be increased by 2 (from 20 to 22), which would give the following values:
+        // 97   119  141  163
+        // this being a problem, because the user dragged the 160 node in reality to 162, so the following formula scales this back, so that this is true
+        hueDiff = (hueDiff * 2) / (treatLike - 1);
+
+        const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
+        const indexTwoHSB = colorUtils.getHSBFromColorData(swatches.Main[2].colorData, colorMode);
+
+        let analogousHueDiff = indexTwoHSB[0] - indexOneHSB[0];
+        if (indexInt > colorLength / 2 + 0.5) {
+            // To the right of center
+            // Moving hue right increases analogousHueDiff
+            // Moving hue left decreases analogousHueDiff
+
+            analogousHueDiff = analogousHueDiff + hueDiff;
+        } else if (indexInt < colorLength / 2 + 0.5) {
+            // To the left of center
+            // Moving hue left increases analogousHueDiff
+            // Moving hue right decreases analogousHueDiff
+
+            analogousHueDiff = analogousHueDiff - hueDiff;
+        }
+
+        setSwatches((prevSwatches) => {
+            let newMainSwatches = {};
+            let centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches.Main, colorMode);
+            centerColorHSB[1] = newColorHSB[1];
+            centerColorHSB[2] = newColorHSB[2];
+            if (indexInt === colorLength / 2 + 0.5) {
+                centerColorHSB[0] = newColorHSB[0];
+            }
+            newMainSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches.Main).length, colorMode);
 
             return { Main: newMainSwatches };
         });
@@ -95,7 +165,7 @@ export default function PalettePicker() {
             // compare swatches[index] to newColor
             const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
             const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
-            const hueDiff = newColorHSB[0] - prevColorHSB[0];
+            const hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
 
             const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
             let indexOneColorData = indexOneHSB.concat();
@@ -153,6 +223,9 @@ export default function PalettePicker() {
             case "Split-Complementary":
                 restrictSplitComplementary(index, newColor);
                 break;
+            case "Analogous":
+                restrictAnalogous(index, newColor);
+                break;
             default:
                 setColor(sectionName, index, newColor);
         }
@@ -177,7 +250,7 @@ export default function PalettePicker() {
     const addSwatch = (sectionName) => {
         setSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches[sectionName][generateUniqueIndex(sectionName)] = "#FFFFFF";
+            newSwatches[sectionName][generateUniqueIndex(sectionName)] = { hex: "#FFFFFF", colorData: colorUtils.getColorDataFromHex("#FFFFFF", colorMode) };
             return newSwatches;
         });
     };
@@ -194,6 +267,9 @@ export default function PalettePicker() {
                 break;
             case "Split-Complementary":
                 startSplitComplementaryColorHarmony();
+                break;
+            case "Analogous":
+                startAnalogousColorHarmony();
                 break;
             default:
                 break;

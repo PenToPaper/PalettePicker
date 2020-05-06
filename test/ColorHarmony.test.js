@@ -170,9 +170,9 @@ describe("Algorithms for finding color harmonies function correctly", () => {
         // Fully saturated color, no wraparound from 20 hue to 170 hue to 230 hue
         let resultsArray = colorUtils.getSplitComplementaryColorFromHex("#FF5500");
         expect(colorDataMargin(resultsArray[0].colorData, [170, 100, 100])).toEqual(true);
-        expect(resultsArray[0].hex).toEqual("#00FFD4");
+        expect(resultsArray[0].hex).toEqual("#00FFD5");
         expect(colorDataMargin(resultsArray[1].colorData, [230, 100, 100])).toEqual(true);
-        expect(resultsArray[1].hex).toEqual("#002BFF");
+        expect(resultsArray[1].hex).toEqual("#002AFF");
         // Fully saturated color, wraparound from 160 hue to 310 hue to 10 hue
         resultsArray = colorUtils.getSplitComplementaryColorFromHex("#00FFAA");
         expect(colorDataMargin(resultsArray[0].colorData, [310, 100, 100])).toEqual(true);
@@ -203,5 +203,100 @@ describe("Algorithms for finding color harmonies function correctly", () => {
         expect(resultsArray[0].hex).toEqual("#804076");
         expect(colorDataMargin(resultsArray[1].colorData, [10, 50, 50])).toEqual(true);
         expect(resultsArray[1].hex).toEqual("#804A40");
+    });
+
+    it("Calculates 5 analogous colors from colorData as expected", () => {
+        // Fully saturated color, no wraparound from 100 hue
+        let resultsArray = colorUtils.getAnalogousColorFromHSBCenter([100, 100, 100], 10, 5);
+        expect(colorDataMargin(resultsArray["1"].colorData, [80, 100, 100])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#AAFF00");
+        expect(colorDataMargin(resultsArray["2"].colorData, [90, 100, 100])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#80FF00");
+        expect(colorDataMargin(resultsArray["3"].colorData, [100, 100, 100])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#55FF00");
+        expect(colorDataMargin(resultsArray["4"].colorData, [110, 100, 100])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#2BFF00");
+        expect(colorDataMargin(resultsArray["5"].colorData, [120, 100, 100])).toEqual(true);
+        expect(resultsArray["5"].hex).toEqual("#00FF00");
+        // Half saturated, half brightness color, no wraparound from 100 hue
+        resultsArray = colorUtils.getAnalogousColorFromHSBCenter([100, 50, 50], 10, 5);
+        expect(colorDataMargin(resultsArray["1"].colorData, [80, 50, 50])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#6A8040");
+        expect(colorDataMargin(resultsArray["2"].colorData, [90, 50, 50])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#608040");
+        expect(colorDataMargin(resultsArray["3"].colorData, [100, 50, 50])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#558040");
+        expect(colorDataMargin(resultsArray["4"].colorData, [110, 50, 50])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#4A8040");
+        expect(colorDataMargin(resultsArray["5"].colorData, [120, 50, 50])).toEqual(true);
+        expect(resultsArray["5"].hex).toEqual("#408040");
+        // Fully saturated color, wraparound from 0 hue
+        resultsArray = colorUtils.getAnalogousColorFromHSBCenter([0, 100, 100], 10, 5);
+        expect(colorDataMargin(resultsArray["1"].colorData, [340, 100, 100])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#FF0055");
+        expect(colorDataMargin(resultsArray["2"].colorData, [350, 100, 100])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#FF002B");
+        expect(colorDataMargin(resultsArray["3"].colorData, [0, 100, 100])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#FF0000");
+        expect(colorDataMargin(resultsArray["4"].colorData, [10, 100, 100])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#FF2A00");
+        expect(colorDataMargin(resultsArray["5"].colorData, [20, 100, 100])).toEqual(true);
+        expect(resultsArray["5"].hex).toEqual("#FF5500");
+        // Half saturated color, half brightness color, wraparound from 0 hue
+        resultsArray = colorUtils.getAnalogousColorFromHSBCenter([0, 50, 50], 10, 5);
+        expect(colorDataMargin(resultsArray["1"].colorData, [340, 50, 50])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#804055");
+        expect(colorDataMargin(resultsArray["2"].colorData, [350, 50, 50])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#80404A");
+        expect(colorDataMargin(resultsArray["3"].colorData, [0, 50, 50])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#804040");
+        expect(colorDataMargin(resultsArray["4"].colorData, [10, 50, 50])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#804A40");
+        expect(colorDataMargin(resultsArray["5"].colorData, [20, 50, 50])).toEqual(true);
+        expect(resultsArray["5"].hex).toEqual("#805540");
+    });
+
+    it("Calculates 4 analogous colors from colorData as expected", () => {
+        // Fully saturated color, no wraparound from 100 hue
+        let resultsArray = colorUtils.getAnalogousColorFromHSBCenter([100, 100, 100], 20, 4);
+        expect(colorDataMargin(resultsArray["1"].colorData, [70, 100, 100])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#D4FF00");
+        expect(colorDataMargin(resultsArray["2"].colorData, [90, 100, 100])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#80FF00");
+        expect(colorDataMargin(resultsArray["3"].colorData, [110, 100, 100])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#2BFF00");
+        expect(colorDataMargin(resultsArray["4"].colorData, [130, 100, 100])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#00FF2A");
+        // Half saturated, half brightness color, no wraparound from 100 hue
+        resultsArray = colorUtils.getAnalogousColorFromHSBCenter([100, 50, 50], 20, 4);
+        expect(colorDataMargin(resultsArray["1"].colorData, [70, 50, 50])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#758040");
+        expect(colorDataMargin(resultsArray["2"].colorData, [90, 50, 50])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#608040");
+        expect(colorDataMargin(resultsArray["3"].colorData, [110, 50, 50])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#4A8040");
+        expect(colorDataMargin(resultsArray["4"].colorData, [130, 50, 50])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#40804A");
+        // Fully saturated color, wraparound from 0 hue
+        resultsArray = colorUtils.getAnalogousColorFromHSBCenter([0, 100, 100], 20, 4);
+        expect(colorDataMargin(resultsArray["1"].colorData, [330, 100, 100])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#FF0080");
+        expect(colorDataMargin(resultsArray["2"].colorData, [350, 100, 100])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#FF002B");
+        expect(colorDataMargin(resultsArray["3"].colorData, [10, 100, 100])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#FF2A00");
+        expect(colorDataMargin(resultsArray["4"].colorData, [30, 100, 100])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#FF8000");
+        // Half saturated, half brightness color, wraparound from 0 hue
+        resultsArray = colorUtils.getAnalogousColorFromHSBCenter([0, 50, 50], 20, 4);
+        expect(colorDataMargin(resultsArray["1"].colorData, [330, 50, 50])).toEqual(true);
+        expect(resultsArray["1"].hex).toEqual("#804060");
+        expect(colorDataMargin(resultsArray["2"].colorData, [350, 50, 50])).toEqual(true);
+        expect(resultsArray["2"].hex).toEqual("#80404A");
+        expect(colorDataMargin(resultsArray["3"].colorData, [10, 50, 50])).toEqual(true);
+        expect(resultsArray["3"].hex).toEqual("#804A40");
+        expect(colorDataMargin(resultsArray["4"].colorData, [30, 50, 50])).toEqual(true);
+        expect(resultsArray["4"].hex).toEqual("#806040");
+        expect(Object.keys(resultsArray).length).toEqual(4);
     });
 });
