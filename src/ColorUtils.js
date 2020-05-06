@@ -189,7 +189,7 @@ export function getHSBAnalogousColor(color, hueDiff, numNodes, colorMode = "HSB"
     if (colorMode === "HSB") {
         return getAnalogousColorFromHSBCenter(color.colorData, hueDiff, numNodes, colorMode);
     } else {
-        return getAnalogousColorFromHexCenter(color.colorData, hueDiff, numNodes, colorMode);
+        return getAnalogousColorFromHexCenter(color.hex, hueDiff, numNodes, colorMode);
     }
 }
 
