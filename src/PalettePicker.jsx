@@ -141,14 +141,14 @@ export default function PalettePicker() {
 
             if (isShiftPressed) {
                 if (index === "1" || index === "3") {
-                    if (isBetween(arcTwo + hueDiff / 2, 30, 150) && isBetween(arcOne - hueDiff / 2, 30, 150)) {
-                        arcOne -= hueDiff / 2;
-                        arcTwo += hueDiff / 2;
+                    if (isBetween(arcTwo + hueDiff * 2, 30, 150) && isBetween(arcOne - hueDiff * 2, 30, 150)) {
+                        arcOne -= hueDiff * 2;
+                        arcTwo += hueDiff * 2;
                     }
                 } else {
-                    if (isBetween(arcOne + hueDiff / 2, 30, 150) && isBetween(arcTwo - hueDiff / 2, 30, 150)) {
-                        arcTwo -= hueDiff / 2;
-                        arcOne += hueDiff / 2;
+                    if (isBetween(arcOne + hueDiff * 2, 30, 150) && isBetween(arcTwo - hueDiff * 2, 30, 150)) {
+                        arcTwo -= hueDiff * 2;
+                        arcOne += hueDiff * 2;
                     }
                 }
                 rotation -= hueDiff;

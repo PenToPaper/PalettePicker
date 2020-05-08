@@ -428,3 +428,172 @@ describe("PalletePicker analogous color functions work properly with 5 swatches"
         expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
+
+describe("PalletePicker Rectangle color functions work properly on click and drag", () => {
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Changes swatches properly on analogous color initilization", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+        expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Rectangle");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("4")).toEqual(true);
+        expect(getSwatches().Main[1].hex).toEqual("#FFEE33");
+    });
+
+    it("Restricts swatch color changes to analogous color scheme while active with changes to first index color", () => {
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#66CC51", colorData: [110, 60, 80] });
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        let roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
+        expect(getSwatches().Main[1].hex).toEqual("#66CC52");
+        expect(roundedColorData).toEqual([110, 60, 80]);
+
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
+        expect(getSwatches().Main[2].hex).toEqual("#52CCCC");
+        expect(roundedColorData).toEqual([180, 60, 80]);
+
+        roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
+        expect(getSwatches().Main[3].hex).toEqual("#B852CC");
+        expect(roundedColorData).toEqual([290, 60, 80]);
+
+        roundedColorData = getSwatches().Main[4].colorData.map(Math.round);
+        expect(getSwatches().Main[4].hex).toEqual("#CC5252");
+        expect(roundedColorData).toEqual([0, 60, 80]);
+    });
+
+    it("Restricts swatch color changes to triad color scheme while active with changes to second index color", () => {
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 2, { hex: "#006AFF", colorData: [215, 100, 100] });
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        let roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
+        expect(getSwatches().Main[1].hex).toEqual("#00FF6A");
+        expect(roundedColorData).toEqual([145, 100, 100]);
+
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
+        expect(getSwatches().Main[2].hex).toEqual("#006AFF");
+        expect(roundedColorData).toEqual([215, 100, 100]);
+
+        roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
+        expect(getSwatches().Main[3].hex).toEqual("#FF0095");
+        expect(roundedColorData).toEqual([325, 100, 100]);
+
+        roundedColorData = getSwatches().Main[4].colorData.map(Math.round);
+        expect(getSwatches().Main[4].hex).toEqual("#FF9500");
+        expect(roundedColorData).toEqual([35, 100, 100]);
+    });
+
+    it("No longer restricts to color schemes when not active", () => {
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+
+        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+
+        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
+        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+
+        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+    });
+});
+
+describe("PalletePicker Rectangle color functions work properly on SHIFT click and drag", () => {
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Changes swatches properly on analogous color initilization", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+        expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Rectangle");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("4")).toEqual(true);
+        expect(getSwatches().Main[1].hex).toEqual("#FFEE33");
+    });
+
+    it("Modifies arcOne and arcTwo on shift click", () => {
+        let preventDefaultPlaceholder = jest.fn();
+        appWrapper.find({ className: "body" }).prop("onKeyDown")({ keyCode: 16, preventDefault: preventDefaultPlaceholder });
+        expect(preventDefaultPlaceholder).toHaveBeenCalled();
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", "1", { hex: "#B8CC52", colorData: [70, 60, 80] });
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        let roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
+        expect(getSwatches().Main[1].hex).toEqual("#B8CC52");
+        expect(roundedColorData).toEqual([70, 60, 80]);
+
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
+        expect(getSwatches().Main[2].hex).toEqual("#66CC52");
+        expect(roundedColorData).toEqual([110, 60, 80]);
+
+        roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
+        expect(getSwatches().Main[3].hex).toEqual("#6652CC");
+        expect(roundedColorData).toEqual([250, 60, 80]);
+
+        roundedColorData = getSwatches().Main[4].colorData.map(Math.round);
+        expect(getSwatches().Main[4].hex).toEqual("#B852CC");
+        expect(roundedColorData).toEqual([290, 60, 80]);
+    });
+
+    it("Continues to use new arcOne and arcTwo on normal click and drag", () => {
+        let preventDefaultPlaceholder = jest.fn();
+        appWrapper.find({ className: "body" }).prop("onKeyUp")({ keyCode: 16, preventDefault: preventDefaultPlaceholder });
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FF00FF", colorData: [300, 100, 100] });
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        let roundedColorData = getSwatches().Main[1].colorData.map(Math.round);
+        expect(getSwatches().Main[1].hex).toEqual("#FF00FF");
+        expect(roundedColorData).toEqual([300, 100, 100]);
+
+        roundedColorData = getSwatches().Main[2].colorData.map(Math.round);
+        expect(getSwatches().Main[2].hex).toEqual("#FF0055");
+        expect(roundedColorData).toEqual([340, 100, 100]);
+
+        roundedColorData = getSwatches().Main[3].colorData.map(Math.round);
+        expect(getSwatches().Main[3].hex).toEqual("#00FF00");
+        expect(roundedColorData).toEqual([120, 100, 100]);
+
+        roundedColorData = getSwatches().Main[4].colorData.map(Math.round);
+        expect(getSwatches().Main[4].hex).toEqual("#00FFAA");
+        expect(roundedColorData).toEqual([160, 100, 100]);
+    });
+
+    it("No longer restricts to color schemes when not active", () => {
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+
+        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+
+        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
+        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+
+        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+    });
+});
