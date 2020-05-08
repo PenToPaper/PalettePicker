@@ -220,3 +220,17 @@ export function getAbsoluteHueDiff(prevColorHSB, newColorHSB) {
 
     return hueDiff;
 }
+
+export function getRectangleColor(rotation, arcOne, arcTwo, saturation, brightness, colorMode = "HSB") {
+    const indexOne = getColorRotatedHSB([90, saturation, brightness], rotation - arcOne / 2);
+    const indexTwo = getColorRotatedHSB(indexOne, arcOne);
+    const indexThree = getColorRotatedHSB(indexOne, arcOne + arcTwo);
+    const indexFour = getColorRotatedHSB(indexOne, -arcTwo);
+
+    return {
+        "1": { hex: "#" + convert.hsv.hex(indexOne), colorData: getColorDataFromHSB(indexOne, colorMode) },
+        "2": { hex: "#" + convert.hsv.hex(indexTwo), colorData: getColorDataFromHSB(indexTwo, colorMode) },
+        "3": { hex: "#" + convert.hsv.hex(indexThree), colorData: getColorDataFromHSB(indexThree, colorMode) },
+        "4": { hex: "#" + convert.hsv.hex(indexFour), colorData: getColorDataFromHSB(indexFour, colorMode) },
+    };
+}

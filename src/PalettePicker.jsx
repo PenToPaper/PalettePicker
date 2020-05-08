@@ -45,6 +45,15 @@ export default function PalettePicker() {
         return prevSwatches.Main[1];
     };
 
+    const startRectangleColorHarmony = () => {
+        setSwatches((prevSwatches) => {
+            let newMainSwatches = {};
+            newMainSwatches = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
+
+            return { Main: newMainSwatches };
+        });
+    };
+
     const startAnalogousColorHarmony = () => {
         setSwatches((prevSwatches) => {
             let newMainSwatches = {};
@@ -87,6 +96,29 @@ export default function PalettePicker() {
             const splitColors = colorUtils.getHSBSplitComplementaryColor(newMainSwatches[1], colorMode);
             newMainSwatches[2] = splitColors[0];
             newMainSwatches[3] = splitColors[1];
+
+            return { Main: newMainSwatches };
+        });
+    };
+
+    const restrictRectangle = (index, newColor) => {
+        const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
+        const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
+
+        let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
+
+        // A in Q1, B in Q2, etc
+        const aHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
+        const bHSB = colorUtils.getHSBFromColorData(swatches.Main[2].colorData, colorMode);
+        const cHSB = colorUtils.getHSBFromColorData(swatches.Main[3].colorData, colorMode);
+
+        const arcOne = bHSB[0] - aHSB[0];
+        const arcTwo = cHSB[0] - bHSB[0];
+
+        const rotation = hueDiff + aHSB[0] - (90 - arcOne / 2);
+
+        setSwatches(() => {
+            let newMainSwatches = colorUtils.getRectangleColor(rotation, arcOne, arcTwo, newColorHSB[1], newColorHSB[2], colorMode);
 
             return { Main: newMainSwatches };
         });
@@ -226,6 +258,9 @@ export default function PalettePicker() {
             case "Analogous":
                 restrictAnalogous(index, newColor);
                 break;
+            case "Rectangle":
+                restrictRectangle(index, newColor);
+                break;
             default:
                 setColor(sectionName, index, newColor);
         }
@@ -270,6 +305,9 @@ export default function PalettePicker() {
                 break;
             case "Analogous":
                 startAnalogousColorHarmony();
+                break;
+            case "Rectangle":
+                startRectangleColorHarmony();
                 break;
             default:
                 break;

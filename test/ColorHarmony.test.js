@@ -299,4 +299,67 @@ describe("Algorithms for finding color harmonies function correctly", () => {
         expect(resultsArray["4"].hex).toEqual("#806040");
         expect(Object.keys(resultsArray).length).toEqual(4);
     });
+
+    it("Calculates four Reatangle colors from colorData as expected", () => {
+        // Fully saturated color, no rotation
+        let resultsArray = colorUtils.getRectangleColor(0, 70, 110, 100, 100);
+        expect(resultsArray[1].colorData).toEqual([55, 100, 100]);
+        expect(resultsArray[1].hex).toEqual("#FFEA00");
+        expect(resultsArray[2].colorData).toEqual([125, 100, 100]);
+        expect(resultsArray[2].hex).toEqual("#00FF15");
+        expect(resultsArray[3].colorData).toEqual([235, 100, 100]);
+        expect(resultsArray[3].hex).toEqual("#0015FF");
+        expect(resultsArray[4].colorData).toEqual([305, 100, 100]);
+        expect(resultsArray[4].hex).toEqual("#FF00EA");
+        // Half saturated, half brightness color, no rotation
+        resultsArray = colorUtils.getRectangleColor(0, 70, 110, 50, 50);
+        expect(resultsArray[1].colorData).toEqual([55, 50, 50]);
+        expect(resultsArray[1].hex).toEqual("#807A40");
+        expect(resultsArray[2].colorData).toEqual([125, 50, 50]);
+        expect(resultsArray[2].hex).toEqual("#408045");
+        expect(resultsArray[3].colorData).toEqual([235, 50, 50]);
+        expect(resultsArray[3].hex).toEqual("#404580");
+        expect(resultsArray[4].colorData).toEqual([305, 50, 50]);
+        expect(resultsArray[4].hex).toEqual("#80407A");
+        // Fully saturated color, 50 rotation
+        resultsArray = colorUtils.getRectangleColor(50, 70, 110, 100, 100);
+        expect(resultsArray[1].colorData).toEqual([105, 100, 100]);
+        expect(resultsArray[1].hex).toEqual("#40FF00");
+        expect(resultsArray[2].colorData).toEqual([175, 100, 100]);
+        expect(resultsArray[2].hex).toEqual("#00FFEA");
+        expect(resultsArray[3].colorData).toEqual([285, 100, 100]);
+        expect(resultsArray[3].hex).toEqual("#BF00FF");
+        expect(resultsArray[4].colorData).toEqual([355, 100, 100]);
+        expect(resultsArray[4].hex).toEqual("#FF0015");
+        // Half saturated, half brightness color, 50 rotation
+        resultsArray = colorUtils.getRectangleColor(50, 70, 110, 50, 50);
+        expect(resultsArray[1].colorData).toEqual([105, 50, 50]);
+        expect(resultsArray[1].hex).toEqual("#508040");
+        expect(resultsArray[2].colorData).toEqual([175, 50, 50]);
+        expect(resultsArray[2].hex).toEqual("#40807A");
+        expect(resultsArray[3].colorData).toEqual([285, 50, 50]);
+        expect(resultsArray[3].hex).toEqual("#704080");
+        expect(resultsArray[4].colorData).toEqual([355, 50, 50]);
+        expect(resultsArray[4].hex).toEqual("#804045");
+        // Fully saturated color, 100 rotation
+        resultsArray = colorUtils.getRectangleColor(100, 70, 110, 100, 100);
+        expect(resultsArray[1].colorData).toEqual([155, 100, 100]);
+        expect(resultsArray[1].hex).toEqual("#00FF95");
+        expect(resultsArray[2].colorData).toEqual([225, 100, 100]);
+        expect(resultsArray[2].hex).toEqual("#0040FF");
+        expect(resultsArray[3].colorData).toEqual([335, 100, 100]);
+        expect(resultsArray[3].hex).toEqual("#FF006A");
+        expect(resultsArray[4].colorData).toEqual([45, 100, 100]);
+        expect(resultsArray[4].hex).toEqual("#FFBF00");
+        // Half saturated, half brightness color, 100 rotation
+        resultsArray = colorUtils.getRectangleColor(100, 70, 110, 50, 50);
+        expect(resultsArray[1].colorData).toEqual([155, 50, 50]);
+        expect(resultsArray[1].hex).toEqual("#408065");
+        expect(resultsArray[2].colorData).toEqual([225, 50, 50]);
+        expect(resultsArray[2].hex).toEqual("#405080");
+        expect(resultsArray[3].colorData).toEqual([335, 50, 50]);
+        expect(resultsArray[3].hex).toEqual("#80405A");
+        expect(resultsArray[4].colorData).toEqual([45, 50, 50]);
+        expect(resultsArray[4].hex).toEqual("#807040");
+    });
 });
