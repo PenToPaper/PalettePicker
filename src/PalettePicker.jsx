@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
@@ -17,6 +17,30 @@ export default function PalettePicker() {
     const [colorMode, setColorMode] = useState("HSB");
     const [selection, setSelection] = useState({ sectionName: "Main", index: 1 });
     const [harmony, setHarmony] = useState("None");
+
+    let pressedKeys = [];
+
+    const onKeyDown = (e) => {
+        // this could be a problem in the future, because it modifies the existing array instance rather than making a new one
+        if (!pressedKeys.includes(e.keyCode)) {
+            pressedKeys.push(e.keyCode);
+            e.preventDefault();
+        }
+    };
+
+    const onKeyUp = (e) => {
+        pressedKeys = pressedKeys.filter((key) => key !== e.keyCode);
+        e.preventDefault();
+    };
+
+    useEffect(() => {
+        window.addEventListener("keydown", onKeyDown);
+        window.addEventListener("keyup", onKeyUp);
+        return () => {
+            window.removeEventListener("keydown", onKeyDown);
+            window.removeEventListener("keyup", onKeyUp);
+        };
+    }, [onKeyDown, onKeyUp]);
 
     const recalculateColors = (newColorMode) => {
         setSwatches((prevSwatches) => {
@@ -102,24 +126,44 @@ export default function PalettePicker() {
     };
 
     const restrictRectangle = (index, newColor) => {
-        const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
-        const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
+        setSwatches((prevSwatches) => {
+            const isShiftPressed = pressedKeys.includes(16);
 
-        let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
+            const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[index].colorData, colorMode);
+            const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
 
-        // A in Q1, B in Q2, etc
-        const aHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
-        const bHSB = colorUtils.getHSBFromColorData(swatches.Main[2].colorData, colorMode);
-        const cHSB = colorUtils.getHSBFromColorData(swatches.Main[3].colorData, colorMode);
+            let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
 
-        const arcOne = bHSB[0] - aHSB[0];
-        const arcTwo = cHSB[0] - bHSB[0];
+            // A in Q1, B in Q2, etc
+            const aHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
+            const bHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[2].colorData, colorMode);
+            const cHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[3].colorData, colorMode);
 
-        const rotation = hueDiff + aHSB[0] - (90 - arcOne / 2);
+            let arcOne = Math.abs(colorUtils.getAbsoluteHueDiff(bHSB, aHSB));
+            let arcTwo = Math.abs(colorUtils.getAbsoluteHueDiff(cHSB, bHSB));
 
-        setSwatches(() => {
+            let rotation = hueDiff + aHSB[0] - (90 - arcOne / 2);
+
+            const isBetween = (number, lowerBound, upperBound) => {
+                return number < upperBound && number > lowerBound;
+            };
+
+            if (isShiftPressed) {
+                if (index === "1" || index === "3") {
+                    if (isBetween(arcTwo + hueDiff / 2, 30, 150) && isBetween(arcOne - hueDiff / 2, 30, 150)) {
+                        arcOne -= hueDiff / 2;
+                        arcTwo += hueDiff / 2;
+                    }
+                } else {
+                    if (isBetween(arcOne + hueDiff / 2, 30, 150) && isBetween(arcTwo - hueDiff / 2, 30, 150)) {
+                        arcTwo -= hueDiff / 2;
+                        arcOne += hueDiff / 2;
+                    }
+                }
+                rotation -= hueDiff;
+            }
+
             let newMainSwatches = colorUtils.getRectangleColor(rotation, arcOne, arcTwo, newColorHSB[1], newColorHSB[2], colorMode);
-
             return { Main: newMainSwatches };
         });
     };
