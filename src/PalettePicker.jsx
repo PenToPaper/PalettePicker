@@ -33,15 +33,6 @@ export default function PalettePicker() {
         e.preventDefault();
     };
 
-    useEffect(() => {
-        window.addEventListener("keydown", onKeyDown);
-        window.addEventListener("keyup", onKeyUp);
-        return () => {
-            window.removeEventListener("keydown", onKeyDown);
-            window.removeEventListener("keyup", onKeyUp);
-        };
-    }, [onKeyDown, onKeyUp]);
-
     const recalculateColors = (newColorMode) => {
         setSwatches((prevSwatches) => {
             // Loop through all the colors
@@ -361,7 +352,7 @@ export default function PalettePicker() {
     };
 
     return (
-        <div className="body">
+        <div className="body" tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
             <Nav />
             <main>
                 <PaletteHeader
