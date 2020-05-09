@@ -159,6 +159,20 @@ export default function PalettePicker() {
         });
     };
 
+    const addAnalogousSwatch = () => {
+        const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
+        const indexTwoHSB = colorUtils.getHSBFromColorData(swatches.Main[2].colorData, colorMode);
+
+        const analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
+
+        setSwatches((prevSwatches) => {
+            const centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches.Main, colorMode);
+            const newMainSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches.Main).length + 1, colorMode);
+
+            return { Main: newMainSwatches };
+        });
+    };
+
     const restrictAnalogous = (index, newColor) => {
         const indexInt = parseInt(index);
 
@@ -196,7 +210,7 @@ export default function PalettePicker() {
         const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
         const indexTwoHSB = colorUtils.getHSBFromColorData(swatches.Main[2].colorData, colorMode);
 
-        let analogousHueDiff = indexTwoHSB[0] - indexOneHSB[0];
+        let analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
         if (indexInt > colorLength / 2 + 0.5) {
             // To the right of center
             // Moving hue right increases analogousHueDiff
@@ -318,6 +332,13 @@ export default function PalettePicker() {
     };
 
     const addSwatch = (sectionName) => {
+        if (sectionName === "Main" && harmony !== "None") {
+            if (harmony === "Analogous") {
+                addAnalogousSwatch();
+            }
+            return;
+        }
+
         setSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches[sectionName][generateUniqueIndex(sectionName)] = { hex: "#FFFFFF", colorData: colorUtils.getColorDataFromHex("#FFFFFF", colorMode) };

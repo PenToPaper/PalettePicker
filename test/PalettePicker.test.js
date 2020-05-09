@@ -345,7 +345,7 @@ describe("PalletePicker analogous color functions work properly with 5 swatches"
         return appWrapper.find("PaletteHeader").prop("swatches");
     };
 
-    it("Changes swatches properly on analogous color initilization", () => {
+    it("Changes swatches properly on Rectangle color initilization", () => {
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(5);
@@ -436,7 +436,7 @@ describe("PalletePicker Rectangle color functions work properly on click and dra
         return appWrapper.find("PaletteHeader").prop("swatches");
     };
 
-    it("Changes swatches properly on analogous color initilization", () => {
+    it("Changes swatches properly on Rectangle color initilization", () => {
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(5);
@@ -518,7 +518,7 @@ describe("PalletePicker Rectangle color functions work properly on SHIFT click a
         return appWrapper.find("PaletteHeader").prop("swatches");
     };
 
-    it("Changes swatches properly on analogous color initilization", () => {
+    it("Changes swatches properly on Rectangle color initilization", () => {
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(5);
@@ -595,5 +595,69 @@ describe("PalletePicker Rectangle color functions work properly on SHIFT click a
 
         expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
         expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+    });
+});
+
+describe("PalletePicker addSwatch functionality is partially restricted with color harmony", () => {
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Adds a swatch properly by default", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+        expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
+    });
+
+    it("Rejects adding swatches to color harmonies that aren't Analogous", () => {
+        // Rectangle
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Rectangle");
+
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        expect(getSwatches().Main[1].hex).not.toEqual("#FFFFFF");
+
+        // Split complementary
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Split-Complementary");
+
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        expect(getSwatches().Main[1].hex).not.toEqual("#FFFFFF");
+
+        // Triad
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Triad");
+
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        expect(getSwatches().Main[1].hex).not.toEqual("#FFFFFF");
+
+        // Complementary
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Complementary");
+
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+        expect(getSwatches().Main[1].hex).not.toEqual("#FFFFFF");
+    });
+
+    it("Properly adds the new swatch to the color harmony in Analogous mode", () => {
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Analogous");
+
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+        expect(getSwatches().Main[1].hex).not.toEqual("#FFFFFF");
+        expect(getSwatches().Main[2].hex).not.toEqual("#FFFFFF");
+        expect(getSwatches().Main[3].hex).not.toEqual("#FFFFFF");
+        expect(getSwatches().Main[4].hex).not.toEqual("#FFFFFF");
+        expect(getSwatches().Main[5].hex).not.toEqual("#FFFFFF");
     });
 });
