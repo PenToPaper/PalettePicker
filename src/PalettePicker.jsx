@@ -61,7 +61,7 @@ export default function PalettePicker() {
     };
 
     const startRectangleColorHarmony = () => {
-        setSwatches((prevSwatches) => {
+        setSwatches(() => {
             let newMainSwatches = {};
             newMainSwatches = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
 
@@ -160,12 +160,12 @@ export default function PalettePicker() {
     };
 
     const addAnalogousSwatch = () => {
-        const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
-        const indexTwoHSB = colorUtils.getHSBFromColorData(swatches.Main[2].colorData, colorMode);
-
-        const analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
-
         setSwatches((prevSwatches) => {
+            const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
+            const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[2].colorData, colorMode);
+
+            const analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
+
             const centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches.Main, colorMode);
             const newMainSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches.Main).length + 1, colorMode);
 
@@ -174,58 +174,58 @@ export default function PalettePicker() {
     };
 
     const restrictAnalogous = (index, newColor) => {
-        const indexInt = parseInt(index);
-
-        const colorLength = Object.keys(swatches.Main).length;
-
-        const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
-        const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
-
-        let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
-
-        // There's probably a better way of doing this but my brain can't find it.
-        // treatLike represents what colorLength the hueDiff adjustment should follow.
-        // for an array of length 4:
-        // 1 2 3 4     it returns
-        // 4 2 2 4
-        let treatLike = Math.ceil(Math.abs(colorLength / 2 + 0.5 - indexInt)) * 2;
-        // If the number of nodes is odd, add one to the treatLike formula and it'll fit into the below formula exactly as if it were even.
-        if (colorLength % 2 === 1) {
-            treatLike++;
-        }
-        // this adjusts the real hue difference to actually follow the cursor's position
-        // formula derived from:
-        // o  o  |  o  o
-        // (distance to next node)
-        // 1  .5   .5  1
-        // by just adding the difference, the calculation would not follow the cursor, because the hueDiff for the purposes of the analogous calculation scales by more than the cursor actually moved
-        // ex:
-        // in a 4 node analogous harmony, with hue values:
-        // 100, 120, 140, 160 (logical center = 130)
-        // moving the 160 node by +2 hue, would otherwise cause hueDiff to be increased by 2 (from 20 to 22), which would give the following values:
-        // 97   119  141  163
-        // this being a problem, because the user dragged the 160 node in reality to 162, so the following formula scales this back, so that this is true
-        hueDiff = (hueDiff * 2) / (treatLike - 1);
-
-        const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
-        const indexTwoHSB = colorUtils.getHSBFromColorData(swatches.Main[2].colorData, colorMode);
-
-        let analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
-        if (indexInt > colorLength / 2 + 0.5) {
-            // To the right of center
-            // Moving hue right increases analogousHueDiff
-            // Moving hue left decreases analogousHueDiff
-
-            analogousHueDiff = analogousHueDiff + hueDiff;
-        } else if (indexInt < colorLength / 2 + 0.5) {
-            // To the left of center
-            // Moving hue left increases analogousHueDiff
-            // Moving hue right decreases analogousHueDiff
-
-            analogousHueDiff = analogousHueDiff - hueDiff;
-        }
-
         setSwatches((prevSwatches) => {
+            const indexInt = parseInt(index);
+
+            const colorLength = Object.keys(prevSwatches.Main).length;
+
+            const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[index].colorData, colorMode);
+            const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
+
+            let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
+
+            // There's probably a better way of doing this but my brain can't find it.
+            // treatLike represents what colorLength the hueDiff adjustment should follow.
+            // for an array of length 4:
+            // 1 2 3 4     it returns
+            // 4 2 2 4
+            let treatLike = Math.ceil(Math.abs(colorLength / 2 + 0.5 - indexInt)) * 2;
+            // If the number of nodes is odd, add one to the treatLike formula and it'll fit into the below formula exactly as if it were even.
+            if (colorLength % 2 === 1) {
+                treatLike++;
+            }
+            // this adjusts the real hue difference to actually follow the cursor's position
+            // formula derived from:
+            // o  o  |  o  o
+            // (distance to next node)
+            // 1  .5   .5  1
+            // by just adding the difference, the calculation would not follow the cursor, because the hueDiff for the purposes of the analogous calculation scales by more than the cursor actually moved
+            // ex:
+            // in a 4 node analogous harmony, with hue values:
+            // 100, 120, 140, 160 (logical center = 130)
+            // moving the 160 node by +2 hue, would otherwise cause hueDiff to be increased by 2 (from 20 to 22), which would give the following values:
+            // 97   119  141  163
+            // this being a problem, because the user dragged the 160 node in reality to 162, so the following formula scales this back, so that this is true
+            hueDiff = (hueDiff * 2) / (treatLike - 1);
+
+            const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
+            const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[2].colorData, colorMode);
+
+            let analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
+            if (indexInt > colorLength / 2 + 0.5) {
+                // To the right of center
+                // Moving hue right increases analogousHueDiff
+                // Moving hue left decreases analogousHueDiff
+
+                analogousHueDiff = analogousHueDiff + hueDiff;
+            } else if (indexInt < colorLength / 2 + 0.5) {
+                // To the left of center
+                // Moving hue left increases analogousHueDiff
+                // Moving hue right decreases analogousHueDiff
+
+                analogousHueDiff = analogousHueDiff - hueDiff;
+            }
+
             let newMainSwatches = {};
             let centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches.Main, colorMode);
             centerColorHSB[1] = newColorHSB[1];
@@ -240,32 +240,32 @@ export default function PalettePicker() {
     };
 
     const restrictTriplets = (index, newColor, colorDataFunction, genericHarmonyFunction) => {
-        let tripletColors;
-        let indexOne;
-        if (index !== "1") {
-            // compare swatches[index] to newColor
-            const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
-            const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
-            const hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
-
-            const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
-            let indexOneColorData = indexOneHSB.concat();
-            indexOneColorData[0] = (indexOneColorData[0] + hueDiff + 360) % 360;
-            indexOneColorData[1] = newColorHSB[1];
-            indexOneColorData[2] = newColorHSB[2];
-
-            tripletColors = colorDataFunction(indexOneColorData, "HSB");
-            tripletColors[0].colorData = colorUtils.getColorDataFromHex(tripletColors[0].hex, colorMode);
-            tripletColors[1].colorData = colorUtils.getColorDataFromHex(tripletColors[1].hex, colorMode);
-
-            const hex = colorUtils.getHexFromColorData(indexOneColorData, "HSB");
-            indexOne = { hex: "#" + hex, colorData: colorUtils.getColorDataFromHex(hex, colorMode) };
-        } else {
-            indexOne = newColor;
-            tripletColors = genericHarmonyFunction(newColor, colorMode);
-        }
-
         setSwatches(() => {
+            let tripletColors;
+            let indexOne;
+            if (index !== "1") {
+                // compare swatches[index] to newColor
+                const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
+                const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
+                const hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
+
+                const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
+                let indexOneColorData = indexOneHSB.concat();
+                indexOneColorData[0] = (indexOneColorData[0] + hueDiff + 360) % 360;
+                indexOneColorData[1] = newColorHSB[1];
+                indexOneColorData[2] = newColorHSB[2];
+
+                tripletColors = colorDataFunction(indexOneColorData, "HSB");
+                tripletColors[0].colorData = colorUtils.getColorDataFromHex(tripletColors[0].hex, colorMode);
+                tripletColors[1].colorData = colorUtils.getColorDataFromHex(tripletColors[1].hex, colorMode);
+
+                const hex = colorUtils.getHexFromColorData(indexOneColorData, "HSB");
+                indexOne = { hex: "#" + hex, colorData: colorUtils.getColorDataFromHex(hex, colorMode) };
+            } else {
+                indexOne = newColor;
+                tripletColors = genericHarmonyFunction(newColor, colorMode);
+            }
+
             let newMainSwatches = {};
             newMainSwatches[1] = indexOne;
             newMainSwatches[2] = tripletColors[0];
