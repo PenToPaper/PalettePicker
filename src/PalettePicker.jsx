@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Nav from "./Nav";
 import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
+import CompareColors from "./CompareColors";
 import convert from "color-convert";
 import * as colorUtils from "./ColorUtils";
 
@@ -17,6 +18,7 @@ export default function PalettePicker() {
     const [colorMode, setColorMode] = useState("HSB");
     const [selection, setSelection] = useState({ sectionName: "Main", index: 1 });
     const [harmony, setHarmony] = useState("None");
+    const [modal, setModal] = useState({ status: "hidden" });
 
     let pressedKeys = [];
 
@@ -240,16 +242,16 @@ export default function PalettePicker() {
     };
 
     const restrictTriplets = (index, newColor, colorDataFunction, genericHarmonyFunction) => {
-        setSwatches(() => {
+        setSwatches((prevSwatches) => {
             let tripletColors;
             let indexOne;
             if (index !== "1") {
                 // compare swatches[index] to newColor
-                const prevColorHSB = colorUtils.getHSBFromColorData(swatches.Main[index].colorData, colorMode);
+                const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[index].colorData, colorMode);
                 const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
                 const hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
 
-                const indexOneHSB = colorUtils.getHSBFromColorData(swatches.Main[1].colorData, colorMode);
+                const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
                 let indexOneColorData = indexOneHSB.concat();
                 indexOneColorData[0] = (indexOneColorData[0] + hueDiff + 360) % 360;
                 indexOneColorData[1] = newColorHSB[1];
@@ -346,8 +348,6 @@ export default function PalettePicker() {
         });
     };
 
-    const compareColors = () => {};
-    const contrastChecker = () => {};
     const colorHarmony = (harmonyName) => {
         switch (harmonyName) {
             case "Complementary":
@@ -372,6 +372,32 @@ export default function PalettePicker() {
         setHarmony(harmonyName);
     };
 
+    const selectColor = (selectionObject) => {
+        if (modal.status !== "selecting") {
+            setSelection(selectionObject);
+            return;
+        }
+
+        // prevents from comparing/contrasting 2 of the same color
+        if (selectionObject.sectionName !== selection.sectionName || parseInt(selectionObject.index) !== parseInt(selection.index)) {
+            setModal((prevModal) => {
+                return { ...prevModal, status: "shown", selection: [selection, selectionObject] };
+            });
+        }
+    };
+
+    const compareColors = () => {
+        setModal({ status: "selecting", type: "compare" });
+    };
+
+    const contrastChecker = () => {
+        setModal({ status: "selecting", type: "contrast" });
+    };
+
+    const exitModal = () => {
+        setModal({ status: "hidden" });
+    };
+
     return (
         <div className="body" tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
             <Nav />
@@ -381,14 +407,15 @@ export default function PalettePicker() {
                     selection={selection}
                     colorMode={colorMode}
                     onChange={changeColor}
-                    onSelectSwatch={setSelection}
+                    onSelectSwatch={selectColor}
                     onCompareColors={compareColors}
                     onContrastChecker={contrastChecker}
                     onColorMode={recalculateColors}
                     onColorHarmony={colorHarmony}
                 />
-                <PaletteBody swatches={swatches} colorMode={colorMode} selection={selection} onSelectSwatch={setSelection} onAddSwatch={addSwatch} onChange={changeColor} />
+                <PaletteBody swatches={swatches} colorMode={colorMode} selection={selection} onSelectSwatch={selectColor} onAddSwatch={addSwatch} onChange={changeColor} />
             </main>
+            {modal.status === "shown" && modal.type === "compare" && <CompareColors onModalClose={exitModal} colorMode={colorMode} swatches={swatches} selection={modal.selection} onChange={changeColor} />}
         </div>
     );
 }
