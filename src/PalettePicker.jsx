@@ -27,7 +27,6 @@ export default function PalettePicker() {
         // this could be a problem in the future, because it modifies the existing array instance rather than making a new one
         if (!pressedKeys.includes(e.keyCode)) {
             pressedKeys.push(e.keyCode);
-            e.preventDefault();
         }
     };
 

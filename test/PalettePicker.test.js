@@ -535,9 +535,7 @@ describe("PalletePicker Rectangle color functions work properly on SHIFT click a
     });
 
     it("Modifies arcOne and arcTwo on shift click", () => {
-        let preventDefaultPlaceholder = jest.fn();
-        appWrapper.find({ className: "body" }).prop("onKeyDown")({ keyCode: 16, preventDefault: preventDefaultPlaceholder });
-        expect(preventDefaultPlaceholder).toHaveBeenCalled();
+        appWrapper.find({ className: "body" }).prop("onKeyDown")({ keyCode: 16 });
         appWrapper.find("PaletteHeader").prop("onChange")("Main", "1", { hex: "#B8CC52", colorData: [70, 60, 80] });
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
