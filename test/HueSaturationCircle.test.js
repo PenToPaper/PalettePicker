@@ -54,8 +54,8 @@ describe("HueSaturationCircle calls callback function on click and generates cir
 
     it("Creates 3 circle elements when supplied with the swatch data", () => {
         expect(circleWrapper.find("HueSaturationNode")).toHaveLength(3);
-        expect(circleWrapper.find("HueSaturationNode").get(0).props.color.hex).toEqual("#aaabbb");
+        expect(circleWrapper.find("HueSaturationNode").get(2).props.color.hex).toEqual("#aaabbb");
         expect(circleWrapper.find("HueSaturationNode").get(1).props.color.hex).toEqual("#aaaaaa");
-        expect(circleWrapper.find("HueSaturationNode").get(2).props.color.hex).toEqual("#aaaccc");
+        expect(circleWrapper.find("HueSaturationNode").get(0).props.color.hex).toEqual("#aaaccc");
     });
 });

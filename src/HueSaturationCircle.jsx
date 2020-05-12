@@ -81,15 +81,17 @@ export default function HueSaturationCircle(props) {
         dragSelection.index = props.selection.index;
 
         Object.keys(props.swatches).forEach((swatchCategory) => {
-            Object.keys(props.swatches[swatchCategory]).forEach((swatchKey) => {
-                const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey].hex);
-                const coordinates = getCoordinateFromHueSaturation(circleRadius, hue, saturation);
-                if (coordinatesAreWithin(...getOffsetFromCenter(circleRadius, x, y), ...coordinates, 26)) {
-                    dragSelection.sectionName = swatchCategory;
-                    dragSelection.index = swatchKey;
-                    props.onSelectSwatch({ sectionName: swatchCategory, index: swatchKey });
-                }
-            });
+            Object.keys(props.swatches[swatchCategory])
+                .reverse()
+                .forEach((swatchKey) => {
+                    const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey].hex);
+                    const coordinates = getCoordinateFromHueSaturation(circleRadius, hue, saturation);
+                    if (coordinatesAreWithin(...getOffsetFromCenter(circleRadius, x, y), ...coordinates, 26)) {
+                        dragSelection.sectionName = swatchCategory;
+                        dragSelection.index = swatchKey;
+                        props.onSelectSwatch({ sectionName: swatchCategory, index: swatchKey });
+                    }
+                });
         });
 
         handleDrag(event);
@@ -101,9 +103,11 @@ export default function HueSaturationCircle(props) {
     return (
         <div className="hue-saturation-circle" ref={updateSize} onMouseDown={handleMouseDown} aria-hidden="true">
             {Object.keys(props.swatches).map((swatchCategory) => {
-                return Object.keys(props.swatches[swatchCategory]).map((swatchKey) => {
-                    return <HueSaturationNode colorMode={props.colorMode} key={`${swatchCategory}-${swatchKey}`} circleRadius={circleRadius} color={props.swatches[swatchCategory][swatchKey]} />;
-                });
+                return Object.keys(props.swatches[swatchCategory])
+                    .reverse()
+                    .map((swatchKey) => {
+                        return <HueSaturationNode colorMode={props.colorMode} key={`${swatchCategory}-${swatchKey}`} circleRadius={circleRadius} color={props.swatches[swatchCategory][swatchKey]} />;
+                    });
             })}
         </div>
     );
