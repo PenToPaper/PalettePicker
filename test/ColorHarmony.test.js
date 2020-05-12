@@ -363,3 +363,42 @@ describe("Algorithms for finding color harmonies function correctly", () => {
         expect(resultsArray[4].hex).toEqual("#807040");
     });
 });
+
+describe("WCAG Contrast checker accurately represents contrast ratio between two colors", () => {
+    const isInMarginOfError = (numberOne, numberTwo, margin = 0.01) => {
+        const ret = Math.abs(numberOne - numberTwo) < margin;
+        return ret ? ret : `${numberOne} and ${numberTwo} are not within ${margin}`;
+    };
+
+    it("Accurately measures contrast in RGB colorMode", () => {
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [255, 255, 255] }, { hex: "#000000", colorData: [0, 0, 0] }, "RGB"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#000000", colorData: [0, 0, 0] }, { hex: "#FFFFFF", colorData: [255, 255, 255] }, "RGB"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFEA70", colorData: [255, 234, 112] }, { hex: "#4238FF", colorData: [66, 56, 255] }, "RGB"), 5.32)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [255, 255, 255] }, { hex: "#FFFFFF", colorData: [255, 255, 255] }, "RGB"), 1)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFC9FB", colorData: [255, 201, 251] }, { hex: "#87FFB5", colorData: [135, 255, 181] }, "RGB"), 1.13)).toEqual(true);
+    });
+
+    it("Accurately measures contrast in HSB colorMode", () => {
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [0, 0, 100] }, { hex: "#000000", colorData: [0, 0, 0] }, "HSB"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#000000", colorData: [0, 0, 0] }, { hex: "#FFFFFF", colorData: [0, 0, 100] }, "HSB"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFEA70", colorData: [51, 56, 100] }, { hex: "#4238FF", colorData: [243, 78, 100] }, "HSB"), 5.32)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [0, 0, 100] }, { hex: "#FFFFFF", colorData: [0, 0, 100] }, "HSB"), 1)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFC9FB", colorData: [304, 21, 100] }, { hex: "#87FFB5", colorData: [143, 47, 100] }, "HSB"), 1.13)).toEqual(true);
+    });
+
+    it("Accurately measures contrast in HSL colorMode", () => {
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [0, 0, 100] }, { hex: "#000000", colorData: [0, 0, 0] }, "HSL"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#000000", colorData: [0, 0, 0] }, { hex: "#FFFFFF", colorData: [0, 0, 100] }, "HSL"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFEA70", colorData: [51, 100, 72] }, { hex: "#4238FF", colorData: [243, 100, 61] }, "HSL"), 5.32)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [0, 0, 100] }, { hex: "#FFFFFF", colorData: [0, 0, 100] }, "HSL"), 1)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFC9FB", colorData: [304, 100, 89] }, { hex: "#87FFB5", colorData: [143, 100, 76] }, "HSL"), 1.13)).toEqual(true);
+    });
+
+    it("Accurately measures contrast in CMYK colorMode", () => {
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [0, 0, 0, 0] }, { hex: "#000000", colorData: [0, 0, 0, 100] }, "CMYK"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#000000", colorData: [0, 0, 0, 100] }, { hex: "#FFFFFF", colorData: [0, 0, 0, 0] }, "CMYK"), 21)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFEA70", colorData: [0, 8, 56, 0] }, { hex: "#4238FF", colorData: [74, 78, 0, 0] }, "CMYK"), 5.32)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFFFFF", colorData: [0, 0, 0, 0] }, { hex: "#FFFFFF", colorData: [0, 0, 0, 0] }, "CMYK"), 1)).toEqual(true);
+        expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFC9FB", colorData: [0, 21, 2, 0] }, { hex: "#87FFB5", colorData: [47, 0, 29, 0] }, "CMYK"), 1.13)).toEqual(true);
+    });
+});

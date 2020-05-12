@@ -234,3 +234,39 @@ export function getRectangleColor(rotation, arcOne, arcTwo, saturation, brightne
         "4": { hex: "#" + convert.hsv.hex(indexFour), colorData: getColorDataFromHSB(indexFour, colorMode) },
     };
 }
+
+// From https://www.w3.org/TR/WCAG20-TECHS/G18.html
+export function getWCAGContrast(colorOne, colorTwo, colorMode) {
+    const getRgbFromHex = (color, colorMode) => {
+        if (colorMode === "RGB") {
+            return color.colorData;
+        }
+        return getColorDataFromHex(color.hex, "RGB");
+    };
+
+    const getWCAGValueRGB = (sRGB) => {
+        const rgbRatio = sRGB / 255;
+        let r;
+        if (rgbRatio <= 0.03928) {
+            r = rgbRatio / 12.92;
+        } else {
+            r = Math.pow((rgbRatio + 0.055) / 1.055, 2.4);
+        }
+        return r;
+    };
+
+    const rgbColorOne = getRgbFromHex(colorOne, colorMode);
+    const rgbColorTwo = getRgbFromHex(colorTwo, colorMode);
+
+    const rgbWcagOne = [getWCAGValueRGB(rgbColorOne[0]), getWCAGValueRGB(rgbColorOne[1]), getWCAGValueRGB(rgbColorOne[2])];
+    const rgbWcagTwo = [getWCAGValueRGB(rgbColorTwo[0]), getWCAGValueRGB(rgbColorTwo[1]), getWCAGValueRGB(rgbColorTwo[2])];
+
+    const L1 = 0.2126 * rgbWcagOne[0] + 0.7152 * rgbWcagOne[1] + 0.0722 * rgbWcagOne[2];
+    const L2 = 0.2126 * rgbWcagTwo[0] + 0.7152 * rgbWcagTwo[1] + 0.0722 * rgbWcagTwo[2];
+
+    if (L1 > L2) {
+        return (L1 + 0.05) / (L2 + 0.05);
+    } else {
+        return (L2 + 0.05) / (L1 + 0.05);
+    }
+}
