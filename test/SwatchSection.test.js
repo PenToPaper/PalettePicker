@@ -8,19 +8,14 @@ describe("Swatch Section properly renders elements based on props", () => {
     const swatchData = {
         10: "#aaaaaa",
         2: "#aaabbb",
-        13: "#aaaccc"
+        13: "#aaaccc",
     };
     const selection = 2;
     const onChangeCallback = jest.fn();
     const swatchSectionWrapper = shallow(<SwatchSection sectionName="Section Title" swatches={swatchData} selection={selection} onAddSwatch={callback} onChange={onChangeCallback} onSelectSwatch={() => {}} />);
 
     it("Renders a header", () => {
-        expect(
-            swatchSectionWrapper
-                .find("section")
-                .find("h1")
-                .text()
-        ).toEqual("Section Title");
+        expect(swatchSectionWrapper.find("section").find("input").prop("value")).toEqual("Section Title");
     });
 
     it("Renders an add swatch button", () => {
@@ -36,7 +31,7 @@ describe("Swatch Section properly renders elements based on props", () => {
     });
 
     it("Passes onChange method to swatches", () => {
-        expect(swatchSectionWrapper.find("Swatch").map(swatch => typeof swatch.prop("onChange") === "function")).toEqual([true, true, true]);
+        expect(swatchSectionWrapper.find("Swatch").map((swatch) => typeof swatch.prop("onChange") === "function")).toEqual([true, true, true]);
         swatchSectionWrapper.find({ color: "#aaaaaa", selected: false }).prop("onChange")("#fffccc");
         expect(onChangeCallback).toHaveBeenLastCalledWith("10", "#fffccc");
     });
@@ -46,7 +41,7 @@ describe("Swatch Section calls onAddSwatch callback, and renders more swatches a
     let swatchData = {
         10: "#aaaaaa",
         2: "#aaabbb",
-        13: "#aaaccc"
+        13: "#aaaccc",
     };
     const callback = jest.fn(() => {
         const newSwatchData = Object.assign({}, swatchData);

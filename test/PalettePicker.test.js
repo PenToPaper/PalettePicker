@@ -659,3 +659,27 @@ describe("PalletePicker addSwatch functionality is partially restricted with col
         expect(getSwatches().Main[5].hex).not.toEqual("#FFFFFF");
     });
 });
+
+describe("PalettePicker section modifiers function properly", () => {
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Changes default section name", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        expect(Object.keys(getSwatches())).toHaveLength(1);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+    });
+
+    it("Adds new sections", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        console.log(getSwatches());
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+    });
+});

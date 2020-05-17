@@ -7,20 +7,20 @@ describe("Palette body translates props into swatch sections", () => {
         Main: {
             10: "#aaaaaa",
             2: "#aaabbb",
-            13: "#aaaccc"
+            13: "#aaaccc",
         },
         Body: {
             3: "#aaaddd",
             4: "#aaaeee",
-            5: "#aaafff"
-        }
+            5: "#aaafff",
+        },
     };
     const selection = {
         sectionName: "Main",
-        index: 2
+        index: 2,
     };
 
-    const addSwatch = jest.fn(swatchSection => {
+    const addSwatch = jest.fn((swatchSection) => {
         swatchData[swatchSection][11] = "#bbbaaa";
     });
 
@@ -37,11 +37,11 @@ describe("Palette body translates props into swatch sections", () => {
         expect(bodyWrapper.find({ sectionName: "Main" }).prop("swatches")).toEqual(swatchData.Main);
         expect(bodyWrapper.find({ sectionName: "Main" }).prop("selection")).toEqual(selection.index);
         expect(bodyWrapper.find({ sectionName: "Main" }).prop("colorMode")).toEqual("HSB");
-        expect(bodyWrapper.find({ sectionName: "Main" }).key()).toEqual("Main");
+        expect(bodyWrapper.find({ sectionName: "Main" }).key()).toEqual("0");
         expect(bodyWrapper.find({ sectionName: "Body" })).toHaveLength(1);
         expect(bodyWrapper.find({ sectionName: "Body" }).prop("swatches")).toEqual(swatchData.Body);
         expect(bodyWrapper.find({ sectionName: "Body" }).prop("selection")).toEqual(undefined);
-        expect(bodyWrapper.find({ sectionName: "Body" }).key()).toEqual("Body");
+        expect(bodyWrapper.find({ sectionName: "Body" }).key()).toEqual("1");
         expect(bodyWrapper.find({ sectionName: "Body" }).prop("colorMode")).toEqual("HSB");
     });
 

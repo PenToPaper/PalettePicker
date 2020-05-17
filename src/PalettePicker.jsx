@@ -333,6 +333,28 @@ export default function PalettePicker() {
         return uniqueIndex;
     };
 
+    const changeSectionName = (oldSection, newSection) => {
+        setSwatches((prevSwatches) => {
+            const newSwatches = Object.keys(prevSwatches).reduce((swatchObj, sectionName) => {
+                if (sectionName !== oldSection) {
+                    swatchObj[sectionName] = prevSwatches[sectionName];
+                } else {
+                    swatchObj[newSection] = prevSwatches[sectionName];
+                }
+                return swatchObj;
+            }, {});
+            return newSwatches;
+        });
+    };
+
+    const addSwatchSection = () => {
+        setSwatches((prevSwatches) => {
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches["New Section " + Object.keys(newSwatches).length + 1] = { 1: { hex: "#FFFFFF", colorData: [0, 0, 100] } };
+            return newSwatches;
+        });
+    };
+
     const addSwatch = (sectionName) => {
         if (sectionName === "Main" && harmony !== "None") {
             if (harmony === "Analogous") {
@@ -413,7 +435,7 @@ export default function PalettePicker() {
                     onColorMode={recalculateColors}
                     onColorHarmony={colorHarmony}
                 />
-                <PaletteBody swatches={swatches} colorMode={colorMode} selection={selection} onSelectSwatch={selectColor} onAddSwatch={addSwatch} onChange={changeColor} />
+                <PaletteBody onSectionNameChange={changeSectionName} swatches={swatches} colorMode={colorMode} selection={selection} onSelectSwatch={selectColor} onAddSwatch={addSwatch} onAddSwatchSection={addSwatchSection} onChange={changeColor} />
             </main>
             {modal.status === "shown" && modal.type === "compare" && <CompareColors onModalClose={exitModal} colorMode={colorMode} swatches={swatches} selection={modal.selection} onChange={changeColor} />}
             {modal.status === "shown" && modal.type === "contrast" && <ContrastCheck onModalClose={exitModal} colorMode={colorMode} swatches={swatches} selection={modal.selection} onChange={changeColor} />}
