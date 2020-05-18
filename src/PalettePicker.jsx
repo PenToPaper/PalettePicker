@@ -35,8 +35,16 @@ export default function PalettePicker() {
         e.preventDefault();
     };
 
-    const recalculateColors = (newColorMode) => {
+    const setSaveSwatches = (callback) => {
         setSwatches((prevSwatches) => {
+            const newSwatches = callback(prevSwatches);
+            window.localStorage.setItem("swatches", JSON.stringify(newSwatches));
+            return newSwatches;
+        });
+    };
+
+    const recalculateColors = (newColorMode) => {
+        setSaveSwatches((prevSwatches) => {
             // Loop through all the colors
             let newSwatches = {};
             for (const category of Object.keys(prevSwatches)) {
@@ -63,7 +71,7 @@ export default function PalettePicker() {
     };
 
     const startRectangleColorHarmony = () => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches.Main = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
 
@@ -72,7 +80,7 @@ export default function PalettePicker() {
     };
 
     const startAnalogousColorHarmony = () => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
 
@@ -83,7 +91,7 @@ export default function PalettePicker() {
     };
 
     const startComplementaryColorHarmony = () => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
 
@@ -97,7 +105,7 @@ export default function PalettePicker() {
     };
 
     const startTriadColorHarmony = () => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
 
@@ -114,7 +122,7 @@ export default function PalettePicker() {
     };
 
     const startSplitComplementaryColorHarmony = () => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
 
@@ -131,7 +139,7 @@ export default function PalettePicker() {
     };
 
     const restrictRectangle = (index, newColor) => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const isShiftPressed = pressedKeys.includes(16);
 
             const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[index].colorData, colorMode);
@@ -174,7 +182,7 @@ export default function PalettePicker() {
     };
 
     const addAnalogousSwatch = () => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
             const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[2].colorData, colorMode);
 
@@ -188,7 +196,7 @@ export default function PalettePicker() {
     };
 
     const restrictAnalogous = (index, newColor) => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const indexInt = parseInt(index);
 
             const colorLength = Object.keys(prevSwatches.Main).length;
@@ -254,7 +262,7 @@ export default function PalettePicker() {
     };
 
     const restrictTriplets = (index, newColor, colorDataFunction, genericHarmonyFunction) => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             let tripletColors;
             let indexOne;
             if (index !== "1") {
@@ -299,7 +307,7 @@ export default function PalettePicker() {
 
     const restrictComplement = (index, newColor) => {
         const changeIndex = index === "1" ? 2 : 1;
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches.Main[index] = newColor;
             newSwatches.Main[changeIndex] = colorUtils.getHSBComplementaryColor(newColor, colorMode);
@@ -330,7 +338,7 @@ export default function PalettePicker() {
     };
 
     const setColor = (sectionName, index, newColor) => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches[sectionName][index] = newColor;
             return newSwatches;
@@ -346,7 +354,7 @@ export default function PalettePicker() {
     };
 
     const changeSectionName = (oldSection, newSection) => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.keys(prevSwatches).reduce((swatchObj, sectionName) => {
                 if (sectionName !== oldSection) {
                     swatchObj[sectionName] = prevSwatches[sectionName];
@@ -360,7 +368,7 @@ export default function PalettePicker() {
     };
 
     const addSwatchSection = () => {
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches["New Section " + (Object.keys(newSwatches).length + 1)] = { 1: { hex: "#FFFFFF", colorData: [0, 0, 100] } };
             return newSwatches;
@@ -375,7 +383,7 @@ export default function PalettePicker() {
             return;
         }
 
-        setSwatches((prevSwatches) => {
+        setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches[sectionName][generateUniqueIndex(sectionName)] = { hex: "#FFFFFF", colorData: colorUtils.getColorDataFromHex("#FFFFFF", colorMode) };
             return newSwatches;
