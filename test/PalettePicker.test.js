@@ -677,7 +677,6 @@ describe("PalettePicker section modifiers function properly", () => {
     it("Adds new sections", () => {
         appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
         expect(Object.keys(getSwatches())).toHaveLength(2);
-        console.log(getSwatches());
         expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
         expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
         expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);

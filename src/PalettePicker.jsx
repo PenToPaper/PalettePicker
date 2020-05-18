@@ -63,58 +63,70 @@ export default function PalettePicker() {
     };
 
     const startRectangleColorHarmony = () => {
-        setSwatches(() => {
-            let newMainSwatches = {};
-            newMainSwatches = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
+        setSwatches((prevSwatches) => {
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches.Main = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
 
-            return { Main: newMainSwatches };
+            return newSwatches;
         });
     };
 
     const startAnalogousColorHarmony = () => {
         setSwatches((prevSwatches) => {
-            let newMainSwatches = {};
-            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
-            newMainSwatches = colorUtils.getHSBAnalogousColor(newMainSwatches[1], 15, Object.keys(prevSwatches.Main).length, colorMode);
+            const newSwatches = Object.assign({}, prevSwatches);
+            const rootColor = colorifyStartColorHarmony(prevSwatches);
 
-            return { Main: newMainSwatches };
+            newSwatches.Main = colorUtils.getHSBAnalogousColor(rootColor, 15, Object.keys(prevSwatches.Main).length, colorMode);
+
+            return newSwatches;
         });
     };
 
     const startComplementaryColorHarmony = () => {
         setSwatches((prevSwatches) => {
-            let newMainSwatches = {};
-            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
-            newMainSwatches[2] = colorUtils.getHSBComplementaryColor(newMainSwatches[1], colorMode);
+            const newSwatches = Object.assign({}, prevSwatches);
+            const rootColor = colorifyStartColorHarmony(prevSwatches);
 
-            return { Main: newMainSwatches };
+            newSwatches.Main = {
+                1: rootColor,
+                2: colorUtils.getHSBComplementaryColor(rootColor, colorMode),
+            };
+
+            return newSwatches;
         });
     };
 
     const startTriadColorHarmony = () => {
         setSwatches((prevSwatches) => {
-            let newMainSwatches = {};
+            const newSwatches = Object.assign({}, prevSwatches);
+            const rootColor = colorifyStartColorHarmony(prevSwatches);
 
-            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
+            const triadColors = colorUtils.getHSBTriadColor(rootColor, colorMode);
 
-            const triadColors = colorUtils.getHSBTriadColor(newMainSwatches[1], colorMode);
-            newMainSwatches[2] = triadColors[0];
-            newMainSwatches[3] = triadColors[1];
+            newSwatches.Main = {
+                1: rootColor,
+                2: triadColors[0],
+                3: triadColors[1],
+            };
 
-            return { Main: newMainSwatches };
+            return newSwatches;
         });
     };
 
     const startSplitComplementaryColorHarmony = () => {
         setSwatches((prevSwatches) => {
-            let newMainSwatches = {};
-            newMainSwatches[1] = colorifyStartColorHarmony(prevSwatches);
+            const newSwatches = Object.assign({}, prevSwatches);
+            const rootColor = colorifyStartColorHarmony(prevSwatches);
 
-            const splitColors = colorUtils.getHSBSplitComplementaryColor(newMainSwatches[1], colorMode);
-            newMainSwatches[2] = splitColors[0];
-            newMainSwatches[3] = splitColors[1];
+            const splitColors = colorUtils.getHSBSplitComplementaryColor(rootColor, colorMode);
 
-            return { Main: newMainSwatches };
+            newSwatches.Main = {
+                1: rootColor,
+                2: splitColors[0],
+                3: splitColors[1],
+            };
+
+            return newSwatches;
         });
     };
 
@@ -350,7 +362,7 @@ export default function PalettePicker() {
     const addSwatchSection = () => {
         setSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches["New Section " + Object.keys(newSwatches).length + 1] = { 1: { hex: "#FFFFFF", colorData: [0, 0, 100] } };
+            newSwatches["New Section " + (Object.keys(newSwatches).length + 1)] = { 1: { hex: "#FFFFFF", colorData: [0, 0, 100] } };
             return newSwatches;
         });
     };
