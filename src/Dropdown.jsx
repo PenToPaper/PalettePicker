@@ -2,13 +2,15 @@ import React, { useState, useRef } from "react";
 
 export default function Dropdown(props) {
     // Option currently selected
-    const [selectedOptionIndex, setSelectedOptionIndex] = useState(props.selectedOptionIndex);
     const [isOpen, setIsOpen] = useState(false);
     const buttonDom = useRef(null);
     const ulDom = useRef(null);
 
-    const setSelectedOption = index => {
-        setSelectedOptionIndex(index);
+    const getSelectedIndex = () => {
+        props.options.indexOf(props.selectedOption);
+    };
+
+    const setSelectedOption = (index) => {
         props.onChange(props.options[index]);
     };
 
@@ -16,14 +18,14 @@ export default function Dropdown(props) {
     let lastAlphanumericKeypress = Date.now() - 300;
 
     const selectPreviousOption = () => {
-        setSelectedOption(selectedOptionIndex < 1 ? 0 : selectedOptionIndex - 1);
+        setSelectedOption(getSelectedIndex() < 1 ? 0 : getSelectedIndex() - 1);
     };
 
     const selectNextOption = () => {
-        setSelectedOption(selectedOptionIndex >= props.options.length - 1 ? props.options.length - 1 : selectedOptionIndex + 1);
+        setSelectedOption(getSelectedIndex() >= props.options.length - 1 ? props.options.length - 1 : getSelectedIndex() + 1);
     };
 
-    const handleButtonKeyDown = event => {
+    const handleButtonKeyDown = (event) => {
         switch (event.keyCode) {
             // enter
             case 13:
@@ -46,7 +48,7 @@ export default function Dropdown(props) {
     };
 
     const filterSearch = () => {
-        for (let i = selectedOptionIndex; i < props.options.length; i++) {
+        for (let i = getSelectedIndex(); i < props.options.length; i++) {
             if (props.options[i].toLowerCase().indexOf(search) === 0) {
                 setSelectedOption(i);
                 return;
@@ -54,7 +56,7 @@ export default function Dropdown(props) {
         }
     };
 
-    const handleUlKeyDown = event => {
+    const handleUlKeyDown = (event) => {
         switch (event.keyCode) {
             // home
             case 36:
@@ -90,8 +92,8 @@ export default function Dropdown(props) {
         }
     };
 
-    const handleButtonClick = event => {
-        setIsOpen(prevIsOpen => !prevIsOpen);
+    const handleButtonClick = (event) => {
+        setIsOpen((prevIsOpen) => !prevIsOpen);
     };
 
     const handleLiClick = (event, index) => {
@@ -110,20 +112,20 @@ export default function Dropdown(props) {
                 aria-labelledby={`${props.labelId} ${props.labelId}-selected`}
                 aria-expanded={isOpen ? "true" : undefined}
             >
-                {props.options[selectedOptionIndex]}
+                {props.selectedOption}
             </button>
-            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${selectedOptionIndex}`}>
+            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${getSelectedIndex()}`}>
                 {props.options.map((option, index) => {
                     return (
                         <li
                             id={`${props.labelId}-${index}`}
                             key={`${props.labelId}-${index}`}
-                            onClick={event => {
+                            onClick={(event) => {
                                 handleLiClick(event, index);
                             }}
                             role="option"
-                            aria-selected={index === selectedOptionIndex ? "true" : undefined}
-                            className={index === selectedOptionIndex ? "dropdown-selected" : undefined}
+                            aria-selected={option === props.selectedOption ? "true" : undefined}
+                            className={option === props.selectedOption ? "dropdown-selected" : undefined}
                         >
                             {option}
                         </li>

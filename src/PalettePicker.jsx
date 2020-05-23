@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
@@ -21,7 +21,55 @@ export default function PalettePicker() {
     const [harmony, setHarmony] = useState("None");
     const [modal, setModal] = useState({ status: "hidden" });
 
+    const [projects, setProjects] = useState(["My Project 1", "My Project 2"]);
+    const [activeProject, setActiveProject] = useState(0);
+
     let pressedKeys = [];
+
+    useEffect(() => {
+        refreshProjectsListFromLocalData();
+        refreshFromLocalData(activeProject);
+    }, []);
+
+    const setLocalStorage = (changedDataType, newData) => {
+        let oldLocalStorage = JSON.parse(window.localStorage.getItem(projects[activeProject]));
+
+        if (oldLocalStorage === null) {
+            oldLocalStorage = { swatches, harmony, colorMode };
+        }
+
+        switch (changedDataType) {
+            case "colorMode":
+                oldLocalStorage.colorMode = newData;
+                break;
+            case "harmony":
+                oldLocalStorage.harmony = newData;
+                break;
+            case "swatches":
+                oldLocalStorage.swatches = newData;
+                break;
+        }
+
+        window.localStorage.setItem(projects[activeProject], JSON.stringify(oldLocalStorage));
+    };
+
+    const refreshProjectsListFromLocalData = () => {
+        let localStorageObjects = Object.keys(window.localStorage);
+        if (localStorageObjects.length === 0) {
+            localStorageObjects = ["My Project 1"];
+        }
+        setProjects(localStorageObjects);
+    };
+
+    const refreshFromLocalData = (index) => {
+        const storedJson = JSON.parse(window.localStorage.getItem(projects[index]));
+
+        if (storedJson) {
+            setColorMode(storedJson.colorMode);
+            setHarmony(storedJson.harmony);
+            setSwatches(storedJson.swatches);
+        }
+    };
 
     const onKeyDown = (e) => {
         // this could be a problem in the future, because it modifies the existing array instance rather than making a new one
@@ -38,9 +86,14 @@ export default function PalettePicker() {
     const setSaveSwatches = (callback) => {
         setSwatches((prevSwatches) => {
             const newSwatches = callback(prevSwatches);
-            window.localStorage.setItem("swatches", JSON.stringify(newSwatches));
+            setLocalStorage("swatches", newSwatches);
             return newSwatches;
         });
+    };
+
+    const setSaveColorMode = (newColorMode) => {
+        setColorMode(newColorMode);
+        setLocalStorage("colorMode", newColorMode);
     };
 
     const recalculateColors = (newColorMode) => {
@@ -58,7 +111,7 @@ export default function PalettePicker() {
         });
 
         // Adjust the colorMode state
-        setColorMode(newColorMode);
+        setSaveColorMode(newColorMode);
     };
 
     const colorifyStartColorHarmony = (prevSwatches) => {
@@ -412,6 +465,7 @@ export default function PalettePicker() {
         }
 
         setHarmony(harmonyName);
+        setLocalStorage("harmony", harmonyName);
     };
 
     const selectColor = (selectionObject) => {
@@ -440,14 +494,70 @@ export default function PalettePicker() {
         setModal({ status: "hidden" });
     };
 
+    const selectProject = (index) => {
+        setActiveProject(index);
+        refreshFromLocalData(index);
+    };
+
+    const projectNameChange = (index, newName) => {
+        setProjects((prevProjects) => {
+            const newProjects = prevProjects.concat();
+            window.localStorage.removeItem(prevProjects[index]);
+            window.localStorage.setItem(newName, JSON.stringify({ harmony, swatches, colorMode }));
+            newProjects[index] = newName;
+            return newProjects;
+        });
+    };
+
+    const projectDelete = (index) => {
+        setProjects((prevProjects) => {
+            window.localStorage.removeItem(prevProjects[index]);
+            const newProjects = prevProjects.filter((project, i) => i !== index);
+            if (newProjects.length === 0) {
+                addProject();
+            }
+            return newProjects;
+        });
+    };
+
+    const addProject = () => {
+        const newHarmony = "None";
+        const newColorMode = "HSB";
+        const newSwatches = {
+            Main: {
+                1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+                2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+                3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+                4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            },
+        };
+
+        setSwatches(newSwatches);
+        setHarmony(newHarmony);
+        setColorMode(newColorMode);
+
+        setProjects((prevProjects) => {
+            let newIndex = prevProjects.length;
+            do {
+                ++newIndex;
+            } while (prevProjects.includes("My Project " + newIndex));
+
+            const newProjects = prevProjects.concat();
+            newProjects.push("My Project " + newIndex);
+            window.localStorage.setItem("My Project " + newIndex, JSON.stringify({ harmony: newHarmony, swatches: newSwatches, colorMode: newColorMode }));
+            return newProjects;
+        });
+    };
+
     return (
         <div className="body" tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
-            <Nav />
+            <Nav projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
             <main>
                 <PaletteHeader
                     swatches={swatches}
                     selection={selection}
                     colorMode={colorMode}
+                    colorHarmony={harmony}
                     onChange={changeColor}
                     onSelectSwatch={selectColor}
                     onCompareColors={compareColors}

@@ -45,36 +45,96 @@ nav
         bottom: 0px
         right: 0px
         background-color: $back-dark
-        button
+        button, input
             background-color: transparent
             border: none
-            padding: 0px
-        ul
-            border-bottom: 4px solid $font-dark-deemphasized
-            li
-                button
-                    font-size: 18px
-                    font-weight: 600
-                    color: $front-off-white
-                    padding: 32px
-                    width: 100%
-                    &:focus
-                        border: 1px solid $front-off-white
-                &.project-selected button
-                    background-color: $font-dark-deemphasized
-        .add-project
-            width: 100%
+        li
+            position: relative
             display: flex
-            padding: 32px
+            min-height: 75px
+            input, .project
+                padding: 0
+                flex-grow: 1
+                font-size: 18px
+                text-align: left
+                color: $front-off-white
+            input
+                text-decoration: underline
+            &.project-selected
+                background-color: $font-dark-deemphasized
+                .project
+                    font-weight: 600
+
+        .nav-modifier
+            margin: 15px
+
+        .add-project
+            margin: 15px auto
+            display: flex
+            padding: 8px 15px
+            background-color: $font-dark-deemphasized
             justify-content: center
-            font-size: 16px
-            font-weight: 500
+            font-size: 18px
             color: $front-off-white
             &:focus
                 border: 1px solid $front-off-white
             img
-                height: 18px
+                height: 22px
                 margin-right: 8px
+        
+        .project-delete
+            position: absolute
+            top: 0
+            bottom: 0
+            left: 0
+            right: 0
+            background-color: $font-dark-deemphasized
+            display: flex
+            align-items: center
+            font-size: 18px
+            justify-content: space-between
+            span
+                color: $front-off-white
+                margin-left: 15px
+            .confirm-delete-project
+                font-size: 18px
+                color: $approval-back-green
+            .deny-delete-project
+                font-size: 18px
+                color: $denial-back-red
+                margin-right: 15px
+
+
+        // button
+        //     background-color: transparent
+        //     border: none
+        //     padding: 0px
+        // ul
+        //     border-bottom: 4px solid $font-dark-deemphasized
+        //     li
+        //         button
+        //             font-size: 18px
+        //             font-weight: 600
+        //             color: $front-off-white
+        //             padding: 32px
+        //             width: 100%
+        //             &:focus
+        //                 border: 1px solid $front-off-white
+        //         &.project-selected button
+        //             background-color: $font-dark-deemphasized
+        // .add-project
+        //     width: 100%
+        //     display: flex
+        //     padding: 32px
+        //     justify-content: center
+        //     font-size: 16px
+        //     font-weight: 500
+        //     color: $front-off-white
+        //     &:focus
+        //         border: 1px solid $front-off-white
+        //     img
+        //         height: 18px
+        //         margin-right: 8px
 
 header
     display: flex
