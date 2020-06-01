@@ -58,6 +58,7 @@ export default function PalettePicker() {
         if (localStorageObjects.length === 0) {
             localStorageObjects = ["My Project 1"];
         }
+        localStorageObjects.sort();
         setProjects(localStorageObjects);
     };
 

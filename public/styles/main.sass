@@ -4,6 +4,9 @@
 body
     background-color: $back-light
 
+div.body
+    position: relative
+
 nav
     height: 80px
     border-bottom: 6px solid $font-dark-deemphasized
@@ -29,7 +32,7 @@ nav
 
     &.hamburger-menu-expanded::before
         content: ""
-        position: fixed
+        position: absolute
         top: 80px
         bottom: 0px
         left: 0px
@@ -46,6 +49,7 @@ nav
         right: 0px
         background-color: $back-dark
         button, input
+            @include focus-outline($front-off-white)
             background-color: transparent
             border: none
         li
@@ -66,6 +70,7 @@ nav
                     font-weight: 600
 
         .nav-modifier
+            @include focus-outline($front-off-white)
             margin: 15px
 
         .add-project
