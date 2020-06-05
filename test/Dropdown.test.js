@@ -4,7 +4,7 @@ import { shallow, mount } from "enzyme";
 import simulateKeyDown from "./SimulateKeyDown";
 
 describe("Dropdown renders default state correctly based on props", () => {
-    const dropdownWrapper = shallow(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOptionIndex={0} />);
+    const dropdownWrapper = shallow(<Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOption={"None"} />);
 
     it("Renders correct number of children", () => {
         expect(dropdownWrapper.children("button#dropdown-color-harmony-selected")).toHaveLength(1);
@@ -26,14 +26,14 @@ describe("Dropdown renders default state correctly based on props", () => {
     });
 
     it("Renders all li elements with proper react and accessibility attributes", () => {
-        expect(dropdownWrapper.find("li").map(li => li.prop("role"))).toEqual(["option", "option", "option", "option", "option", "option"]);
-        expect(dropdownWrapper.find("li").map(li => li.prop("id"))).toEqual(["dropdown-color-harmony-0", "dropdown-color-harmony-1", "dropdown-color-harmony-2", "dropdown-color-harmony-3", "dropdown-color-harmony-4", "dropdown-color-harmony-5"]);
-        expect(dropdownWrapper.find("li").map(li => li.key())).toEqual(["dropdown-color-harmony-0", "dropdown-color-harmony-1", "dropdown-color-harmony-2", "dropdown-color-harmony-3", "dropdown-color-harmony-4", "dropdown-color-harmony-5"]);
+        expect(dropdownWrapper.find("li").map((li) => li.prop("role"))).toEqual(["option", "option", "option", "option", "option", "option"]);
+        expect(dropdownWrapper.find("li").map((li) => li.prop("id"))).toEqual(["dropdown-color-harmony-0", "dropdown-color-harmony-1", "dropdown-color-harmony-2", "dropdown-color-harmony-3", "dropdown-color-harmony-4", "dropdown-color-harmony-5"]);
+        expect(dropdownWrapper.find("li").map((li) => li.key())).toEqual(["dropdown-color-harmony-0", "dropdown-color-harmony-1", "dropdown-color-harmony-2", "dropdown-color-harmony-3", "dropdown-color-harmony-4", "dropdown-color-harmony-5"]);
     });
 
     it("Properly selects the active li element", () => {
-        expect(dropdownWrapper.find("li").map(li => li.prop("aria-selected"))).toEqual(["true", undefined, undefined, undefined, undefined, undefined]);
-        expect(dropdownWrapper.find("li").map(li => li.hasClass("dropdown-selected"))).toEqual([true, false, false, false, false, false]);
+        expect(dropdownWrapper.find("li").map((li) => li.prop("aria-selected"))).toEqual(["true", undefined, undefined, undefined, undefined, undefined]);
+        expect(dropdownWrapper.find("li").map((li) => li.hasClass("dropdown-selected"))).toEqual([true, false, false, false, false, false]);
     });
 });
 
@@ -50,26 +50,22 @@ const expectLiSelected = (dropdownWrapper, index) => {
     expectedDropdownSelected[index] = true;
 
     expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-" + index);
-    expect(dropdownWrapper.find("li").map(li => li.prop("aria-selected"))).toEqual(expectedAriaSelected);
-    expect(
-        dropdownWrapper
-            .find("li")
-            .get(index)
-            .props.className.includes("dropdown-selected")
-    ).toEqual(true);
+    expect(dropdownWrapper.find("li").map((li) => li.prop("aria-selected"))).toEqual(expectedAriaSelected);
+    expect(dropdownWrapper.find("li").get(index).props.className.includes("dropdown-selected")).toEqual(true);
 };
 
 describe("Dropdown renders updated states properly based on keyboard input", () => {
-    const callback = jest.fn();
+    let currentlySelected = "None";
+    const callback = jest.fn((newlySelected) => {
+        currentlySelected = newlySelected;
+        dropdownWrapper.setProps({ selectedOption: currentlySelected });
+    });
     const optionsList = ["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"];
-    const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={optionsList} selectedOptionIndex={0} onChange={callback} />);
+    const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={optionsList} selectedOption={"None"} onChange={callback} />);
 
     it("Opens the dropdown menu with button focused and enter keypress", () => {
         // Focus button
-        dropdownWrapper
-            .find("button")
-            .getDOMNode()
-            .focus();
+        dropdownWrapper.find("button").getDOMNode().focus();
 
         simulateKeyDown(dropdownWrapper, "button", "enter");
 
@@ -86,7 +82,6 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
         simulateKeyDown(dropdownWrapper, "ul", "end");
 
         // Bottom li is selected
-        dropdownWrapper.update();
         expectLiSelected(dropdownWrapper, 5);
         expect(callback).toHaveBeenLastCalledWith(optionsList[5]);
 
@@ -158,9 +153,13 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 });
 
 describe("Dropdown renders updated states properly based on mouse input", () => {
-    const callback = jest.fn();
+    let currentlySelected = "None";
+    const callback = jest.fn((newlySelected) => {
+        currentlySelected = newlySelected;
+        dropdownWrapper.setProps({ selectedOption: currentlySelected });
+    });
     const optionsList = ["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"];
-    const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={optionsList} selectedOptionIndex={0} onChange={callback} />);
+    const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={optionsList} selectedOption={"None"} onChange={callback} />);
 
     it("Expands the dropdown menu on button click", () => {
         dropdownWrapper.find("button").simulate("click");

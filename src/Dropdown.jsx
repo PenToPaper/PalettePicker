@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 export default function Dropdown(props) {
     // Option currently selected
@@ -6,16 +6,22 @@ export default function Dropdown(props) {
     const buttonDom = useRef(null);
     const ulDom = useRef(null);
 
+    let search = useRef("");
+    let lastAlphanumericKeypress = useRef(0);
+
+    useEffect(() => {
+        if (isOpen) {
+            ulDom.current.focus();
+        }
+    }, [isOpen]);
+
     const getSelectedIndex = () => {
-        props.options.indexOf(props.selectedOption);
+        return props.options.indexOf(props.selectedOption);
     };
 
     const setSelectedOption = (index) => {
         props.onChange(props.options[index]);
     };
-
-    let search = "";
-    let lastAlphanumericKeypress = Date.now() - 300;
 
     const selectPreviousOption = () => {
         setSelectedOption(getSelectedIndex() < 1 ? 0 : getSelectedIndex() - 1);
@@ -30,26 +36,35 @@ export default function Dropdown(props) {
             // enter
             case 13:
                 setIsOpen(true);
-                ulDom.current.focus();
+                event.preventDefault();
                 break;
             // arrow up
             case 38:
                 setIsOpen(true);
-                ulDom.current.focus();
                 selectPreviousOption();
+                event.preventDefault();
                 break;
             // arrow down
             case 40:
                 setIsOpen(true);
-                ulDom.current.focus();
                 selectNextOption();
+                event.preventDefault();
                 break;
         }
     };
 
-    const filterSearch = () => {
+    const filterSearch = (searchChars) => {
+        // filter results based on currently selected item
         for (let i = getSelectedIndex(); i < props.options.length; i++) {
-            if (props.options[i].toLowerCase().indexOf(search) === 0) {
+            if (props.options[i].toLowerCase().indexOf(searchChars) === 0) {
+                setSelectedOption(i);
+                return;
+            }
+        }
+
+        // if it finds nothing, search the first half of the list
+        for (let i = 0; i < getSelectedIndex(); i++) {
+            if (props.options[i].toLowerCase().indexOf(searchChars) === 0) {
                 setSelectedOption(i);
                 return;
             }
@@ -61,18 +76,22 @@ export default function Dropdown(props) {
             // home
             case 36:
                 setSelectedOption(0);
+                event.preventDefault();
                 break;
             // end
             case 35:
                 setSelectedOption(props.options.length - 1);
+                event.preventDefault();
                 break;
             // arrow up
             case 38:
                 selectPreviousOption();
+                event.preventDefault();
                 break;
             // arrow down
             case 40:
                 selectNextOption();
+                event.preventDefault();
                 break;
             // enter
             // escape
@@ -80,14 +99,19 @@ export default function Dropdown(props) {
             case 27:
                 setIsOpen(false);
                 buttonDom.current.focus();
+                event.preventDefault();
                 break;
             default:
                 // if last keypress is over 300ms ago
-                if (Date.now() - lastAlphanumericKeypress > 300) {
-                    search = "";
+                const currentTimestamp = Date.now();
+                const keyPressed = event.key.concat();
+                if (search !== "" && currentTimestamp - lastAlphanumericKeypress.current > 500) {
+                    search.current = keyPressed;
+                } else {
+                    search.current = search.current + keyPressed;
                 }
-                search = search + event.key;
-                filterSearch();
+                lastAlphanumericKeypress.current = currentTimestamp;
+                filterSearch(search.current);
                 break;
         }
     };
@@ -98,6 +122,10 @@ export default function Dropdown(props) {
 
     const handleLiClick = (event, index) => {
         setSelectedOption(index);
+        setIsOpen(false);
+    };
+
+    const handleBlur = (event) => {
         setIsOpen(false);
     };
 
@@ -114,7 +142,7 @@ export default function Dropdown(props) {
             >
                 {props.selectedOption}
             </button>
-            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${getSelectedIndex()}`}>
+            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${getSelectedIndex()}`} onBlur={handleBlur}>
                 {props.options.map((option, index) => {
                     return (
                         <li
