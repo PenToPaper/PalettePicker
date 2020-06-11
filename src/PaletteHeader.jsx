@@ -48,10 +48,10 @@ export default function PaletteHeader(props) {
                 <Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOption={props.colorHarmony} onChange={props.onColorHarmony} />
                 <label id="dropdown-color-harmony">Color Mode</label>
                 <Dropdown labelId="dropdown-color-mode" options={["HSB", "HSL", "RGB", "CMYK"]} selectedOption={props.colorMode} onChange={props.onColorMode} />
-                <button className="header-tool" id="compare-colors-tool" onClick={props.onCompareColors}>
+                <button className={props.toolModal.status === "selecting" && props.toolModal.type === "compare" ? "header-tool tool-selecting" : "header-tool"} id="compare-colors-tool" onClick={props.onCompareColors}>
                     Compare Colors
                 </button>
-                <button className="header-tool" id="contrast-checker-tool" onClick={props.onContrastChecker}>
+                <button className={props.toolModal.status === "selecting" && props.toolModal.type === "contrast" ? "header-tool tool-selecting" : "header-tool"} id="contrast-checker-tool" onClick={props.onContrastChecker}>
                     Contrast Checker
                 </button>
             </div>

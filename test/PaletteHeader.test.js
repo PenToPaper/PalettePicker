@@ -18,7 +18,17 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
     };
     const selection = { sectionName: "Main", index: 1 };
     const headerWrapper = shallow(
-        <PaletteHeader onChange={change} colorMode={"HSB"} selection={selection} swatches={swatchData} onCompareColors={compareColors} onContrastChecker={contrastChecker} onColorMode={colorMode} onColorHarmony={colorHarmony} />
+        <PaletteHeader
+            onChange={change}
+            toolModal={{ status: "hidden" }}
+            colorMode={"HSB"}
+            selection={selection}
+            swatches={swatchData}
+            onCompareColors={compareColors}
+            onContrastChecker={contrastChecker}
+            onColorMode={colorMode}
+            onColorHarmony={colorHarmony}
+        />
     );
 
     it("Includes proper elements", () => {
@@ -58,5 +68,29 @@ describe("PaletteHeader includes color palette and proper tool selection menus",
         headerWrapper.setProps({ swatchData: newSwatchData });
         headerWrapper.find("HueSaturationCircle").prop("onPickColor")(5, 10, { sectionName: "Main", index: 1 });
         expect(change).toHaveBeenLastCalledWith(selection.sectionName, selection.index, { hex: "#807473", colorData: [5, 10, 50] });
+    });
+
+    it("Changes class of tool buttons when proper tool modal is selecting", () => {
+        expect(headerWrapper.find("button").at(0).hasClass("tool-selecting")).toEqual(false);
+        expect(headerWrapper.find("button").at(0).hasClass("header-tool")).toEqual(true);
+
+        expect(headerWrapper.find("button").at(1).hasClass("tool-selecting")).toEqual(false);
+        expect(headerWrapper.find("button").at(1).hasClass("header-tool")).toEqual(true);
+
+        headerWrapper.setProps({ toolModal: { status: "selecting", type: "compare" } });
+
+        expect(headerWrapper.find("button").at(0).hasClass("tool-selecting")).toEqual(true);
+        expect(headerWrapper.find("button").at(0).hasClass("header-tool")).toEqual(true);
+
+        expect(headerWrapper.find("button").at(1).hasClass("tool-selecting")).toEqual(false);
+        expect(headerWrapper.find("button").at(1).hasClass("header-tool")).toEqual(true);
+
+        headerWrapper.setProps({ toolModal: { status: "selecting", type: "contrast" } });
+
+        expect(headerWrapper.find("button").at(0).hasClass("tool-selecting")).toEqual(false);
+        expect(headerWrapper.find("button").at(0).hasClass("header-tool")).toEqual(true);
+
+        expect(headerWrapper.find("button").at(1).hasClass("tool-selecting")).toEqual(true);
+        expect(headerWrapper.find("button").at(1).hasClass("header-tool")).toEqual(true);
     });
 });

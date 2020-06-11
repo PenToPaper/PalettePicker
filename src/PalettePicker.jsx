@@ -484,11 +484,21 @@ export default function PalettePicker() {
     };
 
     const compareColors = () => {
-        setModal({ status: "selecting", type: "compare" });
+        setModal((prevModal) => {
+            if (prevModal.type === "compare") {
+                return { status: "hidden" };
+            }
+            return { status: "selecting", type: "compare" };
+        });
     };
 
     const contrastChecker = () => {
-        setModal({ status: "selecting", type: "contrast" });
+        setModal((prevModal) => {
+            if (prevModal.type === "contrast") {
+                return { status: "hidden" };
+            }
+            return { status: "selecting", type: "contrast" };
+        });
     };
 
     const exitModal = () => {
@@ -559,6 +569,7 @@ export default function PalettePicker() {
                     selection={selection}
                     colorMode={colorMode}
                     colorHarmony={harmony}
+                    toolModal={modal}
                     onChange={changeColor}
                     onSelectSwatch={selectColor}
                     onCompareColors={compareColors}
