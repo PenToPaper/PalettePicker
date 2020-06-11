@@ -198,12 +198,21 @@ describe("Swatch properly handles optional delete swatch functionality", () => {
     });
 });
 
-describe("Swatch calls onSelect prop onClick", () => {
+describe("Swatch calls onSelect prop onClick and on focus-enter", () => {
     const callback = jest.fn();
     const swatchWrapper = mount(<Swatch selected={true} color={{ hex: "#663333", colorData: [0, 50, 40] }} onColorChange={() => {}} colorMode={"HSB"} onSelect={callback} />);
 
-    it("Calls onSelect", () => {
+    it("Calls onSelect on click", () => {
         swatchWrapper.find(".swatch").prop("onClick")();
-        expect(callback).toHaveBeenCalled();
+        expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it("Calls onSelect on focus-enter", () => {
+        swatchWrapper.find(".swatch").prop("onKeyDown")({ keyCode: 13, target: { classList: { contains: () => true } } });
+        expect(callback).toHaveBeenCalledTimes(2);
+        swatchWrapper.find(".swatch").prop("onKeyDown")({ keyCode: 13, target: { classList: { contains: () => false } } });
+        expect(callback).toHaveBeenCalledTimes(2);
+        swatchWrapper.find(".swatch").prop("onKeyDown")({ keyCode: 12, target: { classList: { contains: () => true } } });
+        expect(callback).toHaveBeenCalledTimes(2);
     });
 });

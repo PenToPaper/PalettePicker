@@ -305,8 +305,15 @@ export default function Swatch(props) {
         }
     };
 
+    const handleKeyDown = (event) => {
+        // If swatch itself is focused and enter is pressed, select it
+        if (event.keyCode === 13 && event.target.classList.contains("swatch")) {
+            props.onSelect();
+        }
+    };
+
     return (
-        <div className={`swatch ${props.selected ? "swatch-selected" : ""}`} tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color.hex }} onClick={props.onSelect}>
+        <div className={`swatch ${props.selected ? "swatch-selected" : ""}`} tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color.hex }} onClick={props.onSelect} onKeyDown={handleKeyDown}>
             <h6>{props.color.hex}</h6>
             {props.deleteButton && (
                 <button
