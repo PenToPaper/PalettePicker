@@ -6,6 +6,9 @@ body
 
 div.body
     position: relative
+    &.body-fixed
+        overflow-y: hidden
+        height: 100vh
 
 nav
     height: 80px
@@ -42,7 +45,8 @@ nav
 
     #hamburger-menu-body
         width: 352px
-        position: absolute
+        position: fixed
+        overflow-y: scroll
         z-index: 21
         top: 80px
         bottom: 0px

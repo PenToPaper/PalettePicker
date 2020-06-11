@@ -4,7 +4,7 @@ import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
 import CompareColors from "./CompareColors";
 import ContrastCheck from "./ContrastCheck";
-import convert from "color-convert";
+import NaturalCompare from "natural-compare-lite";
 import * as colorUtils from "./ColorUtils";
 
 export default function PalettePicker() {
@@ -20,6 +20,7 @@ export default function PalettePicker() {
     const [selection, setSelection] = useState({ sectionName: "Main", index: 1 });
     const [harmony, setHarmony] = useState("None");
     const [modal, setModal] = useState({ status: "hidden" });
+    const [isNavOpen, setIsNavOpen] = useState(false);
 
     const [projects, setProjects] = useState(["My Project 1", "My Project 2"]);
     const [activeProject, setActiveProject] = useState(0);
@@ -30,6 +31,10 @@ export default function PalettePicker() {
         refreshProjectsListFromLocalData();
         refreshFromLocalData(activeProject);
     }, []);
+
+    const toggleNav = () => {
+        setIsNavOpen((prevIsNavOpen) => !prevIsNavOpen);
+    };
 
     const setLocalStorage = (changedDataType, newData) => {
         let oldLocalStorage = JSON.parse(window.localStorage.getItem(projects[activeProject]));
@@ -58,7 +63,7 @@ export default function PalettePicker() {
         if (localStorageObjects.length === 0) {
             localStorageObjects = ["My Project 1"];
         }
-        localStorageObjects.sort();
+        localStorageObjects.sort(NaturalCompare);
         setProjects(localStorageObjects);
     };
 
@@ -561,8 +566,8 @@ export default function PalettePicker() {
     };
 
     return (
-        <div className="body" tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
-            <Nav projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
+        <div className={isNavOpen ? "body body-fixed" : "body"} tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
+            <Nav isOpen={isNavOpen} toggleIsOpen={toggleNav} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
             <main>
                 <PaletteHeader
                     swatches={swatches}

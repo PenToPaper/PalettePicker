@@ -109,7 +109,6 @@ export const Project = React.forwardRef((props, ref) => {
 });
 
 export default function Nav(props) {
-    const [isOpen, setIsOpen] = useState(false);
     const [editing, setEditing] = useState(-1);
     const [confirmingDelete, setConfirmingDelete] = useState(-1);
 
@@ -202,13 +201,13 @@ export default function Nav(props) {
     };
 
     return (
-        <FocusTrap active={isOpen}>
-            <nav role="navigation" className={isOpen ? "hamburger-menu-expanded" : ""} onKeyDown={handleButtonKeyDown}>
+        <FocusTrap active={props.isOpen}>
+            <nav role="navigation" className={props.isOpen ? "hamburger-menu-expanded" : ""} onKeyDown={handleButtonKeyDown}>
                 <img src="/assets/PalettePickerLogo.svg" alt="Palette Picker Logo" />
-                <button className="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded={isOpen ? "true" : "false"} aria-controls="hamburger-menu-body" onClick={() => setIsOpen((prevOpen) => !prevOpen)}>
+                <button className="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded={props.isOpen ? "true" : "false"} aria-controls="hamburger-menu-body" onClick={props.toggleIsOpen}>
                     <img src="/assets/materialicons/material_menu_offwhite.svg" alt="" />
                 </button>
-                <div id="hamburger-menu-body" aria-label="Your Projects" hidden={!isOpen}>
+                <div id="hamburger-menu-body" aria-label="Your Projects" hidden={!props.isOpen}>
                     <ul role="menubar" aria-label="Load, delete, and edit PalettePicker saved projects">
                         {props.projects.map((project, index) => {
                             return (

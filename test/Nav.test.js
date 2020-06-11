@@ -25,7 +25,14 @@ describe("Renders state properly based on props", () => {
         projects.push("My Project " + projects.length);
         navWrapper.setProps({ projects });
     });
-    const navWrapper = shallow(<Nav.default projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />);
+    let isOpen = false;
+    const toggleNav = () => {
+        isOpen = !isOpen;
+        navWrapper.setProps({ isOpen });
+    };
+    const navWrapper = shallow(
+        <Nav.default isOpen={isOpen} toggleIsOpen={toggleNav} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
+    );
 
     it("Renders proper static elements", () => {
         // Top-level nav
@@ -245,7 +252,14 @@ describe("Core functions of Nav work properly", () => {
         projects.push("My Project " + projects.length);
         dropdownWrapper.setProps({ projects });
     });
-    const navWrapper = mount(<Nav.default projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />);
+    let isOpen = false;
+    const toggleNav = () => {
+        isOpen = !isOpen;
+        navWrapper.setProps({ isOpen });
+    };
+    const navWrapper = mount(
+        <Nav.default isOpen={isOpen} toggleIsOpen={toggleNav} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
+    );
 
     // Open button on click and enter toggle isOpen state, aria attributes update confirming that nav is open and nav's class is updated
     it("Toggles isOpen state and appearance", () => {
