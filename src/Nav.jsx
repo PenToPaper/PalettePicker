@@ -3,7 +3,7 @@ import FocusTrap from "focus-trap-react";
 
 // https://www.w3.org/TR/wai-aria-practices/examples/menubar/menubar-1/menubar-1.html = Nav
 // https://www.w3.org/TR/wai-aria-practices/examples/dialog-modal/alertdialog.html = ProjectConfirmDelete
-function ProjectManagedInput(props) {
+export function ProjectManagedInput(props) {
     const input = useRef(null);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ function ProjectManagedInput(props) {
     );
 }
 
-function ProjectSelectButton(props) {
+export function ProjectSelectButton(props) {
     return (
         <button
             className="project"
@@ -35,9 +35,8 @@ function ProjectSelectButton(props) {
     );
 }
 
-function ProjectConfirmDelete(props) {
+export function ProjectConfirmDelete(props) {
     const deny = useRef(null);
-    const confirm = useRef(null);
 
     useEffect(() => {
         deny.current.focus();
@@ -54,7 +53,7 @@ function ProjectConfirmDelete(props) {
 
     return (
         <FocusTrap>
-            <div className="project-delete" aria-role="alertdialog" aria-modal="true" aria-labelledby={`${props.index}-proj-delete-desc`} onKeyDown={handleButtonKeyDown}>
+            <div className="project-delete" role="alertdialog" aria-modal="true" aria-labelledby={`${props.index}-proj-delete-desc`} onKeyDown={handleButtonKeyDown}>
                 <span id={`${props.index}-proj-delete-desc`}>Confirm delete project?</span>
                 <button
                     className="deny-delete-project"
@@ -71,7 +70,6 @@ function ProjectConfirmDelete(props) {
                         props.onDeleteProject(props.index);
                         props.onConfirmingDelete(-1);
                     }}
-                    ref={confirm}
                 >
                     Yes
                 </button>
@@ -80,9 +78,9 @@ function ProjectConfirmDelete(props) {
     );
 }
 
-const Project = React.forwardRef((props, ref) => {
+export const Project = React.forwardRef((props, ref) => {
     return (
-        <li className={props.selected ? "project-selected" : ""} key={props.index} id={"project-" + props.index} aria-selected={props.selected ? "true" : "false"} aria-role="menuitem">
+        <li className={props.selected ? "project-selected" : ""} key={props.index} id={"project-" + props.index} aria-selected={props.selected ? "true" : "false"} role="menuitem">
             <button
                 className="nav-modifier"
                 onClick={() => {
@@ -105,7 +103,7 @@ const Project = React.forwardRef((props, ref) => {
             >
                 <img src="/assets/materialicons/material_delete_offwhite.svg" alt="Delete Project"></img>
             </button>
-            {props.confirmingDelete && <ProjectConfirmDelete index={props.index} onDeleteProject={props.onDeleteProject} onConfirmingDelete={props.onConfirmingDelete} index={props.index} />}
+            {props.confirmingDelete && <ProjectConfirmDelete index={props.index} onDeleteProject={props.onDeleteProject} onConfirmingDelete={props.onConfirmingDelete} />}
         </li>
     );
 });
@@ -119,7 +117,7 @@ export default function Nav(props) {
 
     useEffect(() => {
         firstButtonRefs.current = new Array(props.projects.length);
-    }, props.projects.length);
+    }, [props.projects.length]);
 
     const handleEditingClick = (index) => {
         setEditing((prevEditing) => {
@@ -132,14 +130,17 @@ export default function Nav(props) {
 
     const focusProject = (index) => {
         firstButtonRefs.current[index].focus();
+        return index;
     };
 
     const focusNextProject = (currentIndex) => {
         const nextIndex = currentIndex + 1;
         if (!(firstButtonRefs.current.length <= nextIndex) && firstButtonRefs.current[nextIndex] !== null) {
             focusProject(nextIndex);
+            return nextIndex;
         } else {
             focusProject(0);
+            return 0;
         }
     };
 
@@ -147,8 +148,10 @@ export default function Nav(props) {
         const nextIndex = currentIndex - 1;
         if (nextIndex >= 0 && firstButtonRefs.current[nextIndex] !== null) {
             focusProject(nextIndex);
+            return nextIndex;
         } else {
             focusProject(firstButtonRefs.current.length - 1);
+            return firstButtonRefs.current.length - 1;
         }
     };
 
@@ -169,36 +172,32 @@ export default function Nav(props) {
         switch (event.keyCode) {
             // Arrow right
             case 39:
-                focusNextProject(currentElement);
-                event.preventDefault();
-                break;
-            // Arrow left
-            case 37:
-                focusPreviousProject(currentElement);
-                event.preventDefault();
-                break;
-            // Home
-            case 36:
-                focusProject(0);
-                event.preventDefault();
-                break;
-            // End
-            case 35:
-                focusProject(firstButtonRefs.current.length - 1);
-                event.preventDefault();
-                break;
             // Arrow down
             case 40:
+                event.preventDefault();
+                return focusNextProject(currentElement);
+            // Arrow left
+            case 37:
             // Arrow up
             case 38:
                 event.preventDefault();
-                break;
+                return focusPreviousProject(currentElement);
+            // Home
+            case 36:
+                event.preventDefault();
+                return focusProject(0);
+            // End
+            case 35:
+                event.preventDefault();
+                return focusProject(firstButtonRefs.current.length - 1);
             // Space
             case 32:
                 if (editing === -1) {
                     event.preventDefault();
                 }
-                break;
+                return undefined;
+            default:
+                return undefined;
         }
     };
 
@@ -206,14 +205,15 @@ export default function Nav(props) {
         <FocusTrap active={isOpen}>
             <nav role="navigation" className={isOpen ? "hamburger-menu-expanded" : ""} onKeyDown={handleButtonKeyDown}>
                 <img src="/assets/PalettePickerLogo.svg" alt="Palette Picker Logo" />
-                <button className="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded={isOpen ? "true" : "false"} aria-controls="hamburger-menu-body" onClick={() => setIsOpen(!isOpen)}>
+                <button className="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded={isOpen ? "true" : "false"} aria-controls="hamburger-menu-body" onClick={() => setIsOpen((prevOpen) => !prevOpen)}>
                     <img src="/assets/materialicons/material_menu_offwhite.svg" alt="" />
                 </button>
                 <div id="hamburger-menu-body" aria-label="Your Projects" hidden={!isOpen}>
-                    <ul aria-role="menubar" aria-label="Load, delete, and edit PalettePicker saved projects">
+                    <ul role="menubar" aria-label="Load, delete, and edit PalettePicker saved projects">
                         {props.projects.map((project, index) => {
                             return (
                                 <Project
+                                    key={project}
                                     ref={(el) => (firstButtonRefs.current[index] = el)}
                                     selected={index === props.activeProject}
                                     index={index}

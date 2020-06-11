@@ -143,7 +143,11 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
     it("Moves selected li element based on text typing", () => {
         simulateKeyDown(dropdownWrapper, "button", "arrow_up");
-        simulateKeyDown(dropdownWrapper, "ul", "t");
+        simulateKeyDown(dropdownWrapper, "ul", "t", {
+            key: {
+                concat: () => "t",
+            },
+        });
 
         // 4th li is selected
         dropdownWrapper.update();

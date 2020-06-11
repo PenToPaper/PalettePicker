@@ -1,6 +1,6 @@
 import { act } from "react-dom/test-utils";
 
-export default function simulateKeyDown(wrapper, elementName, key) {
+export default function simulateKeyDown(wrapper, elementName, key, eventWrapper = {}) {
     let keyCode = 0;
     switch (key) {
         case "enter":
@@ -37,7 +37,8 @@ export default function simulateKeyDown(wrapper, elementName, key) {
             keyCode = 84;
             break;
     }
+    eventWrapper.keyCode = keyCode;
     act(() => {
-        wrapper.find(elementName).simulate("keydown", { keyCode, key });
+        wrapper.find(elementName).simulate("keydown", eventWrapper);
     });
 }
