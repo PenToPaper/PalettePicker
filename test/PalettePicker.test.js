@@ -87,18 +87,41 @@ describe("PalletePicker complementary color functions work properly", () => {
         expect(getSwatches().Main[1].colorData).toEqual([90, 100, 100]);
     });
 
+    it("Still functions after adding extra sections", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+
+        const prevNewSection = getSwatches()["New Section 2"];
+
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 2, { hex: "#AA00FF", colorData: [280, 100, 100] });
+
+        expect(Object.keys(getSwatches()["New Name"])).toHaveLength(2);
+        expect(getSwatches()["New Name"][2].hex).toEqual("#AA00FF");
+        expect(getSwatches()["New Name"][2].colorData).toEqual([280, 100, 100]);
+
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
+
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(getSwatches()["New Section 2"]).toEqual(prevNewSection);
+    });
+
     it("No longer restricts to color schemes when not active", () => {
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
 
-        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+        const previousIndexTwo = Object.assign({}, getSwatches()["New Name"][2]);
 
-        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
 
-        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
-        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
 
-        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
-        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+        expect(getSwatches()["New Name"][2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches()["New Name"][2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
 
@@ -158,18 +181,48 @@ describe("PalletePicker triad color functions work properly", () => {
         expect(roundedColorData).toEqual([30, 100, 100]);
     });
 
+    it("Still functions after adding extra sections", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+
+        const prevNewSection = getSwatches()["New Section 2"];
+
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#8000FF", colorData: [270, 100, 100] });
+
+        expect(Object.keys(getSwatches()["New Name"])).toHaveLength(3);
+
+        let roundedColorData = getSwatches()["New Name"][1].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#8000FF");
+        expect(roundedColorData).toEqual([270, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][2].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][2].hex).toEqual("#FF8000");
+        expect(roundedColorData).toEqual([30, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][3].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][3].hex).toEqual("#00FF80");
+        expect(roundedColorData).toEqual([150, 100, 100]);
+
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(getSwatches()["New Section 2"]).toEqual(prevNewSection);
+    });
+
     it("No longer restricts to color schemes when not active", () => {
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
 
-        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+        const previousIndexTwo = Object.assign({}, getSwatches()["New Name"][2]);
 
-        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
 
-        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
-        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
 
-        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
-        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+        expect(getSwatches()["New Name"][2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches()["New Name"][2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
 
@@ -193,7 +246,7 @@ describe("PalletePicker split complementary color functions work properly", () =
         expect(getSwatches().Main[1].hex).toEqual("#9A33FF");
     });
 
-    it("Restricts swatch color changes to triad color scheme while active with changes to first index color", () => {
+    it("Restricts swatch color changes to split complementary color scheme while active with changes to first index color", () => {
         appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#8000FF", colorData: [270, 100, 100] });
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(3);
@@ -211,7 +264,7 @@ describe("PalletePicker split complementary color functions work properly", () =
         expect(roundedColorData).toEqual([120, 100, 100]);
     });
 
-    it("Restricts swatch color changes to triad color scheme while active with changes to second index color", () => {
+    it("Restricts swatch color changes to split complementary color scheme while active with changes to second index color", () => {
         appWrapper.find("PaletteHeader").prop("onChange")("Main", 2, { hex: "#8000FF", colorData: [270, 100, 100] });
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(3);
@@ -229,18 +282,48 @@ describe("PalletePicker split complementary color functions work properly", () =
         expect(roundedColorData).toEqual([120, 100, 100]);
     });
 
+    it("Still functions after adding extra sections", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+
+        const prevNewSection = getSwatches()["New Section 2"];
+
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#8000FF", colorData: [270, 100, 100] });
+
+        expect(Object.keys(getSwatches()["New Name"])).toHaveLength(3);
+
+        let roundedColorData = getSwatches()["New Name"][1].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#8000FF");
+        expect(roundedColorData).toEqual([270, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][2].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][2].hex).toEqual("#FFFF00");
+        expect(roundedColorData).toEqual([60, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][3].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][3].hex).toEqual("#00FF00");
+        expect(roundedColorData).toEqual([120, 100, 100]);
+
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(getSwatches()["New Section 2"]).toEqual(prevNewSection);
+    });
+
     it("No longer restricts to color schemes when not active", () => {
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
 
-        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+        const previousIndexTwo = Object.assign({}, getSwatches()["New Name"][2]);
 
-        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
 
-        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
-        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
 
-        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
-        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+        expect(getSwatches()["New Name"][2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches()["New Name"][2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
 
@@ -301,7 +384,7 @@ describe("PalletePicker analogous color functions work properly with 4 swatches"
         expect(roundedColorData).toEqual([321, 100, 100]);
     });
 
-    it("Restricts swatch color changes to triad color scheme while active with changes to second index color", () => {
+    it("Restricts swatch color changes to analogous color scheme while active with changes to second index color", () => {
         appWrapper.find("PaletteHeader").prop("onChange")("Main", 2, { hex: "#0015FF", colorData: [235, 100, 100] });
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
@@ -323,18 +406,52 @@ describe("PalletePicker analogous color functions work properly with 4 swatches"
         expect(roundedColorData).toEqual([16, 100, 100]);
     });
 
+    it("Still functions after adding extra sections", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+
+        const prevNewSection = getSwatches()["New Section 2"];
+
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 2, { hex: "#3C00FF", colorData: [254, 100, 100] });
+
+        expect(Object.keys(getSwatches()["New Name"])).toHaveLength(4);
+
+        let roundedColorData = getSwatches()["New Name"][1].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#004FFF");
+        expect(roundedColorData).toEqual([221, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][2].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][2].hex).toEqual("#3C00FF");
+        expect(roundedColorData).toEqual([254, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][3].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][3].hex).toEqual("#C600FF");
+        expect(roundedColorData).toEqual([287, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][4].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][4].hex).toEqual("#FF00AE");
+        expect(roundedColorData).toEqual([319, 100, 100]);
+
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(getSwatches()["New Section 2"]).toEqual(prevNewSection);
+    });
+
     it("No longer restricts to color schemes when not active", () => {
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
 
-        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+        const previousIndexTwo = Object.assign({}, getSwatches()["New Name"][2]);
 
-        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
 
-        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
-        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
 
-        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
-        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+        expect(getSwatches()["New Name"][2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches()["New Name"][2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
 
@@ -414,18 +531,56 @@ describe("PalletePicker analogous color functions work properly with 5 swatches"
         expect(roundedColorData).toEqual([21, 100, 100]);
     });
 
+    it("Still functions after adding extra sections", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+
+        const prevNewSection = getSwatches()["New Section 2"];
+
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 3, { hex: "#AA00FF", colorData: [280, 100, 100] });
+
+        expect(Object.keys(getSwatches()["New Name"])).toHaveLength(5);
+
+        let roundedColorData = getSwatches()["New Name"][1].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#00FFD2");
+        expect(roundedColorData).toEqual([169, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][2].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][2].hex).toEqual("#0041FF");
+        expect(roundedColorData).toEqual([225, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][3].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][3].hex).toEqual("#AA00FF");
+        expect(roundedColorData).toEqual([280, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][4].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][4].hex).toEqual("#FF0069");
+        expect(roundedColorData).toEqual([335, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][5].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][5].hex).toEqual("#FF8200");
+        expect(roundedColorData).toEqual([31, 100, 100]);
+
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(getSwatches()["New Section 2"]).toEqual(prevNewSection);
+    });
+
     it("No longer restricts to color schemes when not active", () => {
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
 
-        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+        const previousIndexTwo = Object.assign({}, getSwatches()["New Name"][2]);
 
-        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
 
-        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
-        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
 
-        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
-        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+        expect(getSwatches()["New Name"][2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches()["New Name"][2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
 
@@ -452,7 +607,7 @@ describe("PalletePicker Rectangle color functions work properly on click and dra
         expect(getSwatches().Main[1].hex).toEqual("#FFEE33");
     });
 
-    it("Restricts swatch color changes to analogous color scheme while active with changes to first index color", () => {
+    it("Restricts swatch color changes to rectangular color scheme while active with changes to first index color", () => {
         appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#66CC51", colorData: [110, 60, 80] });
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
@@ -474,7 +629,7 @@ describe("PalletePicker Rectangle color functions work properly on click and dra
         expect(roundedColorData).toEqual([0, 60, 80]);
     });
 
-    it("Restricts swatch color changes to triad color scheme while active with changes to second index color", () => {
+    it("Restricts swatch color changes to rectangular color scheme while active with changes to second index color", () => {
         appWrapper.find("PaletteHeader").prop("onChange")("Main", 2, { hex: "#006AFF", colorData: [215, 100, 100] });
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
@@ -496,18 +651,52 @@ describe("PalletePicker Rectangle color functions work properly on click and dra
         expect(roundedColorData).toEqual([35, 100, 100]);
     });
 
+    it("Still functions after adding extra sections", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+
+        const prevNewSection = getSwatches()["New Section 2"];
+
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 2, { hex: "#0040FF", colorData: [225, 100, 100] });
+
+        expect(Object.keys(getSwatches()["New Name"])).toHaveLength(4);
+
+        let roundedColorData = getSwatches()["New Name"][1].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#00FF95");
+        expect(roundedColorData).toEqual([155, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][2].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][2].hex).toEqual("#0040FF");
+        expect(roundedColorData).toEqual([225, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][3].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][3].hex).toEqual("#FF006A");
+        expect(roundedColorData).toEqual([335, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][4].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][4].hex).toEqual("#FFBF00");
+        expect(roundedColorData).toEqual([45, 100, 100]);
+
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(getSwatches()["New Section 2"]).toEqual(prevNewSection);
+    });
+
     it("No longer restricts to color schemes when not active", () => {
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
 
-        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+        const previousIndexTwo = Object.assign({}, getSwatches()["New Name"][2]);
 
-        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
 
-        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
-        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
 
-        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
-        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+        expect(getSwatches()["New Name"][2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches()["New Name"][2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
 
@@ -555,11 +744,12 @@ describe("PalletePicker Rectangle color functions work properly on SHIFT click a
         roundedColorData = getSwatches().Main[4].colorData.map(Math.round);
         expect(getSwatches().Main[4].hex).toEqual("#B852CC");
         expect(roundedColorData).toEqual([290, 60, 80]);
+
+        let preventDefaultPlaceholder = jest.fn();
+        appWrapper.find({ className: "body" }).prop("onKeyUp")({ keyCode: 16, preventDefault: preventDefaultPlaceholder });
     });
 
     it("Continues to use new arcOne and arcTwo on normal click and drag", () => {
-        let preventDefaultPlaceholder = jest.fn();
-        appWrapper.find({ className: "body" }).prop("onKeyUp")({ keyCode: 16, preventDefault: preventDefaultPlaceholder });
         appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FF00FF", colorData: [300, 100, 100] });
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
@@ -581,18 +771,52 @@ describe("PalletePicker Rectangle color functions work properly on SHIFT click a
         expect(roundedColorData).toEqual([160, 100, 100]);
     });
 
+    it("Still functions after adding extra sections", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("Main", "New Name");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+
+        const prevNewSection = getSwatches()["New Section 2"];
+
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#FF00FF", colorData: [310, 100, 100] });
+
+        expect(Object.keys(getSwatches()["New Name"])).toHaveLength(4);
+
+        let roundedColorData = getSwatches()["New Name"][1].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#FF00D4");
+        expect(roundedColorData).toEqual([310, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][2].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][2].hex).toEqual("#FF002B");
+        expect(roundedColorData).toEqual([350, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][3].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][3].hex).toEqual("#00FF2A");
+        expect(roundedColorData).toEqual([130, 100, 100]);
+
+        roundedColorData = getSwatches()["New Name"][4].colorData.map(Math.round);
+        expect(getSwatches()["New Name"][4].hex).toEqual("#00FFD5");
+        expect(roundedColorData).toEqual([170, 100, 100]);
+
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(getSwatches()["New Section 2"]).toEqual(prevNewSection);
+    });
+
     it("No longer restricts to color schemes when not active", () => {
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
 
-        const previousIndexTwo = Object.assign({}, getSwatches().Main[2]);
+        const previousIndexTwo = Object.assign({}, getSwatches()["New Name"][2]);
 
-        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
+        appWrapper.find("PaletteHeader").prop("onChange")("New Name", 1, { hex: "#55FF00", colorData: [100, 100, 100] });
 
-        expect(getSwatches().Main[1].hex).toEqual("#55FF00");
-        expect(getSwatches().Main[1].colorData).toEqual([100, 100, 100]);
+        expect(getSwatches()["New Name"][1].hex).toEqual("#55FF00");
+        expect(getSwatches()["New Name"][1].colorData).toEqual([100, 100, 100]);
 
-        expect(getSwatches().Main[2].hex).toEqual(previousIndexTwo.hex);
-        expect(getSwatches().Main[2].colorData).toEqual(previousIndexTwo.colorData);
+        expect(getSwatches()["New Name"][2].hex).toEqual(previousIndexTwo.hex);
+        expect(getSwatches()["New Name"][2].colorData).toEqual(previousIndexTwo.colorData);
     });
 });
 
@@ -674,11 +898,31 @@ describe("PalettePicker section modifiers function properly", () => {
         expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
     });
 
+    it("Changes swatch section name within selection if applicable", () => {
+        // From previous test
+        expect(appWrapper.find("PaletteHeader").prop("selection").sectionName).toEqual("New Name");
+        expect(appWrapper.find("PaletteHeader").prop("selection").index).toEqual(1);
+    });
+
     it("Adds new sections", () => {
         appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
         expect(Object.keys(getSwatches())).toHaveLength(2);
         expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
         expect(Object.keys(getSwatches()).includes("Main")).toEqual(false);
         expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+    });
+
+    it("Refuses to change section name if name already exists in list", () => {
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("New Name", "New Section 2");
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        expect(Object.keys(getSwatches()).includes("New Name")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("New Section 2")).toEqual(true);
+    });
+
+    it("Changes swatch section name within selection if applicable", () => {
+        // From previous test
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("New Section 2", "New Section 3");
+        expect(appWrapper.find("PaletteHeader").prop("selection").sectionName).toEqual("New Name");
+        expect(appWrapper.find("PaletteHeader").prop("selection").index).toEqual(1);
     });
 });

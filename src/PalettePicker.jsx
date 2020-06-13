@@ -430,17 +430,29 @@ export default function PalettePicker() {
     };
 
     const changeSectionName = (oldSection, newSection) => {
-        setSaveSwatches((prevSwatches) => {
-            const newSwatches = Object.keys(prevSwatches).reduce((swatchObj, sectionName) => {
-                if (sectionName !== oldSection) {
-                    swatchObj[sectionName] = prevSwatches[sectionName];
-                } else {
-                    swatchObj[newSection] = prevSwatches[sectionName];
+        // If the newSection name doesn't already exist
+        if (!Object.keys(swatches).includes(newSection)) {
+            setSelection((prevSelection) => {
+                if (prevSelection.sectionName === oldSection) {
+                    const newSelection = Object.assign(prevSelection);
+                    newSelection.sectionName = newSection;
+                    return newSelection;
                 }
-                return swatchObj;
-            }, {});
-            return newSwatches;
-        });
+                return prevSelection;
+            });
+
+            setSaveSwatches((prevSwatches) => {
+                const newSwatches = Object.keys(prevSwatches).reduce((swatchObj, sectionName) => {
+                    if (sectionName !== oldSection) {
+                        swatchObj[sectionName] = prevSwatches[sectionName];
+                    } else {
+                        swatchObj[newSection] = prevSwatches[sectionName];
+                    }
+                    return swatchObj;
+                }, {});
+                return newSwatches;
+            });
+        }
     };
 
     const addSwatchSection = () => {
