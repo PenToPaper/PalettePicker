@@ -925,4 +925,15 @@ describe("PalettePicker section modifiers function properly", () => {
         expect(appWrapper.find("PaletteHeader").prop("selection").sectionName).toEqual("New Name");
         expect(appWrapper.find("PaletteHeader").prop("selection").index).toEqual(1);
     });
+
+    it("Generates unique section names on section generation", () => {
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("New Section 3", "New Section 1");
+        appWrapper.find("PaletteBody").prop("onSectionNameChange")("New Name", "New Section 3");
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(3);
+        expect(Object.keys(getSwatches()).includes("New Section 1")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("New Section 3")).toEqual(true);
+        expect(Object.keys(getSwatches()).includes("New Section 4")).toEqual(true);
+    });
 });

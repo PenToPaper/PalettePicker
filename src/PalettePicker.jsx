@@ -421,14 +421,6 @@ export default function PalettePicker() {
         });
     };
 
-    const generateUniqueIndex = (sectionName) => {
-        let uniqueIndex = 0;
-        do {
-            uniqueIndex = Date.now() * 10000 + Math.round(Math.random() * 10000);
-        } while (uniqueIndex in swatches[sectionName]);
-        return uniqueIndex;
-    };
-
     const changeSectionName = (oldSection, newSection) => {
         // If the newSection name doesn't already exist
         if (!Object.keys(swatches).includes(newSection)) {
@@ -456,14 +448,32 @@ export default function PalettePicker() {
     };
 
     const addSwatchSection = () => {
+        const generateUniqueIndex = (prevSwatches) => {
+            const swatchKeys = Object.keys(prevSwatches);
+            let uniqueIndex = swatchKeys.length;
+            do {
+                uniqueIndex++;
+            } while (swatchKeys.includes(`New Section ${uniqueIndex}`));
+            return `New Section ${uniqueIndex}`;
+        };
+
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches["New Section " + (Object.keys(newSwatches).length + 1)] = { 1: { hex: "#FFFFFF", colorData: [0, 0, 100] } };
+            const newSwatchSectionName = generateUniqueIndex(prevSwatches);
+            newSwatches[newSwatchSectionName] = { 1: { hex: "#FFFFFF", colorData: [0, 0, 100] } };
             return newSwatches;
         });
     };
 
     const addSwatch = (sectionName) => {
+        const generateUniqueIndex = (prevSwatches, sectionName) => {
+            let uniqueIndex = 0;
+            do {
+                uniqueIndex = Date.now() * 10000 + Math.round(Math.random() * 10000);
+            } while (uniqueIndex in prevSwatches[sectionName]);
+            return uniqueIndex;
+        };
+
         if (sectionName === getFirstSectionName(swatches) && harmony !== "None") {
             if (harmony === "Analogous") {
                 addAnalogousSwatch();
@@ -473,7 +483,7 @@ export default function PalettePicker() {
 
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches[sectionName][generateUniqueIndex(sectionName)] = { hex: "#FFFFFF", colorData: colorUtils.getColorDataFromHex("#FFFFFF", colorMode) };
+            newSwatches[sectionName][generateUniqueIndex(prevSwatches, sectionName)] = { hex: "#FFFFFF", colorData: colorUtils.getColorDataFromHex("#FFFFFF", colorMode) };
             return newSwatches;
         });
     };
