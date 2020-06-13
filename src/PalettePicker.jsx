@@ -120,19 +120,23 @@ export default function PalettePicker() {
         setSaveColorMode(newColorMode);
     };
 
+    const getFirstSectionName = (swatchList) => {
+        return Object.keys(swatchList)[0];
+    };
+
     const colorifyStartColorHarmony = (prevSwatches) => {
-        if (prevSwatches.Main[1].hex === "#FFFFFF") {
+        if (prevSwatches[getFirstSectionName(prevSwatches)][1].hex === "#FFFFFF") {
             // First swatch is white, make it purple, so the line of complementary colors is straight up and down
             return { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
         }
         // First swatch has actual color, create complementary colors from this
-        return prevSwatches.Main[1];
+        return prevSwatches[getFirstSectionName(prevSwatches)][1];
     };
 
     const startRectangleColorHarmony = () => {
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches.Main = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
+            newSwatches[[getFirstSectionName(prevSwatches)]] = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
 
             return newSwatches;
         });
@@ -143,7 +147,7 @@ export default function PalettePicker() {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
 
-            newSwatches.Main = colorUtils.getHSBAnalogousColor(rootColor, 15, Object.keys(prevSwatches.Main).length, colorMode);
+            newSwatches[getFirstSectionName(prevSwatches)] = colorUtils.getHSBAnalogousColor(rootColor, 15, Object.keys(prevSwatches[getFirstSectionName(prevSwatches)]).length, colorMode);
 
             return newSwatches;
         });
@@ -154,7 +158,7 @@ export default function PalettePicker() {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
 
-            newSwatches.Main = {
+            newSwatches[getFirstSectionName(prevSwatches)] = {
                 1: rootColor,
                 2: colorUtils.getHSBComplementaryColor(rootColor, colorMode),
             };
@@ -170,7 +174,7 @@ export default function PalettePicker() {
 
             const triadColors = colorUtils.getHSBTriadColor(rootColor, colorMode);
 
-            newSwatches.Main = {
+            newSwatches[getFirstSectionName(prevSwatches)] = {
                 1: rootColor,
                 2: triadColors[0],
                 3: triadColors[1],
@@ -187,7 +191,7 @@ export default function PalettePicker() {
 
             const splitColors = colorUtils.getHSBSplitComplementaryColor(rootColor, colorMode);
 
-            newSwatches.Main = {
+            newSwatches[getFirstSectionName(prevSwatches)] = {
                 1: rootColor,
                 2: splitColors[0],
                 3: splitColors[1],
@@ -199,17 +203,18 @@ export default function PalettePicker() {
 
     const restrictRectangle = (index, newColor) => {
         setSaveSwatches((prevSwatches) => {
+            const firstSectionName = getFirstSectionName(prevSwatches);
             const isShiftPressed = pressedKeys.includes(16);
 
-            const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[index].colorData, colorMode);
+            const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][index].colorData, colorMode);
             const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
 
             let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
 
             // A in Q1, B in Q2, etc
-            const aHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
-            const bHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[2].colorData, colorMode);
-            const cHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[3].colorData, colorMode);
+            const aHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][1].colorData, colorMode);
+            const bHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][2].colorData, colorMode);
+            const cHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][3].colorData, colorMode);
 
             let arcOne = Math.abs(colorUtils.getAbsoluteHueDiff(bHSB, aHSB));
             let arcTwo = Math.abs(colorUtils.getAbsoluteHueDiff(cHSB, bHSB));
@@ -235,32 +240,38 @@ export default function PalettePicker() {
                 rotation -= hueDiff;
             }
 
-            let newMainSwatches = colorUtils.getRectangleColor(rotation, arcOne, arcTwo, newColorHSB[1], newColorHSB[2], colorMode);
-            return { Main: newMainSwatches };
+            const newSectionSwatches = colorUtils.getRectangleColor(rotation, arcOne, arcTwo, newColorHSB[1], newColorHSB[2], colorMode);
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches[firstSectionName] = newSectionSwatches;
+            return newSwatches;
         });
     };
 
     const addAnalogousSwatch = () => {
         setSaveSwatches((prevSwatches) => {
-            const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
-            const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[2].colorData, colorMode);
+            const firstSectionName = getFirstSectionName(prevSwatches);
+            const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][1].colorData, colorMode);
+            const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][2].colorData, colorMode);
 
             const analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
 
-            const centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches.Main, colorMode);
-            const newMainSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches.Main).length + 1, colorMode);
+            const centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches[firstSectionName], colorMode);
+            const newSectionSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches[firstSectionName]).length + 1, colorMode);
 
-            return { Main: newMainSwatches };
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches[firstSectionName] = newSectionSwatches;
+            return newSwatches;
         });
     };
 
     const restrictAnalogous = (index, newColor) => {
         setSaveSwatches((prevSwatches) => {
+            const firstSectionName = getFirstSectionName(prevSwatches);
             const indexInt = parseInt(index);
 
-            const colorLength = Object.keys(prevSwatches.Main).length;
+            const colorLength = Object.keys(prevSwatches[firstSectionName]).length;
 
-            const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[index].colorData, colorMode);
+            const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][index].colorData, colorMode);
             const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
 
             let hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
@@ -289,8 +300,8 @@ export default function PalettePicker() {
             // this being a problem, because the user dragged the 160 node in reality to 162, so the following formula scales this back, so that this is true
             hueDiff = (hueDiff * 2) / (treatLike - 1);
 
-            const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
-            const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[2].colorData, colorMode);
+            const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][1].colorData, colorMode);
+            const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][2].colorData, colorMode);
 
             let analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
             if (indexInt > colorLength / 2 + 0.5) {
@@ -307,30 +318,33 @@ export default function PalettePicker() {
                 analogousHueDiff = analogousHueDiff - hueDiff;
             }
 
-            let newMainSwatches = {};
-            let centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches.Main, colorMode);
+            let newSectionSwatches = {};
+            let centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches[firstSectionName], colorMode);
             centerColorHSB[1] = newColorHSB[1];
             centerColorHSB[2] = newColorHSB[2];
             if (indexInt === colorLength / 2 + 0.5) {
                 centerColorHSB[0] = newColorHSB[0];
             }
-            newMainSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches.Main).length, colorMode);
+            newSectionSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches[firstSectionName]).length, colorMode);
 
-            return { Main: newMainSwatches };
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches[firstSectionName] = newSectionSwatches;
+            return newSwatches;
         });
     };
 
     const restrictTriplets = (index, newColor, colorDataFunction, genericHarmonyFunction) => {
         setSaveSwatches((prevSwatches) => {
+            const firstSectionName = getFirstSectionName(prevSwatches);
             let tripletColors;
             let indexOne;
             if (index !== "1") {
                 // compare swatches[index] to newColor
-                const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[index].colorData, colorMode);
+                const prevColorHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][index].colorData, colorMode);
                 const newColorHSB = colorUtils.getHSBFromColorData(newColor.colorData, colorMode);
                 const hueDiff = colorUtils.getAbsoluteHueDiff(prevColorHSB, newColorHSB);
 
-                const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches.Main[1].colorData, colorMode);
+                const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][1].colorData, colorMode);
                 let indexOneColorData = indexOneHSB.concat();
                 indexOneColorData[0] = (indexOneColorData[0] + hueDiff + 360) % 360;
                 indexOneColorData[1] = newColorHSB[1];
@@ -347,12 +361,14 @@ export default function PalettePicker() {
                 tripletColors = genericHarmonyFunction(newColor, colorMode);
             }
 
-            let newMainSwatches = {};
-            newMainSwatches[1] = indexOne;
-            newMainSwatches[2] = tripletColors[0];
-            newMainSwatches[3] = tripletColors[1];
+            let newSectionSwatches = {};
+            newSectionSwatches[1] = indexOne;
+            newSectionSwatches[2] = tripletColors[0];
+            newSectionSwatches[3] = tripletColors[1];
 
-            return { Main: newMainSwatches };
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches[firstSectionName] = newSectionSwatches;
+            return newSwatches;
         });
     };
 
@@ -367,9 +383,10 @@ export default function PalettePicker() {
     const restrictComplement = (index, newColor) => {
         const changeIndex = index === "1" ? 2 : 1;
         setSaveSwatches((prevSwatches) => {
+            const firstSectionName = getFirstSectionName(prevSwatches);
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches.Main[index] = newColor;
-            newSwatches.Main[changeIndex] = colorUtils.getHSBComplementaryColor(newColor, colorMode);
+            newSwatches[firstSectionName][index] = newColor;
+            newSwatches[firstSectionName][changeIndex] = colorUtils.getHSBComplementaryColor(newColor, colorMode);
             return newSwatches;
         });
     };
@@ -435,7 +452,7 @@ export default function PalettePicker() {
     };
 
     const addSwatch = (sectionName) => {
-        if (sectionName === "Main" && harmony !== "None") {
+        if (sectionName === getFirstSectionName(swatches) && harmony !== "None") {
             if (harmony === "Analogous") {
                 addAnalogousSwatch();
             }
@@ -548,7 +565,7 @@ export default function PalettePicker() {
             },
         };
 
-        setSwatches(newSwatches);
+        setSaveSwatches(newSwatches);
         setHarmony(newHarmony);
         setColorMode(newColorMode);
 
