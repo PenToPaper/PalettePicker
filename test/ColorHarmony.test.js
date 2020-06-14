@@ -402,3 +402,8 @@ describe("WCAG Contrast checker accurately represents contrast ratio between two
         expect(isInMarginOfError(colorUtils.getWCAGContrast({ hex: "#FFC9FB", colorData: [0, 21, 2, 0] }, { hex: "#87FFB5", colorData: [47, 0, 29, 0] }, "CMYK"), 1.13)).toEqual(true);
     });
 });
+
+describe("getAbsoluteHueDiff returns correct hue diff", () => {
+    expect(colorUtils.getAbsoluteHueDiff([359, 100, 100], [271, 100, 100])).toEqual(-88);
+    expect(colorUtils.getAbsoluteHueDiff([360, 100, 100], [270, 100, 100])).toEqual(-90);
+});

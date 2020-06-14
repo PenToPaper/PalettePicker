@@ -201,7 +201,11 @@ export function getCenterColorHSB(colors, colorMode = "HSB") {
     } else {
         const colorOne = getHSBFromColorData(colors[numNodes / 2].colorData, colorMode);
         const colorTwo = getHSBFromColorData(colors[numNodes / 2 + 1].colorData, colorMode);
-        return [(colorOne[0] + colorTwo[0]) / 2, colorOne[1], colorOne[2]];
+        const absDiff = Math.abs(getAbsoluteHueDiff(colorOne, colorTwo));
+        if ((colorOne[0] + absDiff) % 360 === colorTwo[0]) {
+            return [(colorOne[0] + absDiff / 2) % 360, colorOne[1], colorOne[2]];
+        }
+        return [(colorTwo[0] + absDiff / 2) % 360, colorOne[1], colorOne[2]];
     }
 }
 

@@ -303,7 +303,7 @@ export default function PalettePicker() {
             const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][1].colorData, colorMode);
             const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][2].colorData, colorMode);
 
-            let analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
+            let analogousHueDiff = Math.abs(colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB));
             if (indexInt > colorLength / 2 + 0.5) {
                 // To the right of center
                 // Moving hue right increases analogousHueDiff
@@ -325,6 +325,10 @@ export default function PalettePicker() {
             if (indexInt === colorLength / 2 + 0.5) {
                 centerColorHSB[0] = newColorHSB[0];
             }
+
+            // Break in case of bug
+            // console.log(indexOneHSB[0], indexTwoHSB[0], colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB), centerColorHSB, Math.abs(analogousHueDiff));
+
             newSectionSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches[firstSectionName]).length, colorMode);
 
             const newSwatches = Object.assign({}, prevSwatches);
