@@ -16,6 +16,8 @@ export default function SwatchSection(props) {
                     <Swatch
                         key={swatchKey}
                         selected={props.selection == swatchKey}
+                        deleteButton={true}
+                        onDeleteSwatch={() => props.onDeleteSwatch(props.sectionName, swatchKey)}
                         colorMode={props.colorMode}
                         color={props.swatches[swatchKey]}
                         onChange={(newColor) => {

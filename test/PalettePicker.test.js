@@ -937,3 +937,207 @@ describe("PalettePicker section modifiers function properly", () => {
         expect(Object.keys(getSwatches()).includes("New Section 4")).toEqual(true);
     });
 });
+
+describe("PalettePicker allows for deletion of swatches, but restricts when color harmonies are active", () => {
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Allows for the deletion of swatches when no harmonies are active", () => {
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "1");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("4")).toEqual(true);
+    });
+
+    it("Does not allow deletion of the last swatch in a given category", () => {
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "3");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(1);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "4");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(1);
+        expect(Object.keys(getSwatches().Main).includes("4")).toEqual(true);
+    });
+
+    it("Moves selection to a new swatch on deletion of a selected swatch", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        const swatches = getSwatches().Main;
+        const previouslySelectedKey = Object.keys(swatches)[3];
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        // Select 4th swatch
+        appWrapper.find("PaletteHeader").prop("onSelectSwatch")({ sectionName: "Main", index: previouslySelectedKey });
+
+        expect(appWrapper.find("PaletteHeader").prop("selection").sectionName).toEqual("Main");
+        expect(appWrapper.find("PaletteHeader").prop("selection").index).toEqual(previouslySelectedKey);
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", previouslySelectedKey);
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+
+        expect(appWrapper.find("PaletteHeader").prop("selection").sectionName).toEqual("Main");
+        expect(appWrapper.find("PaletteHeader").prop("selection").index).toEqual("4");
+    });
+
+    it("Does not allow deletion of swatches when all color harmonies except analogous are selected", () => {
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Complementary");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Triad");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Split-Complementary");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Rectangle");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+    });
+
+    it("Allows for deletion on analogous color harmony up to 2 swatches left", () => {
+        const getAverageHue = (swatchSection) => {
+            let totalHue = 0;
+            for (let i = 0; i < Object.keys(swatchSection).length; i++) {
+                totalHue += swatchSection[i + 1].colorData[0];
+            }
+            return totalHue / Object.keys(swatchSection).length;
+        };
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Analogous");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        const averageHue = getAverageHue(getSwatches().Main);
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+
+        const averageHueAfter = getAverageHue(getSwatches().Main);
+
+        expect(averageHue).toEqual(averageHueAfter);
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+    });
+});
+
+describe("Restricts swatch indexes based on color harmony", () => {
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Initializes all complementary harmonies properly, selection is moved if needed", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "1");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "3");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "4");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(2);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(false);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Complementary");
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+    });
+
+    it("Initializes all triad harmonies properly, selection is moved if needed", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "1");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "3");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "4");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(false);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Triad");
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+    });
+
+    it("Initializes all split complementary harmonies properly, selection is moved if needed", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "1");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "3");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "4");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(3);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(false);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Split-Complementary");
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+    });
+
+    it("Initializes all rectangle harmonies properly, selection is moved if needed", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+        appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "1");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "3");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatch")("Main", "4");
+
+        expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(false);
+        expect(Object.keys(getSwatches().Main).includes("4")).toEqual(false);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Rectangle");
+        expect(Object.keys(getSwatches().Main).includes("1")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("2")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("3")).toEqual(true);
+        expect(Object.keys(getSwatches().Main).includes("4")).toEqual(true);
+
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("None");
+    });
+});

@@ -320,7 +320,7 @@ export default function Swatch(props) {
                     aria-label="Delete Swatch"
                     onClick={(event) => {
                         event.stopPropagation();
-                        props.onDeleteSwatch(event);
+                        props.onDeleteSwatch();
                     }}
                 >
                     <img src="/assets/materialicons/material_delete_offblack.svg" alt="" />

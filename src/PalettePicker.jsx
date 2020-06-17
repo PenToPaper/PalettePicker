@@ -53,6 +53,9 @@ export default function PalettePicker() {
             case "swatches":
                 oldLocalStorage.swatches = newData;
                 break;
+            case "selection":
+                oldLocalStorage.selection = newData;
+                break;
         }
 
         window.localStorage.setItem(projects[activeProject], JSON.stringify(oldLocalStorage));
@@ -74,6 +77,7 @@ export default function PalettePicker() {
             setColorMode(storedJson.colorMode);
             setHarmony(storedJson.harmony);
             setSwatches(storedJson.swatches);
+            setSelection(storedJson.selection);
         }
     };
 
@@ -102,6 +106,19 @@ export default function PalettePicker() {
         setLocalStorage("colorMode", newColorMode);
     };
 
+    const setSaveSelection = (newSelection) => {
+        if (typeof newSelection === "function") {
+            setSelection((prevSelection) => {
+                const newSelectionCallback = newSelection(prevSelection);
+                setLocalStorage("selection", newSelectionCallback);
+                return newSelectionCallback;
+            });
+        } else {
+            setSelection(newSelection);
+            setLocalStorage("selection", newSelection);
+        }
+    };
+
     const recalculateColors = (newColorMode) => {
         setSaveSwatches((prevSwatches) => {
             // Loop through all the colors
@@ -125,18 +142,47 @@ export default function PalettePicker() {
     };
 
     const colorifyStartColorHarmony = (prevSwatches) => {
-        if (prevSwatches[getFirstSectionName(prevSwatches)][1].hex === "#FFFFFF") {
+        const sectionOne = getFirstSectionName(prevSwatches);
+        const indexOne = getSwatchIndexFromSimpleIndex(sectionOne, 0, prevSwatches);
+        if (prevSwatches[getFirstSectionName(prevSwatches)][indexOne].hex === "#FFFFFF") {
             // First swatch is white, make it purple, so the line of complementary colors is straight up and down
             return { hex: "#9A33FF", colorData: colorUtils.getColorDataFromHex("#9A33FF", colorMode) };
         }
         // First swatch has actual color, create complementary colors from this
-        return prevSwatches[getFirstSectionName(prevSwatches)][1];
+        return prevSwatches[sectionOne][indexOne];
+    };
+
+    const getSwatchIndexFromSimpleIndex = (sectionName, simpleIndex, swatchesInstance = null) => {
+        if (swatchesInstance === null) {
+            return Object.keys(swatches[sectionName])[simpleIndex];
+        }
+        return Object.keys(swatchesInstance[sectionName])[simpleIndex];
+    };
+
+    const getSimpleZeroIndexFromSwatchIndex = (sectionName, index, swatchesInstance = null) => {
+        if (swatchesInstance === null) {
+            return Object.keys(swatches[sectionName]).indexOf(index);
+        }
+        return Object.keys(swatchesInstance[sectionName]).indexOf(index);
     };
 
     const startRectangleColorHarmony = () => {
         setSaveSwatches((prevSwatches) => {
+            const firstSection = getFirstSectionName(prevSwatches);
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches[[getFirstSectionName(prevSwatches)]] = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
+            newSwatches[firstSection] = colorUtils.getRectangleColor(0, 70, 110, 80, 100, colorMode);
+
+            setSaveSelection((prevSelection) => {
+                if (prevSelection.sectionName === firstSection) {
+                    const prevInt = getSimpleZeroIndexFromSwatchIndex(firstSection, prevSelection.index, prevSwatches);
+                    if (prevInt > -1 && prevInt < 4) {
+                        return { sectionName: prevSelection.sectionName, index: (prevInt + 1).toString() };
+                    } else {
+                        return { sectionName: prevSelection.sectionName, index: "1" };
+                    }
+                }
+                return prevSelection;
+            });
 
             return newSwatches;
         });
@@ -144,10 +190,23 @@ export default function PalettePicker() {
 
     const startAnalogousColorHarmony = () => {
         setSaveSwatches((prevSwatches) => {
+            const firstSection = getFirstSectionName(prevSwatches);
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
 
-            newSwatches[getFirstSectionName(prevSwatches)] = colorUtils.getHSBAnalogousColor(rootColor, 15, Object.keys(prevSwatches[getFirstSectionName(prevSwatches)]).length, colorMode);
+            newSwatches[firstSection] = colorUtils.getHSBAnalogousColor(rootColor, 15, Object.keys(prevSwatches[firstSection]).length, colorMode);
+
+            setSaveSelection((prevSelection) => {
+                if (prevSelection.sectionName === firstSection) {
+                    const prevInt = getSimpleZeroIndexFromSwatchIndex(firstSection, prevSelection.index, prevSwatches);
+                    if (prevInt > -1 && prevInt < Object.keys(prevSwatches[firstSection]).length + 1) {
+                        return { sectionName: prevSelection.sectionName, index: (prevInt + 1).toString() };
+                    } else {
+                        return { sectionName: prevSelection.sectionName, index: "1" };
+                    }
+                }
+                return prevSelection;
+            });
 
             return newSwatches;
         });
@@ -157,11 +216,24 @@ export default function PalettePicker() {
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
+            const firstSection = getFirstSectionName(prevSwatches);
 
-            newSwatches[getFirstSectionName(prevSwatches)] = {
+            newSwatches[firstSection] = {
                 1: rootColor,
                 2: colorUtils.getHSBComplementaryColor(rootColor, colorMode),
             };
+
+            setSaveSelection((prevSelection) => {
+                if (prevSelection.sectionName === firstSection) {
+                    const prevInt = getSimpleZeroIndexFromSwatchIndex(firstSection, prevSelection.index, prevSwatches);
+                    if (prevInt > -1 && prevInt < 2) {
+                        return { sectionName: prevSelection.sectionName, index: (prevInt + 1).toString() };
+                    } else {
+                        return { sectionName: prevSelection.sectionName, index: "1" };
+                    }
+                }
+                return prevSelection;
+            });
 
             return newSwatches;
         });
@@ -171,14 +243,27 @@ export default function PalettePicker() {
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
+            const firstSection = getFirstSectionName(prevSwatches);
 
             const triadColors = colorUtils.getHSBTriadColor(rootColor, colorMode);
 
-            newSwatches[getFirstSectionName(prevSwatches)] = {
+            newSwatches[firstSection] = {
                 1: rootColor,
                 2: triadColors[0],
                 3: triadColors[1],
             };
+
+            setSaveSelection((prevSelection) => {
+                if (prevSelection.sectionName === firstSection) {
+                    const prevInt = getSimpleZeroIndexFromSwatchIndex(firstSection, prevSelection.index, prevSwatches);
+                    if (prevInt > -1 && prevInt < 3) {
+                        return { sectionName: prevSelection.sectionName, index: (prevInt + 1).toString() };
+                    } else {
+                        return { sectionName: prevSelection.sectionName, index: "1" };
+                    }
+                }
+                return prevSelection;
+            });
 
             return newSwatches;
         });
@@ -188,14 +273,27 @@ export default function PalettePicker() {
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const rootColor = colorifyStartColorHarmony(prevSwatches);
+            const firstSection = getFirstSectionName(prevSwatches);
 
             const splitColors = colorUtils.getHSBSplitComplementaryColor(rootColor, colorMode);
 
-            newSwatches[getFirstSectionName(prevSwatches)] = {
+            newSwatches[firstSection] = {
                 1: rootColor,
                 2: splitColors[0],
                 3: splitColors[1],
             };
+
+            setSaveSelection((prevSelection) => {
+                if (prevSelection.sectionName === firstSection) {
+                    const prevInt = getSimpleZeroIndexFromSwatchIndex(firstSection, prevSelection.index, prevSwatches);
+                    if (prevInt > -1 && prevInt < 3) {
+                        return { sectionName: prevSelection.sectionName, index: (prevInt + 1).toString() };
+                    } else {
+                        return { sectionName: prevSelection.sectionName, index: "1" };
+                    }
+                }
+                return prevSelection;
+            });
 
             return newSwatches;
         });
@@ -257,6 +355,23 @@ export default function PalettePicker() {
 
             const centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches[firstSectionName], colorMode);
             const newSectionSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches[firstSectionName]).length + 1, colorMode);
+
+            const newSwatches = Object.assign({}, prevSwatches);
+            newSwatches[firstSectionName] = newSectionSwatches;
+            return newSwatches;
+        });
+    };
+
+    const deleteAnalogousSwatch = () => {
+        setSaveSwatches((prevSwatches) => {
+            const firstSectionName = getFirstSectionName(prevSwatches);
+            const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][1].colorData, colorMode);
+            const indexTwoHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][2].colorData, colorMode);
+
+            const analogousHueDiff = colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB);
+
+            const centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches[firstSectionName], colorMode);
+            const newSectionSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches[firstSectionName]).length - 1, colorMode);
 
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches[firstSectionName] = newSectionSwatches;
@@ -428,7 +543,7 @@ export default function PalettePicker() {
     const changeSectionName = (oldSection, newSection) => {
         // If the newSection name doesn't already exist
         if (!Object.keys(swatches).includes(newSection)) {
-            setSelection((prevSelection) => {
+            setSaveSelection((prevSelection) => {
                 if (prevSelection.sectionName === oldSection) {
                     const newSelection = Object.assign(prevSelection);
                     newSelection.sectionName = newSection;
@@ -492,6 +607,32 @@ export default function PalettePicker() {
         });
     };
 
+    const deleteSwatch = (sectionName, swatchIndex) => {
+        if (Object.keys(swatches[sectionName]).length > 1) {
+            if (harmony === "None" || getFirstSectionName(swatches) !== sectionName) {
+                const updateSelection = (newSwatches) => {
+                    setSaveSelection((prevSelection) => {
+                        if (prevSelection.sectionName === sectionName && prevSelection.index === swatchIndex) {
+                            const newSelection = Object.assign(prevSelection);
+                            newSelection.index = Object.keys(newSwatches[sectionName])[0];
+                            return newSelection;
+                        }
+                        return prevSelection;
+                    });
+                };
+
+                setSaveSwatches((prevSwatches) => {
+                    const newSwatches = Object.assign({}, prevSwatches);
+                    delete newSwatches[sectionName][swatchIndex];
+                    updateSelection(newSwatches);
+                    return newSwatches;
+                });
+            } else if (harmony === "Analogous" && Object.keys(swatches[sectionName]).length > 2) {
+                deleteAnalogousSwatch();
+            }
+        }
+    };
+
     const colorHarmony = (harmonyName) => {
         switch (harmonyName) {
             case "Complementary":
@@ -519,7 +660,7 @@ export default function PalettePicker() {
 
     const selectColor = (selectionObject) => {
         if (modal.status !== "selecting") {
-            setSelection(selectionObject);
+            setSaveSelection(selectionObject);
             return;
         }
 
@@ -625,7 +766,17 @@ export default function PalettePicker() {
                     onColorMode={recalculateColors}
                     onColorHarmony={colorHarmony}
                 />
-                <PaletteBody onSectionNameChange={changeSectionName} swatches={swatches} colorMode={colorMode} selection={selection} onSelectSwatch={selectColor} onAddSwatch={addSwatch} onAddSwatchSection={addSwatchSection} onChange={changeColor} />
+                <PaletteBody
+                    onDeleteSwatch={deleteSwatch}
+                    onSectionNameChange={changeSectionName}
+                    swatches={swatches}
+                    colorMode={colorMode}
+                    selection={selection}
+                    onSelectSwatch={selectColor}
+                    onAddSwatch={addSwatch}
+                    onAddSwatchSection={addSwatchSection}
+                    onChange={changeColor}
+                />
             </main>
             {modal.status === "shown" && modal.type === "compare" && <CompareColors onModalClose={exitModal} colorMode={colorMode} swatches={swatches} selection={modal.selection} onChange={changeColor} />}
             {modal.status === "shown" && modal.type === "contrast" && <ContrastCheck onModalClose={exitModal} colorMode={colorMode} swatches={swatches} selection={modal.selection} onChange={changeColor} />}
