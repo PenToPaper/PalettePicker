@@ -1042,6 +1042,94 @@ describe("PalettePicker allows for deletion of swatches, but restricts when colo
     });
 });
 
+describe("PalettePicker allows for deletion of swatch sections", () => {
+    const appWrapper = shallow(<PalettePicker />);
+
+    const getSwatches = () => {
+        return appWrapper.find("PaletteHeader").prop("swatches");
+    };
+
+    it("Allows for deletion of swatch sections", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 2");
+        expect(Object.keys(getSwatches())).toHaveLength(1);
+    });
+
+    it("Moves selection to first swatch section first index if selected swatch is in deleted section", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+
+        expect(Object.keys(getSwatches())).toHaveLength(4);
+        expect(Object.keys(getSwatches()).indexOf("New Section 4")).toEqual(3);
+
+        appWrapper.find("PaletteHeader").prop("onSelectSwatch")({ sectionName: "New Section 4", index: 1 });
+
+        expect(appWrapper.find("PaletteBody").prop("selection")).toEqual({ sectionName: "New Section 4", index: 1 });
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 4");
+
+        expect(appWrapper.find("PaletteBody").prop("selection")).toEqual({ sectionName: "Main", index: "1" });
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 3");
+    });
+
+    it("Does not move selection if selected swatch is NOT in deleted section", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+
+        expect(Object.keys(getSwatches())).toHaveLength(4);
+        expect(Object.keys(getSwatches()).indexOf("New Section 4")).toEqual(3);
+
+        appWrapper.find("PaletteHeader").prop("onSelectSwatch")({ sectionName: "New Section 4", index: 1 });
+
+        expect(appWrapper.find("PaletteBody").prop("selection")).toEqual({ sectionName: "New Section 4", index: 1 });
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 3");
+
+        expect(appWrapper.find("PaletteBody").prop("selection")).toEqual({ sectionName: "New Section 4", index: 1 });
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 2");
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 4");
+    });
+
+    it("Updates color harmony to None if deleting the first index swatch section", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Complementary");
+
+        expect(appWrapper.find("PaletteHeader").prop("colorHarmony")).toEqual("Complementary");
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("Main");
+
+        expect(Object.keys(getSwatches())).toHaveLength(1);
+        expect(appWrapper.find("PaletteHeader").prop("colorHarmony")).toEqual("None");
+    });
+
+    it("Does not update color harmony if deleting the second index swatch section with a color harmony rule activated", () => {
+        appWrapper.find("PaletteBody").prop("onAddSwatchSection")();
+        appWrapper.find("PaletteHeader").prop("onColorHarmony")("Complementary");
+
+        expect(appWrapper.find("PaletteHeader").prop("colorHarmony")).toEqual("Complementary");
+        expect(Object.keys(getSwatches())).toHaveLength(2);
+
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 3");
+
+        expect(Object.keys(getSwatches())).toHaveLength(1);
+        expect(appWrapper.find("PaletteHeader").prop("colorHarmony")).toEqual("Complementary");
+    });
+
+    it("Does not allow for deletion of swatch section if it is the last remaining one", () => {
+        expect(Object.keys(getSwatches())).toHaveLength(1);
+        appWrapper.find("PaletteBody").prop("onDeleteSwatchSection")("New Section 2");
+        expect(Object.keys(getSwatches())).toHaveLength(1);
+    });
+});
+
 describe("Restricts swatch indexes based on color harmony", () => {
     const appWrapper = shallow(<PalettePicker />);
 

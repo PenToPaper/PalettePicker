@@ -5,12 +5,23 @@ import AddSwatch from "./AddSwatch";
 export default function SwatchSection(props) {
     return (
         <section>
-            <input
-                value={props.sectionName}
-                onChange={(e) => {
-                    props.onSectionNameChange(props.sectionName, e.target.value);
-                }}
-            />
+            <div className="swatch-section-header">
+                <input
+                    value={props.sectionName}
+                    onChange={(e) => {
+                        props.onSectionNameChange(props.sectionName, e.target.value);
+                    }}
+                />
+                <button
+                    aria-label="Delete Swatch Section"
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        props.onDeleteSwatchSection(props.sectionName);
+                    }}
+                >
+                    <img src="/assets/materialicons/material_delete_offblack.svg" alt="" />
+                </button>
+            </div>
             {Object.keys(props.swatches).map((swatchKey) => {
                 return (
                     <Swatch

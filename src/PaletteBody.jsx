@@ -16,6 +16,7 @@ export default function PaletteBody(props) {
                         onAddSwatch={() => {
                             props.onAddSwatch(swatchKey);
                         }}
+                        onDeleteSwatchSection={props.onDeleteSwatchSection}
                         onDeleteSwatch={props.onDeleteSwatch}
                         onSectionNameChange={props.onSectionNameChange}
                         onChange={(index, newColor) => {

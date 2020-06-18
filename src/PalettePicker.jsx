@@ -749,6 +749,34 @@ export default function PalettePicker() {
         });
     };
 
+    const deleteSwatchSection = (sectionName) => {
+        if (Object.keys(swatches).length > 1) {
+            if (Object.keys(swatches).indexOf(sectionName) === 0 && harmony !== "None") {
+                // Update harmony to none, and delete swatch section
+                setHarmony("None");
+                setLocalStorage("harmony", "None");
+            }
+
+            const updateSelection = (newSwatches) => {
+                setSaveSelection((prevSelection) => {
+                    if (prevSelection.sectionName === sectionName) {
+                        const newSection = Object.keys(newSwatches)[0];
+                        const newIndex = Object.keys(newSwatches[newSection])[0];
+                        return { sectionName: newSection, index: newIndex };
+                    }
+                    return prevSelection;
+                });
+            };
+
+            setSaveSwatches((prevSwatches) => {
+                const newSwatches = Object.assign({}, prevSwatches);
+                delete newSwatches[sectionName];
+                updateSelection(newSwatches);
+                return newSwatches;
+            });
+        }
+    };
+
     return (
         <div className={isNavOpen ? "body body-fixed" : "body"} tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
             <Nav isOpen={isNavOpen} toggleIsOpen={toggleNav} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
@@ -775,6 +803,7 @@ export default function PalettePicker() {
                     onSelectSwatch={selectColor}
                     onAddSwatch={addSwatch}
                     onAddSwatchSection={addSwatchSection}
+                    onDeleteSwatchSection={deleteSwatchSection}
                     onChange={changeColor}
                 />
             </main>

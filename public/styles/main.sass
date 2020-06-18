@@ -256,16 +256,25 @@ section
     padding: 0px 32px 32px
     &:first-child
         padding-top: 32px
-    input
-        @include focus-outline($back-dark)
-        font-size: 32px
-        font-weight: 600
-        color: $back-dark
+    .swatch-section-header
+        display: flex
         margin-bottom: 16px
-        display: block
-        background-color: transparent
-        border: none
-        width: 100%
+        button
+            background-color: transparent
+            border: none
+            padding: 0
+            width: 30px
+            img
+                width: 100%
+        input
+            @include focus-outline($back-dark)
+            font-size: 32px
+            font-weight: 600
+            color: $back-dark
+            display: block
+            background-color: transparent
+            border: none
+            width: 100%
     &::after
         content: ""
         clear: both
