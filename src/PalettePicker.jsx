@@ -732,7 +732,7 @@ export default function PalettePicker() {
             },
         };
 
-        setSaveSwatches(newSwatches);
+        setSwatches(newSwatches);
         setHarmony(newHarmony);
         setColorMode(newColorMode);
 
@@ -744,7 +744,7 @@ export default function PalettePicker() {
 
             const newProjects = prevProjects.concat();
             newProjects.push("My Project " + newIndex);
-            window.localStorage.setItem("My Project " + newIndex, JSON.stringify({ harmony: newHarmony, swatches: newSwatches, colorMode: newColorMode }));
+            window.localStorage.setItem("My Project " + newIndex, JSON.stringify({ selection: selection, harmony: newHarmony, swatches: newSwatches, colorMode: newColorMode }));
             return newProjects;
         });
     };
