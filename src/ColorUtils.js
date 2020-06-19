@@ -40,7 +40,7 @@ export function getHexFromColorData(colorData, colorMode) {
     return newColorData;
 }
 
-export function getColorDataFromHSB(hsbColorData, colorMode) {
+function getColorDataFromHSB(hsbColorData, colorMode) {
     let newColorData;
     // ["HSB", "HSL", "RGB", "CMYK"]
     switch (colorMode) {
@@ -83,12 +83,6 @@ export function getColorRotatedHSB(hsbColorData, degreeClockwise) {
     let newHsb = hsbColorData.concat();
     newHsb[0] = (newHsb[0] + degreeClockwise + 360) % 360;
     return newHsb;
-}
-
-export function getColorRotatedHex(colorHex, degreeClockwise) {
-    let hsl = convert.hex.hsl(colorHex);
-    hsl[0] = (hsl[0] + degreeClockwise) % 360;
-    return convert.hsl.hex(hsl);
 }
 
 function getSplitComplementaryColorFromHSBRoot(hsbRoot, colorMode = "HSB") {
