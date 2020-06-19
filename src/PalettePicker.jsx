@@ -716,6 +716,9 @@ export default function PalettePicker() {
     const projectDelete = (index) => {
         setProjects((prevProjects) => {
             window.localStorage.removeItem(prevProjects[index]);
+            if (index === activeProject) {
+                selectProject(0);
+            }
             const newProjects = prevProjects.filter((project, i) => i !== index);
             if (newProjects.length === 0) {
                 addProject();
