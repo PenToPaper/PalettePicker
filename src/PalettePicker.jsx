@@ -749,6 +749,7 @@ export default function PalettePicker() {
             const newProjects = prevProjects.concat();
             newProjects.push("My Project " + newIndex);
             window.localStorage.setItem("My Project " + newIndex, JSON.stringify({ selection: selection, harmony: newHarmony, swatches: newSwatches, colorMode: newColorMode }));
+            setActiveProject(newProjects.length - 1);
             return newProjects;
         });
     };
