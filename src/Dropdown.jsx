@@ -117,12 +117,13 @@ export default function Dropdown(props) {
     };
 
     const handleButtonClick = (event) => {
-        setIsOpen((prevIsOpen) => !prevIsOpen);
+        setIsOpen(true);
     };
 
     const handleLiClick = (event, index) => {
         setSelectedOption(index);
         setIsOpen(false);
+        buttonDom.current.focus();
     };
 
     const handleBlur = (event) => {
@@ -132,7 +133,7 @@ export default function Dropdown(props) {
     return (
         <div className={`dropdown ${isOpen ? "dropdown-expanded" : ""}`}>
             <button
-                onClick={handleButtonClick}
+                onMouseDown={handleButtonClick}
                 onKeyDown={handleButtonKeyDown}
                 ref={buttonDom}
                 id={props.labelId + "-selected"}

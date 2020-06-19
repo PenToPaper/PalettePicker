@@ -1,6 +1,7 @@
 import React from "react";
 import Dropdown from "../src/Dropdown";
 import { shallow, mount } from "enzyme";
+import { act } from "react-dom/test-utils";
 import simulateKeyDown from "./SimulateKeyDown";
 
 describe("Dropdown renders default state correctly based on props", () => {
@@ -166,21 +167,28 @@ describe("Dropdown renders updated states properly based on mouse input", () => 
     const dropdownWrapper = mount(<Dropdown labelId="dropdown-color-harmony" options={optionsList} selectedOption={"None"} onChange={callback} />);
 
     it("Expands the dropdown menu on button click", () => {
-        dropdownWrapper.find("button").simulate("click");
-
+        act(() => {
+            dropdownWrapper.find("button").prop("onMouseDown")();
+        });
+        dropdownWrapper.update();
         expectMenuOpen(dropdownWrapper, true);
     });
 
     it("Retracts the dropdown menu on 2nd button click", () => {
-        dropdownWrapper.find("button").simulate("click");
-
+        act(() => {
+            dropdownWrapper.find("ul").prop("onBlur")();
+        });
+        dropdownWrapper.update();
         expectMenuOpen(dropdownWrapper, false);
     });
 
     it("Changes li selection based on li click", () => {
-        dropdownWrapper.find("button").simulate("click");
-        dropdownWrapper.find("#dropdown-color-harmony-2").simulate("click");
+        act(() => {
+            dropdownWrapper.find("button").prop("onMouseDown")();
+            dropdownWrapper.find("#dropdown-color-harmony-2").prop("onClick")({});
+        });
 
+        dropdownWrapper.update();
         expectLiSelected(dropdownWrapper, 2);
         expect(callback).toHaveBeenLastCalledWith(optionsList[2]);
         expectMenuOpen(dropdownWrapper, false);
