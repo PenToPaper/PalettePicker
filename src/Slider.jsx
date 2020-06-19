@@ -12,25 +12,18 @@ export function getPercentFilled(sliderWidth, relativeMouseX) {
 
 export default function Slider(props) {
     const containerDom = useRef(null);
+    const innerDom = useRef(null);
 
     const getRelativeMouseX = (absoluteMouseX) => {
         return containerDom.current ? absoluteMouseX - containerDom.current.getBoundingClientRect().left : 0;
     };
 
     const incrementValue = (incrementBy) => {
-        if (props.value + incrementBy <= props.max) {
-            props.onChange(props.value + incrementBy);
-        } else if (props.value !== props.max) {
-            props.onChange(props.max);
-        }
+        props.onChange((props.value + incrementBy) % props.max);
     };
 
     const decrementValue = (decrementBy) => {
-        if (props.value - decrementBy >= props.min) {
-            props.onChange(props.value - decrementBy);
-        } else if (props.value !== props.min) {
-            props.onChange(props.min);
-        }
+        props.onChange((props.value - decrementBy + props.max) % props.max);
     };
 
     const handleKeyDown = (event) => {
@@ -80,9 +73,9 @@ export default function Slider(props) {
 
     const handleMouseUp = (event) => {
         handleDrag(event);
-
         document.removeEventListener("mousemove", handleDrag);
         document.removeEventListener("mouseup", handleMouseUp);
+        innerDom.current.focus();
     };
 
     const handleDrag = (event) => {
@@ -93,11 +86,13 @@ export default function Slider(props) {
         handleDrag(event);
         document.addEventListener("mousemove", handleDrag);
         document.addEventListener("mouseup", handleMouseUp);
+        innerDom.current.focus();
     };
 
     return (
         <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleStartDrag} style={props.style}>
             <div
+                ref={innerDom}
                 onKeyDown={handleKeyDown}
                 style={{ left: (props.value / props.max) * 100 + "%" }}
                 className={props.innerClass}

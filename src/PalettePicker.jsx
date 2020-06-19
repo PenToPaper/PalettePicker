@@ -433,6 +433,10 @@ export default function PalettePicker() {
                 analogousHueDiff = analogousHueDiff - hueDiff;
             }
 
+            if (analogousHueDiff < 0.5) {
+                analogousHueDiff = 0.5;
+            }
+
             let newSectionSwatches = {};
             let centerColorHSB = colorUtils.getCenterColorHSB(prevSwatches[firstSectionName], colorMode);
             centerColorHSB[1] = newColorHSB[1];
@@ -442,7 +446,7 @@ export default function PalettePicker() {
             }
 
             // Break in case of bug
-            // console.log(indexOneHSB[0], indexTwoHSB[0], colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB), centerColorHSB, Math.abs(analogousHueDiff));
+            // console.log(indexOneHSB[0], indexTwoHSB[0], colorUtils.getAbsoluteHueDiff(indexOneHSB, indexTwoHSB), analogousHueDiff, centerColorHSB);
 
             newSectionSwatches = colorUtils.getAnalogousColorFromHSBCenter(centerColorHSB, Math.abs(analogousHueDiff), Object.keys(prevSwatches[firstSectionName]).length, colorMode);
 
