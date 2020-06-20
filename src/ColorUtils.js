@@ -268,3 +268,7 @@ export function getWCAGContrast(colorOne, colorTwo, colorMode) {
         return (L2 + 0.05) / (L1 + 0.05);
     }
 }
+
+export function isValidHex(hex) {
+    return hex.search(/^#?[0-9A-F]{6}$/i) !== -1;
+}

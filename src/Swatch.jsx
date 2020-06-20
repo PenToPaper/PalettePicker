@@ -1,24 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Slider from "./Slider";
 import convert from "color-convert";
+import { isValidHex, getColorDataFromHex } from "./ColorUtils.js";
 
 const arrayCopyAndReplace = (originalArray, index, newValue) => {
     const newArray = originalArray.concat();
     newArray[index] = newValue;
     return newArray;
-};
-
-const getColorDataFromHex = (hex, colorMode) => {
-    switch (colorMode) {
-        case "RGB":
-            return convert.hex.rgb(hex);
-        case "HSB":
-            return convert.hex.hsv(hex);
-        case "HSL":
-            return convert.hex.hsl(hex);
-        case "CMYK":
-            return convert.hex.cmyk(hex);
-    }
 };
 
 export function HsbModifier(props) {
@@ -292,6 +280,16 @@ export function CmykModifier(props) {
 }
 
 export default function Swatch(props) {
+    const [hex, setHex] = useState(props.color.hex);
+    let hexBeforeEdit = useRef(props.color.hex);
+
+    useEffect(() => {
+        if (props.color.hex !== hexBeforeEdit) {
+            setHex(props.color.hex);
+            hexBeforeEdit = props.color.hex;
+        }
+    }, [props.color]);
+
     const getCorrectModifier = () => {
         switch (props.colorMode) {
             case "RGB":
@@ -312,9 +310,34 @@ export default function Swatch(props) {
         }
     };
 
+    const hasValidHexDigits = (hex) => {
+        return hex.search(/^#[0-9A-F]{0,6}$/i) !== -1;
+    };
+
+    const onInputChange = (newHex) => {
+        let newHexFormatted = newHex.toUpperCase();
+
+        if (newHexFormatted.indexOf("#") === -1) {
+            newHexFormatted = "#" + newHexFormatted;
+        }
+
+        if (isValidHex(newHex)) {
+            // Publish new result
+            props.onChange({ hex: newHexFormatted, colorData: getColorDataFromHex(newHexFormatted, props.colorMode) });
+        } else if (hasValidHexDigits(newHex)) {
+            setHex(newHexFormatted);
+        }
+    };
+
     return (
         <div className={`swatch ${props.selected ? "swatch-selected" : ""}`} tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color.hex }} onClick={props.onSelect} onKeyDown={handleKeyDown}>
-            <h6>{props.color.hex}</h6>
+            <input
+                value={hex}
+                onChange={(e) => {
+                    onInputChange(e.target.value);
+                }}
+                aria-label="Modify Swatch Hex Code"
+            />
             {props.deleteButton && (
                 <button
                     aria-label="Delete Swatch"
