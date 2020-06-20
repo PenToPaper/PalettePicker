@@ -286,7 +286,7 @@ export default function Swatch(props) {
     useEffect(() => {
         if (props.color.hex !== hexBeforeEdit) {
             setHex(props.color.hex);
-            hexBeforeEdit = props.color.hex;
+            hexBeforeEdit.current = props.color.hex;
         }
     }, [props.color]);
 
@@ -321,12 +321,16 @@ export default function Swatch(props) {
             newHexFormatted = "#" + newHexFormatted;
         }
 
-        if (isValidHex(newHex)) {
+        if (isValidHex(newHexFormatted)) {
             // Publish new result
             props.onChange({ hex: newHexFormatted, colorData: getColorDataFromHex(newHexFormatted, props.colorMode) });
-        } else if (hasValidHexDigits(newHex)) {
+        } else if (hasValidHexDigits(newHexFormatted)) {
             setHex(newHexFormatted);
         }
+    };
+
+    const onBlur = (event) => {
+        setHex(hexBeforeEdit.current);
     };
 
     return (
@@ -336,6 +340,7 @@ export default function Swatch(props) {
                 onChange={(e) => {
                     onInputChange(e.target.value);
                 }}
+                onBlur={onBlur}
                 aria-label="Modify Swatch Hex Code"
             />
             {props.deleteButton && (

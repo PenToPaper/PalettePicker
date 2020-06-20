@@ -105,7 +105,7 @@ export default function Dropdown(props) {
                 // if last keypress is over 300ms ago
                 const currentTimestamp = Date.now();
                 const keyPressed = event.key.concat();
-                if (search !== "" && currentTimestamp - lastAlphanumericKeypress.current > 500) {
+                if (search.current !== "" && currentTimestamp - lastAlphanumericKeypress.current > 500) {
                     search.current = keyPressed;
                 } else {
                     search.current = search.current + keyPressed;

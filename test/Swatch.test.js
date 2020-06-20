@@ -2,6 +2,7 @@ import React from "react";
 import Swatch, { RgbModifier, HsbModifier, HslModifier, CmykModifier } from "../src/Swatch";
 import { shallow, mount } from "enzyme";
 import simulateKeyDown from "./SimulateKeyDown";
+import { act } from "react-dom/test-utils";
 
 describe("Swatch renders default state correctly based on props", () => {
     const swatchWrapper = shallow(<Swatch selected={false} color={{ hex: "#663333", colorData: [0, 50, 40] }} onChange={() => {}} colorMode={"HSB"} />);
@@ -12,8 +13,8 @@ describe("Swatch renders default state correctly based on props", () => {
         expect(swatchWrapper.find(".swatch").prop("aria-selected")).toEqual(undefined);
 
         // h6
-        expect(swatchWrapper.find("h6")).toHaveLength(1);
-        expect(swatchWrapper.find("h6").text()).toEqual("#663333");
+        expect(swatchWrapper.find("input")).toHaveLength(1);
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#663333");
     });
 
     it("Renders proper color values for hsb on load", () => {
@@ -163,8 +164,9 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
         expect(color).toEqual({ hex: "#663B33", colorData: [10, 50, 40] });
 
         swatchWrapper.setProps({ colorMode: "HSB", color });
+        swatchWrapper.update();
 
-        expect(swatchWrapper.find("h6").text()).toEqual("#663B33");
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#663B33");
         // Would normally be 10, but there is no hex color to properly represent hsb(9, 0.5, 0.4)
         expect(swatchWrapper.find("span").first().text()).toEqual("10");
 
@@ -214,5 +216,98 @@ describe("Swatch calls onSelect prop onClick and on focus-enter", () => {
         expect(callback).toHaveBeenCalledTimes(2);
         swatchWrapper.find(".swatch").prop("onKeyDown")({ keyCode: 12, target: { classList: { contains: () => true } } });
         expect(callback).toHaveBeenCalledTimes(2);
+    });
+});
+
+describe("Swatch hex modifier allows for direct hexcode modificiation", () => {
+    let color = { hex: "#663333", colorData: [0, 50, 40] };
+    const onChangeCallback = jest.fn((newColor) => {
+        color = newColor;
+        swatchWrapper.setProps({ color });
+        swatchWrapper.update();
+    });
+    const swatchWrapper = mount(<Swatch selected={true} color={color} onColorChange={() => {}} colorMode={"HSB"} onSelect={() => {}} onChange={onChangeCallback} />);
+
+    const getChangeObject = (string) => {
+        return { target: { value: string } };
+    };
+
+    it("Input only allows valid hex characters", () => {
+        // Valid hex characters, incomplete hex code
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("#66331"));
+        });
+        swatchWrapper.update();
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#66331");
+
+        // Invalid hex characters
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("#66333Z"));
+        });
+        swatchWrapper.update();
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#66331");
+    });
+
+    it("Limits the length of the input to 6 characters", () => {
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("#6633333"));
+        });
+        swatchWrapper.update();
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#66331");
+    });
+
+    it("Corrects text with upperCase and leading #", () => {
+        // Uppercase
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("#aaaBB"));
+        });
+        swatchWrapper.update();
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#AAABB");
+
+        // Leading #
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("BBBCC"));
+        });
+        swatchWrapper.update();
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#BBBCC");
+    });
+
+    it("When input reaches a valid 6-character hex code, calls callback with accurate new color", () => {
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("#BBBCCC"));
+        });
+        swatchWrapper.update();
+        expect(onChangeCallback).toHaveBeenLastCalledWith({ hex: "#BBBCCC", colorData: [236.47058823529403, 8.333333333333345, 80] });
+        expect(swatchWrapper.find("HsbModifier").prop("color")).toEqual({ hex: "#BBBCCC", colorData: [236.47058823529403, 8.333333333333345, 80] });
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#BBBCCC");
+    });
+
+    it("If state changes while user is inputting, the new state overrides the user's input", () => {
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("#CCC"));
+        });
+        swatchWrapper.update();
+
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#CCC");
+
+        onChangeCallback({ hex: "#AAAAAA", colorData: [0, 0, 67] });
+
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#AAAAAA");
+    });
+
+    it("If focus leaves the input, the last valid hex code to occupy that swatch is re-added", () => {
+        act(() => {
+            swatchWrapper.find("input").prop("onChange")(getChangeObject("#CCC"));
+        });
+        swatchWrapper.update();
+
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#CCC");
+
+        act(() => {
+            swatchWrapper.find("input").prop("onBlur")();
+        });
+        swatchWrapper.update();
+
+        expect(swatchWrapper.find("input").prop("value")).toEqual("#AAAAAA");
     });
 });
