@@ -6,11 +6,12 @@ import { act } from "react-dom/test-utils";
 // Don't make this bit accessible or test it for accessibility.
 // It probably should be hidden from screen readers for now.
 describe("Vertical Slider renders proper div based on props", () => {
-    const sliderWrapper = shallow(<VerticalSlider divClass="brightness-vertical" thumbClass="brightness-thumb" onChange={() => {}} />);
+    const sliderWrapper = shallow(<VerticalSlider divClass="brightness-vertical" value={10} thumbClass="brightness-thumb" onChange={() => {}} />);
 
     it("Renders the element properly", () => {
         expect(sliderWrapper.prop("className")).toEqual("brightness-vertical");
         expect(sliderWrapper.children("div").prop("className")).toEqual("brightness-thumb");
+        expect(sliderWrapper.find(".brightness-thumb").prop("style").top).toEqual("10%");
     });
 });
 

@@ -33,4 +33,9 @@ describe("HueSaturationNode calculates its position properly", () => {
         const circleNodeOne = shallow(<HueSaturationNode circleRadius={200} color={{ hex: "#aaaccc", colorData: [236, 17, 80] }} />);
         expect(circleNodeOne.find(".hue-saturation-node").prop("style").backgroundColor).toEqual("#aaaccc");
     });
+
+    it("Changes class to selected if nodes is marked as selected", () => {
+        const circleNodeOne = shallow(<HueSaturationNode circleRadius={200} selected={true} color={{ hex: "#aaaccc", colorData: [236, 17, 80] }} />);
+        expect(circleNodeOne.find(".node-selected")).toHaveLength(1);
+    });
 });

@@ -106,7 +106,15 @@ export default function HueSaturationCircle(props) {
                 return Object.keys(props.swatches[swatchCategory])
                     .reverse()
                     .map((swatchKey) => {
-                        return <HueSaturationNode colorMode={props.colorMode} key={`${swatchCategory}-${swatchKey}`} circleRadius={circleRadius} color={props.swatches[swatchCategory][swatchKey]} />;
+                        return (
+                            <HueSaturationNode
+                                colorMode={props.colorMode}
+                                key={`${swatchCategory}-${swatchKey}`}
+                                selected={swatchCategory === props.selection.sectionName && swatchKey === props.selection.index}
+                                circleRadius={circleRadius}
+                                color={props.swatches[swatchCategory][swatchKey]}
+                            />
+                        );
                     });
             })}
         </div>
