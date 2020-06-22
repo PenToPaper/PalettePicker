@@ -382,6 +382,7 @@ export default function Swatch(props) {
     return (
         <div className={`swatch ${props.selected ? "swatch-selected" : ""}`} tabIndex="0" aria-selected={props.selected ? "true" : undefined} style={{ backgroundColor: props.color.hex }} onClick={props.onSelect} onKeyDown={handleKeyDown}>
             <input
+                type={"text"}
                 value={hex}
                 onChange={(e) => {
                     onInputChange(e.target.value);
