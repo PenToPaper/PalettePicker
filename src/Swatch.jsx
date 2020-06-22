@@ -1,13 +1,59 @@
 import React, { useState, useEffect, useRef } from "react";
 import Slider from "./Slider";
 import convert from "color-convert";
-import { isValidHex, getColorDataFromHex } from "./ColorUtils.js";
+import { isValidHex, getColorDataFromHex, getHexFromColorData } from "./ColorUtils.js";
 
 const arrayCopyAndReplace = (originalArray, index, newValue) => {
     const newArray = originalArray.concat();
     newArray[index] = newValue;
     return newArray;
 };
+
+export function BufferedNumberInput(props) {
+    const [isEmpty, setIsEmpty] = useState(false);
+
+    useEffect(() => {
+        setIsEmpty(false);
+    }, [props.color.colorData[props.index]]);
+
+    const getNewColor = (newValue) => {
+        const colorData = props.color.colorData.concat();
+        colorData[props.index] = parseInt(newValue);
+        const hex = "#" + getHexFromColorData(colorData, props.colorMode);
+        return { hex, colorData };
+    };
+
+    const onInputChange = (newInput) => {
+        let filteredInput = newInput.replace(/[^0-9]/g, "");
+        const parsedNumber = parseInt(filteredInput);
+
+        if (filteredInput === "") {
+            setIsEmpty(true);
+            return;
+        }
+
+        if (parsedNumber !== NaN && parsedNumber <= props.max && parsedNumber >= props.min) {
+            props.onChange(getNewColor(parsedNumber));
+            setIsEmpty(false);
+        }
+    };
+
+    return (
+        <input
+            className={props.className}
+            type="text"
+            inputMode="numeric"
+            value={isEmpty ? "" : Math.round(props.color.colorData[props.index]).toString()}
+            onChange={(e) => {
+                onInputChange(e.target.value);
+            }}
+            onBlur={() => {
+                setIsEmpty(false);
+            }}
+            aria-label={`Modify this swatch's ${props.modifyingLabel}`}
+        />
+    );
+}
 
 export function HsbModifier(props) {
     const hueSaturated = "#" + convert.hsv.hex(arrayCopyAndReplace(props.color.colorData, 1, 100));
@@ -16,56 +62,56 @@ export function HsbModifier(props) {
 
     return (
         <>
-            <Slider
-                wrapperClass="hue-modifier"
-                innerClass="modifier-thumb"
-                max={360}
-                min={0}
-                value={props.color.colorData[0]}
-                pageIncrement={10}
-                innerLabel="Hue"
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
-                    props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="hue-label" aria-hidden="true">
-                {Math.round(props.color.colorData[0])}
-            </span>
-            <Slider
-                wrapperClass="saturation-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[1]}
-                pageIncrement={5}
-                innerLabel="Saturation"
-                style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
-                    props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="saturation-label" aria-hidden="true">
-                {Math.round(props.color.colorData[1])}
-            </span>
-            <Slider
-                wrapperClass="brightness-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[2]}
-                pageIncrement={5}
-                innerLabel="Brightness"
-                style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueBright})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
-                    props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="brightness-label" aria-hidden="true">
-                {Math.round(props.color.colorData[2])}
-            </span>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="hue-modifier"
+                    innerClass="modifier-thumb"
+                    max={360}
+                    min={0}
+                    value={props.color.colorData[0]}
+                    pageIncrement={10}
+                    innerLabel="Hue"
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={360} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="saturation-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[1]}
+                    pageIncrement={5}
+                    innerLabel="Saturation"
+                    style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"saturation"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="brightness-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[2]}
+                    pageIncrement={5}
+                    innerLabel="Brightness"
+                    style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueBright})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"brightness"} />
+            </div>
         </>
     );
 }
@@ -80,57 +126,57 @@ export function RgbModifier(props) {
 
     return (
         <>
-            <Slider
-                wrapperClass="red-modifier"
-                innerClass="modifier-thumb"
-                max={255}
-                min={0}
-                value={props.color.colorData[0]}
-                pageIncrement={10}
-                innerLabel="Red"
-                style={{ backgroundImage: `linear-gradient(to right, ${redNone}, ${redFull})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
-                    props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="red-label" aria-hidden="true">
-                {Math.round(props.color.colorData[0])}
-            </span>
-            <Slider
-                wrapperClass="green-modifier"
-                innerClass="modifier-thumb"
-                max={255}
-                min={0}
-                value={props.color.colorData[1]}
-                pageIncrement={5}
-                innerLabel="Green"
-                style={{ backgroundImage: `linear-gradient(to right, ${greenNone}, ${greenFull})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
-                    props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="green-label" aria-hidden="true">
-                {Math.round(props.color.colorData[1])}
-            </span>
-            <Slider
-                wrapperClass="blue-modifier"
-                innerClass="modifier-thumb"
-                max={255}
-                min={0}
-                value={props.color.colorData[2]}
-                pageIncrement={5}
-                innerLabel="Blue"
-                style={{ backgroundImage: `linear-gradient(to right, ${blueNone}, ${blueFull})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
-                    props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="blue-label" aria-hidden="true">
-                {Math.round(props.color.colorData[2])}
-            </span>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="red-modifier"
+                    innerClass="modifier-thumb"
+                    max={255}
+                    min={0}
+                    value={props.color.colorData[0]}
+                    pageIncrement={10}
+                    innerLabel="Red"
+                    style={{ backgroundImage: `linear-gradient(to right, ${redNone}, ${redFull})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={255} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"red value"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="green-modifier"
+                    innerClass="modifier-thumb"
+                    max={255}
+                    min={0}
+                    value={props.color.colorData[1]}
+                    pageIncrement={5}
+                    innerLabel="Green"
+                    style={{ backgroundImage: `linear-gradient(to right, ${greenNone}, ${greenFull})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={255} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"green value"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="blue-modifier"
+                    innerClass="modifier-thumb"
+                    max={255}
+                    min={0}
+                    value={props.color.colorData[2]}
+                    pageIncrement={5}
+                    innerLabel="Blue"
+                    style={{ backgroundImage: `linear-gradient(to right, ${blueNone}, ${blueFull})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={255} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"blue value"} />
+            </div>
         </>
     );
 }
@@ -142,56 +188,56 @@ export function HslModifier(props) {
 
     return (
         <>
-            <Slider
-                wrapperClass="hue-modifier"
-                innerClass="modifier-thumb"
-                max={360}
-                min={0}
-                value={props.color.colorData[0]}
-                pageIncrement={10}
-                innerLabel="Hue"
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
-                    props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="hue-label" aria-hidden="true">
-                {Math.round(props.color.colorData[0])}
-            </span>
-            <Slider
-                wrapperClass="saturation-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[1]}
-                pageIncrement={5}
-                innerLabel="Saturation"
-                style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
-                    props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="saturation-label" aria-hidden="true">
-                {Math.round(props.color.colorData[1])}
-            </span>
-            <Slider
-                wrapperClass="lightness-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[2]}
-                pageIncrement={5}
-                innerLabel="Lightness"
-                style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueMediumLightness}, #FFFFFF)` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
-                    props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="lightness-label" aria-hidden="true">
-                {Math.round(props.color.colorData[2])}
-            </span>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="hue-modifier"
+                    innerClass="modifier-thumb"
+                    max={360}
+                    min={0}
+                    value={props.color.colorData[0]}
+                    pageIncrement={10}
+                    innerLabel="Hue"
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={360} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"hue"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="saturation-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[1]}
+                    pageIncrement={5}
+                    innerLabel="Saturation"
+                    style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"saturation"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="lightness-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[2]}
+                    pageIncrement={5}
+                    innerLabel="Lightness"
+                    style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueMediumLightness}, #FFFFFF)` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"lightness"} />
+            </div>
         </>
     );
 }
@@ -207,74 +253,74 @@ export function CmykModifier(props) {
 
     return (
         <>
-            <Slider
-                wrapperClass="cyan-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[0]}
-                pageIncrement={10}
-                innerLabel="Cyan"
-                style={{ backgroundImage: `linear-gradient(to right, ${cyanNone}, ${cyanFull})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
-                    props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="cyan-label" aria-hidden="true">
-                {Math.round(props.color.colorData[0])}
-            </span>
-            <Slider
-                wrapperClass="magenta-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[1]}
-                pageIncrement={5}
-                innerLabel="Magenta"
-                style={{ backgroundImage: `linear-gradient(to right, ${magentaNone}, ${magentaFull})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
-                    props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="magenta-label" aria-hidden="true">
-                {Math.round(props.color.colorData[1])}
-            </span>
-            <Slider
-                wrapperClass="yellow-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[2]}
-                pageIncrement={5}
-                innerLabel="Yellow"
-                style={{ backgroundImage: `linear-gradient(to right, ${yellowNone}, ${yellowFull})` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
-                    props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="yellow-label" aria-hidden="true">
-                {Math.round(props.color.colorData[2])}
-            </span>
-            <Slider
-                wrapperClass="key-modifier"
-                innerClass="modifier-thumb"
-                max={100}
-                min={0}
-                value={props.color.colorData[3]}
-                pageIncrement={5}
-                innerLabel="Key"
-                style={{ backgroundImage: `linear-gradient(to right, ${keyNone}, #000000)` }}
-                onChange={(newValue) => {
-                    const newColorData = arrayCopyAndReplace(props.color.colorData, 3, newValue);
-                    props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
-                }}
-            />
-            <span className="key-label" aria-hidden="true">
-                {Math.round(props.color.colorData[3])}
-            </span>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="cyan-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[0]}
+                    pageIncrement={10}
+                    innerLabel="Cyan"
+                    style={{ backgroundImage: `linear-gradient(to right, ${cyanNone}, ${cyanFull})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"cyan value"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="magenta-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[1]}
+                    pageIncrement={5}
+                    innerLabel="Magenta"
+                    style={{ backgroundImage: `linear-gradient(to right, ${magentaNone}, ${magentaFull})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"magenta value"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="yellow-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[2]}
+                    pageIncrement={5}
+                    innerLabel="Yellow"
+                    style={{ backgroundImage: `linear-gradient(to right, ${yellowNone}, ${yellowFull})` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"yellow value"} />
+            </div>
+            <div className="modifier-row">
+                <Slider
+                    wrapperClass="key-modifier"
+                    innerClass="modifier-thumb"
+                    max={100}
+                    min={0}
+                    value={props.color.colorData[3]}
+                    pageIncrement={5}
+                    innerLabel="Key"
+                    style={{ backgroundImage: `linear-gradient(to right, ${keyNone}, #000000)` }}
+                    onChange={(newValue) => {
+                        const newColorData = arrayCopyAndReplace(props.color.colorData, 3, newValue);
+                        props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
+                    }}
+                />
+                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={3} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"key value"} />
+            </div>
         </>
     );
 }

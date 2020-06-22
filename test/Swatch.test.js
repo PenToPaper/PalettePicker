@@ -1,5 +1,5 @@
 import React from "react";
-import Swatch, { RgbModifier, HsbModifier, HslModifier, CmykModifier } from "../src/Swatch";
+import Swatch, { RgbModifier, HsbModifier, HslModifier, CmykModifier, BufferedNumberInput } from "../src/Swatch";
 import { shallow, mount } from "enzyme";
 import simulateKeyDown from "./SimulateKeyDown";
 import { act } from "react-dom/test-utils";
@@ -166,9 +166,9 @@ describe("Swatch changes color displayed and calls onColorChange callback when a
         swatchWrapper.setProps({ colorMode: "HSB", color });
         swatchWrapper.update();
 
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#663B33");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#663B33");
         // Would normally be 10, but there is no hex color to properly represent hsb(9, 0.5, 0.4)
-        expect(swatchWrapper.find("span").first().text()).toEqual("10");
+        expect(swatchWrapper.find("input").at(1).prop("value")).toEqual("10");
 
         expect(swatchWrapper.find(".swatch").prop("style")).toHaveProperty("backgroundColor");
         expect(swatchWrapper.find(".swatch").prop("style").backgroundColor).toEqual("#663B33");
@@ -235,79 +235,321 @@ describe("Swatch hex modifier allows for direct hexcode modificiation", () => {
     it("Input only allows valid hex characters", () => {
         // Valid hex characters, incomplete hex code
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("#66331"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("#66331"));
         });
         swatchWrapper.update();
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#66331");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#66331");
 
         // Invalid hex characters
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("#66333Z"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("#66333Z"));
         });
         swatchWrapper.update();
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#66331");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#66331");
     });
 
     it("Limits the length of the input to 6 characters", () => {
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("#6633333"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("#6633333"));
         });
         swatchWrapper.update();
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#66331");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#66331");
     });
 
     it("Corrects text with upperCase and leading #", () => {
         // Uppercase
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("#aaaBB"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("#aaaBB"));
         });
         swatchWrapper.update();
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#AAABB");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#AAABB");
 
         // Leading #
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("BBBCC"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("BBBCC"));
         });
         swatchWrapper.update();
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#BBBCC");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#BBBCC");
     });
 
     it("When input reaches a valid 6-character hex code, calls callback with accurate new color", () => {
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("#BBBCCC"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("#BBBCCC"));
         });
         swatchWrapper.update();
         expect(onChangeCallback).toHaveBeenLastCalledWith({ hex: "#BBBCCC", colorData: [236.47058823529403, 8.333333333333345, 80] });
         expect(swatchWrapper.find("HsbModifier").prop("color")).toEqual({ hex: "#BBBCCC", colorData: [236.47058823529403, 8.333333333333345, 80] });
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#BBBCCC");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#BBBCCC");
     });
 
     it("If state changes while user is inputting, the new state overrides the user's input", () => {
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("#CCC"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("#CCC"));
         });
         swatchWrapper.update();
 
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#CCC");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#CCC");
 
         onChangeCallback({ hex: "#AAAAAA", colorData: [0, 0, 67] });
 
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#AAAAAA");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#AAAAAA");
     });
 
     it("If focus leaves the input, the last valid hex code to occupy that swatch is re-added", () => {
         act(() => {
-            swatchWrapper.find("input").prop("onChange")(getChangeObject("#CCC"));
+            swatchWrapper.find("input").at(0).prop("onChange")(getChangeObject("#CCC"));
         });
         swatchWrapper.update();
 
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#CCC");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#CCC");
 
         act(() => {
-            swatchWrapper.find("input").prop("onBlur")();
+            swatchWrapper.find("input").at(0).prop("onBlur")();
         });
         swatchWrapper.update();
 
-        expect(swatchWrapper.find("input").prop("value")).toEqual("#AAAAAA");
+        expect(swatchWrapper.find("input").at(0).prop("value")).toEqual("#AAAAAA");
+    });
+});
+
+describe("BufferedNumberInput is implemented properly", () => {
+    let color = {
+        hex: "#00A3A3",
+        colorData: [179.79, 100, 64],
+    };
+    const onChange = jest.fn((newColor) => {
+        color = newColor;
+        inputWrapper.setProps({ color });
+    });
+    const inputWrapper = shallow(<BufferedNumberInput max={360} min={10} color={color} onChange={onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />);
+    const input = inputWrapper.find("input");
+
+    it("Is constructed peoperly based on given props", () => {
+        expect(input.prop("className")).toEqual("slider-input");
+        expect(input.prop("type")).toEqual("text");
+        expect(input.prop("inputMode")).toEqual("numeric");
+        expect(input.prop("value")).toEqual("180");
+        input.prop("onChange")({ target: { value: "180" } });
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(input.prop("aria-label")).toEqual("Modify this swatch's hue");
+    });
+
+    it("When editing with numbers between min and max, it properly fires onChange", () => {
+        input.prop("onChange")({ target: { value: "200" } });
+        expect(onChange).toHaveBeenCalledTimes(2);
+        expect(onChange).toHaveBeenLastCalledWith({ hex: "#006DA3", colorData: [200, 100, 64] });
+        input.prop("onChange")({ target: { value: "10" } });
+        expect(onChange).toHaveBeenCalledTimes(3);
+        expect(onChange).toHaveBeenLastCalledWith({ hex: "#A31B00", colorData: [10, 100, 64] });
+        input.prop("onChange")({ target: { value: "360" } });
+        expect(onChange).toHaveBeenCalledTimes(4);
+        expect(onChange).toHaveBeenLastCalledWith({ hex: "#A30000", colorData: [360, 100, 64] });
+    });
+
+    it("When editing with numbers beyond min and max, it does not fire onChange", () => {
+        input.prop("onChange")({ target: { value: "1000" } });
+        expect(onChange).toHaveBeenCalledTimes(4);
+        input.prop("onChange")({ target: { value: "9" } });
+        expect(onChange).toHaveBeenCalledTimes(4);
+    });
+
+    it("Does not allow non-numeric characters", () => {
+        // No numeric keys
+        input.prop("onChange")({ target: { value: "!@#$%^&*()-_=+abc" } });
+        expect(onChange).toHaveBeenCalledTimes(4);
+
+        // Numeric mix
+        input.prop("onChange")({ target: { value: "!@#$%^&*()-_=+abc123" } });
+        expect(onChange).toHaveBeenCalledTimes(5);
+        expect(onChange).toHaveBeenLastCalledWith({ hex: "#00A308", colorData: [123, 100, 64] });
+    });
+
+    it("Allows for the entire input to be deleted temporarily, does not fire onChange", () => {
+        input.prop("onChange")({ target: { value: "" } });
+        expect(onChange).toHaveBeenCalledTimes(5);
+        expect(inputWrapper.find("input").prop("value")).toEqual("");
+    });
+
+    const inputWrapperMount = mount(<BufferedNumberInput max={360} min={10} color={color} onChange={onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />);
+    it("Clears blank input when props.color.colorData[index] is updated, then refreshes new value", () => {
+        act(() => {
+            inputWrapperMount.find("input").prop("onChange")({ target: { value: "" } });
+        });
+        inputWrapperMount.update();
+        inputWrapperMount.setProps({ color: { hex: "#00B33C", colorData: [140, 100, 70] } });
+        inputWrapperMount.update();
+        expect(inputWrapperMount.find("input").prop("value")).toEqual("140");
+    });
+
+    it("Is given proper arguments in HsbModifier", () => {
+        const onChange = jest.fn();
+        const colorStart = {
+            hex: "#00B33C",
+            colorData: [140, 100, 70],
+        };
+        const hsbWrapper = shallow(<HsbModifier color={colorStart} onChange={onChange} />);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("max")).toEqual(360);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("max")).toEqual(100);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("max")).toEqual(100);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("onChange")).toEqual(onChange);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("index")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("index")).toEqual(1);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("index")).toEqual(2);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorMode")).toEqual("HSB");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorMode")).toEqual("HSB");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorMode")).toEqual("HSB");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("className")).toEqual("slider-input");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("modifyingLabel")).toEqual("hue");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("modifyingLabel")).toEqual("saturation");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("modifyingLabel")).toEqual("brightness");
+    });
+
+    it("Is given proper arguments in RgbModifier", () => {
+        const onChange = jest.fn();
+        const colorStart = {
+            hex: "#00B33C",
+            colorData: [0, 179, 60],
+        };
+        const hsbWrapper = shallow(<RgbModifier color={colorStart} onChange={onChange} />);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("max")).toEqual(255);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("max")).toEqual(255);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("max")).toEqual(255);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("onChange")).toEqual(onChange);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("index")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("index")).toEqual(1);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("index")).toEqual(2);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorMode")).toEqual("RGB");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorMode")).toEqual("RGB");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorMode")).toEqual("RGB");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("className")).toEqual("slider-input");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("modifyingLabel")).toEqual("red value");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("modifyingLabel")).toEqual("green value");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("modifyingLabel")).toEqual("blue value");
+    });
+
+    it("Is given proper arguments in HslModifier", () => {
+        const onChange = jest.fn();
+        const colorStart = {
+            hex: "#00B33C",
+            colorData: [140, 100, 35],
+        };
+        const hsbWrapper = shallow(<HslModifier color={colorStart} onChange={onChange} />);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("max")).toEqual(360);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("max")).toEqual(100);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("max")).toEqual(100);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("onChange")).toEqual(onChange);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("index")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("index")).toEqual(1);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("index")).toEqual(2);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorMode")).toEqual("HSL");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorMode")).toEqual("HSL");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorMode")).toEqual("HSL");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("className")).toEqual("slider-input");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("modifyingLabel")).toEqual("hue");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("modifyingLabel")).toEqual("saturation");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("modifyingLabel")).toEqual("lightness");
+    });
+
+    it("Is given proper arguments in CmykModifier", () => {
+        const onChange = jest.fn();
+        const colorStart = {
+            hex: "#00B33C",
+            colorData: [70, 0, 47, 30],
+        };
+        const hsbWrapper = shallow(<CmykModifier color={colorStart} onChange={onChange} />);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("max")).toEqual(100);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("max")).toEqual(100);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("max")).toEqual(100);
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("max")).toEqual(100);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("min")).toEqual(0);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("color")).toEqual(colorStart);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("onChange")).toEqual(onChange);
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("onChange")).toEqual(onChange);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("index")).toEqual(0);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("index")).toEqual(1);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("index")).toEqual(2);
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("index")).toEqual(3);
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorMode")).toEqual("CMYK");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorMode")).toEqual("CMYK");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorMode")).toEqual("CMYK");
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("colorMode")).toEqual("CMYK");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("className")).toEqual("slider-input");
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("className")).toEqual("slider-input");
+
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("modifyingLabel")).toEqual("cyan value");
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("modifyingLabel")).toEqual("magenta value");
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("modifyingLabel")).toEqual("yellow value");
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("modifyingLabel")).toEqual("key value");
     });
 });
