@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 
 export function getPercentFilled(sliderHeight, relativeMouseY) {
     let percentNum = relativeMouseY / sliderHeight;
@@ -35,7 +35,7 @@ export default function VerticalSlider(props) {
     };
 
     return (
-        <div ref={containerDom} className={props.divClass} onMouseDown={handleStartDrag}>
+        <div ref={containerDom} style={props.style} className={props.divClass} onMouseDown={handleStartDrag}>
             <div className={props.thumbClass} style={{ top: props.value + "%" }} />
         </div>
     );

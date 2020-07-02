@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Slider from "./Slider";
 import convert from "color-convert";
-import { isValidHex, getColorDataFromHex, getHexFromColorData } from "./ColorUtils.js";
-
-const arrayCopyAndReplace = (originalArray, index, newValue) => {
-    const newArray = originalArray.concat();
-    newArray[index] = newValue;
-    return newArray;
-};
+import * as colorUtils from "./ColorUtils.js";
 
 export function BufferedNumberInput(props) {
     const [isEmpty, setIsEmpty] = useState(false);
@@ -19,7 +13,7 @@ export function BufferedNumberInput(props) {
     const getNewColor = (newValue) => {
         const colorData = props.color.colorData.concat();
         colorData[props.index] = parseInt(newValue);
-        const hex = "#" + getHexFromColorData(colorData, props.colorMode);
+        const hex = "#" + colorUtils.getHexFromColorData(colorData, props.colorMode);
         return { hex, colorData };
     };
 
@@ -56,9 +50,9 @@ export function BufferedNumberInput(props) {
 }
 
 export function HsbModifier(props) {
-    const hueSaturated = "#" + convert.hsv.hex(arrayCopyAndReplace(props.color.colorData, 1, 100));
-    const hueDesaturated = "#" + convert.hsv.hex(arrayCopyAndReplace(props.color.colorData, 1, 0));
-    const hueBright = "#" + convert.hsv.hex(arrayCopyAndReplace(props.color.colorData, 2, 100));
+    const hueSaturated = "#" + convert.hsv.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 100));
+    const hueDesaturated = "#" + convert.hsv.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 0));
+    const hueBright = "#" + convert.hsv.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 100));
 
     return (
         <>
@@ -72,7 +66,7 @@ export function HsbModifier(props) {
                     pageIncrement={10}
                     innerLabel="Hue"
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -89,7 +83,7 @@ export function HsbModifier(props) {
                     innerLabel="Saturation"
                     style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -106,7 +100,7 @@ export function HsbModifier(props) {
                     innerLabel="Brightness"
                     style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueBright})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -117,12 +111,12 @@ export function HsbModifier(props) {
 }
 
 export function RgbModifier(props) {
-    const redNone = "#" + convert.rgb.hex(arrayCopyAndReplace(props.color.colorData, 0, 0));
-    const redFull = "#" + convert.rgb.hex(arrayCopyAndReplace(props.color.colorData, 0, 255));
-    const greenNone = "#" + convert.rgb.hex(arrayCopyAndReplace(props.color.colorData, 1, 0));
-    const greenFull = "#" + convert.rgb.hex(arrayCopyAndReplace(props.color.colorData, 1, 255));
-    const blueNone = "#" + convert.rgb.hex(arrayCopyAndReplace(props.color.colorData, 2, 0));
-    const blueFull = "#" + convert.rgb.hex(arrayCopyAndReplace(props.color.colorData, 2, 255));
+    const redNone = "#" + convert.rgb.hex(colorUtils.hsbReplaceValue(props.color.colorData, 0, 0));
+    const redFull = "#" + convert.rgb.hex(colorUtils.hsbReplaceValue(props.color.colorData, 0, 255));
+    const greenNone = "#" + convert.rgb.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 0));
+    const greenFull = "#" + convert.rgb.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 255));
+    const blueNone = "#" + convert.rgb.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 0));
+    const blueFull = "#" + convert.rgb.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 255));
 
     return (
         <>
@@ -137,7 +131,7 @@ export function RgbModifier(props) {
                     innerLabel="Red"
                     style={{ backgroundImage: `linear-gradient(to right, ${redNone}, ${redFull})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -154,7 +148,7 @@ export function RgbModifier(props) {
                     innerLabel="Green"
                     style={{ backgroundImage: `linear-gradient(to right, ${greenNone}, ${greenFull})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -171,7 +165,7 @@ export function RgbModifier(props) {
                     innerLabel="Blue"
                     style={{ backgroundImage: `linear-gradient(to right, ${blueNone}, ${blueFull})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -182,9 +176,9 @@ export function RgbModifier(props) {
 }
 
 export function HslModifier(props) {
-    const hueSaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(props.color.colorData, 1, 100));
-    const hueDesaturated = "#" + convert.hsl.hex(arrayCopyAndReplace(props.color.colorData, 1, 0));
-    const hueMediumLightness = "#" + convert.hsl.hex(arrayCopyAndReplace(props.color.colorData, 2, 50));
+    const hueSaturated = "#" + convert.hsl.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 100));
+    const hueDesaturated = "#" + convert.hsl.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 0));
+    const hueMediumLightness = "#" + convert.hsl.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 50));
 
     return (
         <>
@@ -198,7 +192,7 @@ export function HslModifier(props) {
                     pageIncrement={10}
                     innerLabel="Hue"
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -215,7 +209,7 @@ export function HslModifier(props) {
                     innerLabel="Saturation"
                     style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -232,7 +226,7 @@ export function HslModifier(props) {
                     innerLabel="Lightness"
                     style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueMediumLightness}, #FFFFFF)` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -243,13 +237,13 @@ export function HslModifier(props) {
 }
 
 export function CmykModifier(props) {
-    const cyanNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(props.color.colorData, 0, 0));
-    const cyanFull = "#" + convert.cmyk.hex(arrayCopyAndReplace(props.color.colorData, 0, 100));
-    const magentaNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(props.color.colorData, 1, 0));
-    const magentaFull = "#" + convert.cmyk.hex(arrayCopyAndReplace(props.color.colorData, 1, 100));
-    const yellowNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(props.color.colorData, 2, 0));
-    const yellowFull = "#" + convert.cmyk.hex(arrayCopyAndReplace(props.color.colorData, 2, 100));
-    const keyNone = "#" + convert.cmyk.hex(arrayCopyAndReplace(props.color.colorData, 3, 0));
+    const cyanNone = "#" + convert.cmyk.hex(colorUtils.hsbReplaceValue(props.color.colorData, 0, 0));
+    const cyanFull = "#" + convert.cmyk.hex(colorUtils.hsbReplaceValue(props.color.colorData, 0, 100));
+    const magentaNone = "#" + convert.cmyk.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 0));
+    const magentaFull = "#" + convert.cmyk.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 100));
+    const yellowNone = "#" + convert.cmyk.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 0));
+    const yellowFull = "#" + convert.cmyk.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 100));
+    const keyNone = "#" + convert.cmyk.hex(colorUtils.hsbReplaceValue(props.color.colorData, 3, 0));
 
     return (
         <>
@@ -264,7 +258,7 @@ export function CmykModifier(props) {
                     innerLabel="Cyan"
                     style={{ backgroundImage: `linear-gradient(to right, ${cyanNone}, ${cyanFull})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 0, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -281,7 +275,7 @@ export function CmykModifier(props) {
                     innerLabel="Magenta"
                     style={{ backgroundImage: `linear-gradient(to right, ${magentaNone}, ${magentaFull})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 1, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -298,7 +292,7 @@ export function CmykModifier(props) {
                     innerLabel="Yellow"
                     style={{ backgroundImage: `linear-gradient(to right, ${yellowNone}, ${yellowFull})` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 2, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -315,7 +309,7 @@ export function CmykModifier(props) {
                     innerLabel="Key"
                     style={{ backgroundImage: `linear-gradient(to right, ${keyNone}, #000000)` }}
                     onChange={(newValue) => {
-                        const newColorData = arrayCopyAndReplace(props.color.colorData, 3, newValue);
+                        const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 3, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
@@ -367,9 +361,9 @@ export default function Swatch(props) {
             newHexFormatted = "#" + newHexFormatted;
         }
 
-        if (isValidHex(newHexFormatted)) {
+        if (colorUtils.isValidHex(newHexFormatted)) {
             // Publish new result
-            props.onChange({ hex: newHexFormatted, colorData: getColorDataFromHex(newHexFormatted, props.colorMode) });
+            props.onChange({ hex: newHexFormatted, colorData: colorUtils.getColorDataFromHex(newHexFormatted, props.colorMode) });
         } else if (hasValidHexDigits(newHexFormatted)) {
             setHex(newHexFormatted);
         }

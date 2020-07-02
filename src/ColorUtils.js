@@ -272,3 +272,9 @@ export function getWCAGContrast(colorOne, colorTwo, colorMode) {
 export function isValidHex(hex) {
     return hex.search(/^#?[0-9A-F]{6}$/i) !== -1;
 }
+
+export function hsbReplaceValue(hsbArray, index, newValue) {
+    const newArray = hsbArray.concat();
+    newArray[index] = newValue;
+    return newArray;
+}

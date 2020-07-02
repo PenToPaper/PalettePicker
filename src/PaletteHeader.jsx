@@ -3,7 +3,7 @@ import VerticalSlider from "./VerticalSlider";
 import HueSaturationCircle from "./HueSaturationCircle";
 import Dropdown from "./Dropdown";
 import convert from "color-convert";
-import { getColorDataFromHex, getHSBFromColorData } from "./ColorUtils";
+import { hsbReplaceValue, getColorDataFromHex, getHSBFromColorData } from "./ColorUtils";
 
 export default function PaletteHeader(props) {
     const onBrightnessChange = (newBrightness) => {
@@ -44,9 +44,23 @@ export default function PaletteHeader(props) {
         return hsb[2];
     };
 
+    const getSelectedColor = () => {
+        return props.swatches[props.selection.sectionName][props.selection.index];
+    };
+
+    const getBrightValueHSB = (colorData, colorMode) => {
+        return hsbReplaceValue(getHSBFromColorData(colorData, colorMode), 2, 100);
+    };
+
     return (
         <header>
-            <VerticalSlider divClass="brightness-vertical" thumbClass="brightness-thumb" value={getBrightnessValue(props.swatches[props.selection.sectionName][props.selection.index])} onChange={onBrightnessChange} />
+            <VerticalSlider
+                divClass="brightness-vertical"
+                thumbClass="brightness-thumb"
+                style={{ backgroundImage: `linear-gradient(#000000, ${"#" + convert.hsv.hex(getBrightValueHSB(getSelectedColor().colorData, props.colorMode))})` }}
+                value={getBrightnessValue(getSelectedColor())}
+                onChange={onBrightnessChange}
+            />
             <HueSaturationCircle colorMode={props.colorMode} onSelectSwatch={props.onSelectSwatch} onPickColor={onHueSaturationChange} selection={props.selection} swatches={props.swatches} />
             <div className="header-toolbars">
                 <label id="dropdown-color-harmony">Color Harmony</label>
