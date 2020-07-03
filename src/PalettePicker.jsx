@@ -801,6 +801,7 @@ export default function PalettePicker() {
                     onContrastChecker={contrastChecker}
                     onColorMode={recalculateColors}
                     onColorHarmony={colorHarmony}
+                    projectName={projects[activeProject]}
                 />
                 <PaletteBody
                     onDeleteSwatch={deleteSwatch}

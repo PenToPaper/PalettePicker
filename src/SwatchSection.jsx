@@ -4,7 +4,7 @@ import AddSwatch from "./AddSwatch";
 
 export default function SwatchSection(props) {
     return (
-        <section>
+        <section id={props.sectionName}>
             <div className="swatch-section-header">
                 <input
                     value={props.sectionName}

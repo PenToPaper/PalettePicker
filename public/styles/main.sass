@@ -2,7 +2,7 @@
 @import vars
 
 body
-    background-color: $back-light
+    background-color: $body-background
 
 div.body
     position: relative
@@ -115,11 +115,19 @@ nav
 
 header
     display: flex
-    justify-content: center
-    align-items: center
-    margin-top: 32px
+    justify-content: space-between
+    align-items: stretch
+    max-width: $max-width
+    margin: 32px auto 0
+
+.controls
+    display: flex
+    align-items: stretch
+    background-color: $back-dark
+    padding: 16px
+    box-shadow: $shadow-2
+    max-height: 100%
     .brightness-vertical
-        height: 320px
         width: 48px
         border: 4px solid $back-dark
         background-image: linear-gradient(hsl(0, 0, 0), hsl(0, 0, 100))
@@ -131,12 +139,11 @@ header
         div
             content: " "
             position: absolute
-            left: -8px
-            right: -8px
+            left: 0
+            right: 0
             height: 8px
-            border-radius: 1px
             transform: translateY(-50%)
-            background-color: $back-dark
+            border: 3px solid $back-dark
     
     .hue-saturation-circle
         width: 352px
@@ -162,11 +169,12 @@ header
             border: 3px solid $back-dark
     
     .header-tool
-        @include focus-outline($back-dark)
+        @include focus-fill($component-light-selected)
         width: 352px
         height: 48px
         line-height: 48px
         font-size: 18px
+        font-weight: 600
         border: none
         background-color: $component-light
         text-align: left
@@ -174,7 +182,6 @@ header
         padding: 0 16px
         position: relative
         display: block
-        margin-top: 32px
         &::after
             content: ""
             position: absolute
@@ -190,41 +197,67 @@ header
         &#contrast-checker-tool::after
             background-image: url("../assets/materialicons/material_visibility_offblack.svg")
         &.tool-selecting
-            background-color: $font-dark
-            color: $component-light
-            &#compare-colors-tool::after
-                background-image: url("../assets/materialicons/material_compare_lightgray.svg")
-            &#contrast-checker-tool::after
-                background-image: url("../assets/materialicons/material_visibility_lightgray.svg")
+            background-color: $component-light-selected
 
+    .header-toolbars
+        padding-top: 16px
+        display: flex
+        flex-direction: column
+        justify-content: space-between
+
+.project-preview
+    background-color: $back-dark
+    padding: 16px
+    box-shadow: $shadow-2
+    width: 300px
+    overflow-y: auto
+    h1
+        color: $front-off-white
+        font-size: 32px
+        font-weight: 800
+        text-align: center
+    a
+        @include focus-fill($component-light-selected)
+        margin-top: 18px
+        display: block
+        text-decoration: none
+        color: $back-dark
+        background-color: $back-gray
+        font-size: 16px
+        line-height: 48px
+        font-weight: 600
+        padding: 0 16px
+        height: 48px
 
 label
+    margin-top: -16px
     display: block
-    margin-top: 16px
-    font-size: 14px
+    font-size: 16px
     font-weight: 600
-    color: $font-dark-deemphasized
+    color: $front-light-deemphasized
 
 .dropdown
     position: relative
-    width: 352px
+    max-width: 352px
     &.dropdown-expanded
         button
             background-color: $component-light-selected
         ul
             display: block
     button
-        @include focus-outline($back-dark)
+        @include focus-fill($component-light-selected)
         width: 100%
         height: 48px
         line-height: 48px
         font-size: 18px
+        font-weight: 600
         background-color: $component-light
         border: none
         text-align: left
         padding: 0px 16px
         color: $font-dark
         position: relative
+        cursor: pointer
         &::after
             content: " "
             position: absolute
@@ -246,6 +279,7 @@ label
             height: 48px
             line-height: 48px
             font-size: 18px
+            font-weight: 600
             padding: 0px 16px
             cursor: pointer
             color: $font-dark
@@ -386,6 +420,8 @@ section
     width: 4px
     transform: translateX(-50%)
     background-color: $back-dark
+    &:focus
+        width: 6px
 
 .add-section
     @include focus-outline($back-dark)

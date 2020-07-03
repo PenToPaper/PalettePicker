@@ -36,7 +36,7 @@ export default function VerticalSlider(props) {
 
     return (
         <div ref={containerDom} style={props.style} className={props.divClass} onMouseDown={handleStartDrag}>
-            <div className={props.thumbClass} style={{ top: props.value + "%" }} />
+            <div className={props.thumbClass} style={{ ...props.innerStyle, top: props.value + "%" }} />
         </div>
     );
 }

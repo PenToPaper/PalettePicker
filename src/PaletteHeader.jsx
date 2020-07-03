@@ -5,6 +5,23 @@ import Dropdown from "./Dropdown";
 import convert from "color-convert";
 import { hsbReplaceValue, getColorDataFromHex, getHSBFromColorData } from "./ColorUtils";
 
+function ProjectPreviewTile(props) {
+    return (
+        <div className="project-preview">
+            <h1>{props.projectName}</h1>
+            <ul>
+                {props.sections.map((section) => {
+                    return (
+                        <li>
+                            <a href={`#${section}`}>{`# ${section}`}</a>
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>
+    );
+}
+
 export default function PaletteHeader(props) {
     const onBrightnessChange = (newBrightness) => {
         // More accurate representation if colorMode is already HSB
@@ -54,25 +71,34 @@ export default function PaletteHeader(props) {
 
     return (
         <header>
-            <VerticalSlider
-                divClass="brightness-vertical"
-                thumbClass="brightness-thumb"
-                style={{ backgroundImage: `linear-gradient(#000000, ${"#" + convert.hsv.hex(getBrightValueHSB(getSelectedColor().colorData, props.colorMode))})` }}
-                value={getBrightnessValue(getSelectedColor())}
-                onChange={onBrightnessChange}
-            />
-            <HueSaturationCircle colorMode={props.colorMode} onSelectSwatch={props.onSelectSwatch} onPickColor={onHueSaturationChange} selection={props.selection} swatches={props.swatches} />
-            <div className="header-toolbars">
-                <label id="dropdown-color-harmony">Color Harmony</label>
-                <Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOption={props.colorHarmony} onChange={props.onColorHarmony} />
-                <label id="dropdown-color-harmony">Color Mode</label>
-                <Dropdown labelId="dropdown-color-mode" options={["HSB", "HSL", "RGB", "CMYK"]} selectedOption={props.colorMode} onChange={props.onColorMode} />
-                <button className={props.toolModal.status === "selecting" && props.toolModal.type === "compare" ? "header-tool tool-selecting" : "header-tool"} id="compare-colors-tool" onClick={props.onCompareColors}>
-                    Compare Colors
-                </button>
-                <button className={props.toolModal.status === "selecting" && props.toolModal.type === "contrast" ? "header-tool tool-selecting" : "header-tool"} id="contrast-checker-tool" onClick={props.onContrastChecker}>
-                    Contrast Checker
-                </button>
+            <ProjectPreviewTile projectName={props.projectName} sections={Object.keys(props.swatches)} />
+            <div className="controls">
+                <VerticalSlider
+                    divClass="brightness-vertical"
+                    thumbClass="brightness-thumb"
+                    style={{ backgroundImage: `linear-gradient(#000000, ${"#" + convert.hsv.hex(getBrightValueHSB(getSelectedColor().colorData, props.colorMode))})` }}
+                    innerStyle={{ backgroundColor: getSelectedColor().hex }}
+                    value={getBrightnessValue(getSelectedColor())}
+                    onChange={onBrightnessChange}
+                />
+                <HueSaturationCircle colorMode={props.colorMode} onSelectSwatch={props.onSelectSwatch} onPickColor={onHueSaturationChange} selection={props.selection} swatches={props.swatches} />
+                <div className="header-toolbars">
+                    <div class="labeled-dropdown">
+                        <label id="dropdown-color-harmony">Color Harmony</label>
+
+                        <Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOption={props.colorHarmony} onChange={props.onColorHarmony} />
+                    </div>
+                    <div class="labeled-dropdown">
+                        <label id="dropdown-color-harmony">Color Mode</label>
+                        <Dropdown labelId="dropdown-color-mode" options={["HSB", "HSL", "RGB", "CMYK"]} selectedOption={props.colorMode} onChange={props.onColorMode} />
+                    </div>
+                    <button className={props.toolModal.status === "selecting" && props.toolModal.type === "compare" ? "header-tool tool-selecting" : "header-tool"} id="compare-colors-tool" onClick={props.onCompareColors}>
+                        Compare Colors
+                    </button>
+                    <button className={props.toolModal.status === "selecting" && props.toolModal.type === "contrast" ? "header-tool tool-selecting" : "header-tool"} id="contrast-checker-tool" onClick={props.onContrastChecker}>
+                        Contrast Checker
+                    </button>
+                </div>
             </div>
         </header>
     );
