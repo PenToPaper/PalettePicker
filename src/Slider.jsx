@@ -94,7 +94,7 @@ export default function Slider(props) {
             <div
                 ref={innerDom}
                 onKeyDown={handleKeyDown}
-                style={{ left: (props.value / props.max) * 100 + "%" }}
+                style={{ ...props.innerStyle, left: (props.value / props.max) * 100 + "%" }}
                 className={props.innerClass}
                 role="slider"
                 tabIndex="0"

@@ -13,7 +13,10 @@ function ProjectPreviewTile(props) {
                 {props.sections.map((section) => {
                     return (
                         <li>
-                            <a href={`#${section}`}>{`# ${section}`}</a>
+                            <a href={`#${section}`}>
+                                <span>#</span>
+                                {section}
+                            </a>
                         </li>
                     );
                 })}

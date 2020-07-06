@@ -19,7 +19,9 @@ describe("Swatch Section properly renders elements based on props", () => {
     });
 
     it("Renders an add swatch button", () => {
-        expect(swatchSectionWrapper.find("AddSwatch")).toHaveLength(1);
+        expect(swatchSectionWrapper.find("button").at(0)).toHaveLength(1);
+        expect(swatchSectionWrapper.find("button").at(0).prop("aria-label")).toEqual("Add Swatch to Section");
+        expect(swatchSectionWrapper.find("button").at(0).prop("className")).toEqual("add-swatch");
     });
 
     it("Renders all swatches in argument list", () => {
@@ -53,7 +55,7 @@ describe("Swatch Section calls onAddSwatch callback, and renders more swatches a
     const swatchSectionWrapper = mount(<SwatchSection sectionName="Section Title" swatches={swatchData} onAddSwatch={callback} onSelectSwatch={onSelect} />);
 
     it("Calls onAddSwatch on add swatch click, and refreshes swatch list", () => {
-        swatchSectionWrapper.find("AddSwatch").simulate("click");
+        swatchSectionWrapper.find("button").at(0).prop("onClick")();
 
         expect(callback).toHaveBeenCalled();
         expect(Object.keys(swatchData).length).toEqual(4);

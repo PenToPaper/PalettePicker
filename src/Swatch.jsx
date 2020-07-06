@@ -65,6 +65,7 @@ export function HsbModifier(props) {
                     value={props.color.colorData[0]}
                     pageIncrement={10}
                     innerLabel="Hue"
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
@@ -82,6 +83,7 @@ export function HsbModifier(props) {
                     pageIncrement={5}
                     innerLabel="Saturation"
                     style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
@@ -99,6 +101,7 @@ export function HsbModifier(props) {
                     pageIncrement={5}
                     innerLabel="Brightness"
                     style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueBright})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
@@ -130,6 +133,7 @@ export function RgbModifier(props) {
                     pageIncrement={10}
                     innerLabel="Red"
                     style={{ backgroundImage: `linear-gradient(to right, ${redNone}, ${redFull})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
@@ -147,6 +151,7 @@ export function RgbModifier(props) {
                     pageIncrement={5}
                     innerLabel="Green"
                     style={{ backgroundImage: `linear-gradient(to right, ${greenNone}, ${greenFull})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
@@ -164,6 +169,7 @@ export function RgbModifier(props) {
                     pageIncrement={5}
                     innerLabel="Blue"
                     style={{ backgroundImage: `linear-gradient(to right, ${blueNone}, ${blueFull})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
@@ -191,6 +197,7 @@ export function HslModifier(props) {
                     value={props.color.colorData[0]}
                     pageIncrement={10}
                     innerLabel="Hue"
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
@@ -208,6 +215,7 @@ export function HslModifier(props) {
                     pageIncrement={5}
                     innerLabel="Saturation"
                     style={{ backgroundImage: `linear-gradient(to right, ${hueDesaturated}, ${hueSaturated})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
@@ -225,6 +233,7 @@ export function HslModifier(props) {
                     pageIncrement={5}
                     innerLabel="Lightness"
                     style={{ backgroundImage: `linear-gradient(to right, #000000, ${hueMediumLightness}, #FFFFFF)` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
@@ -257,6 +266,7 @@ export function CmykModifier(props) {
                     pageIncrement={10}
                     innerLabel="Cyan"
                     style={{ backgroundImage: `linear-gradient(to right, ${cyanNone}, ${cyanFull})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
@@ -274,6 +284,7 @@ export function CmykModifier(props) {
                     pageIncrement={5}
                     innerLabel="Magenta"
                     style={{ backgroundImage: `linear-gradient(to right, ${magentaNone}, ${magentaFull})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 1, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
@@ -291,6 +302,7 @@ export function CmykModifier(props) {
                     pageIncrement={5}
                     innerLabel="Yellow"
                     style={{ backgroundImage: `linear-gradient(to right, ${yellowNone}, ${yellowFull})` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 2, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
@@ -308,6 +320,7 @@ export function CmykModifier(props) {
                     pageIncrement={5}
                     innerLabel="Key"
                     style={{ backgroundImage: `linear-gradient(to right, ${keyNone}, #000000)` }}
+                    innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 3, newValue);
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
@@ -392,7 +405,7 @@ export default function Swatch(props) {
                         props.onDeleteSwatch();
                     }}
                 >
-                    <img src="/assets/materialicons/material_delete_offblack.svg" alt="" />
+                    <img src="/assets/materialicons/material_delete_offwhite.svg" alt="" />
                 </button>
             )}
 
