@@ -54,25 +54,21 @@ export function ProjectConfirmDelete(props) {
     return (
         <FocusTrap>
             <div className="project-delete" role="alertdialog" aria-modal="true" aria-labelledby={`${props.index}-proj-delete-desc`} onKeyDown={handleButtonKeyDown}>
-                <span id={`${props.index}-proj-delete-desc`}>Confirm delete project?</span>
-                <button
-                    className="deny-delete-project"
-                    onClick={() => {
-                        props.onConfirmingDelete(-1);
-                    }}
-                    ref={deny}
-                >
-                    No
-                </button>
                 <button
                     className="confirm-delete-project"
                     onClick={() => {
                         props.onDeleteProject(props.index);
                         props.onConfirmingDelete(-1);
                     }}
-                >
-                    Yes
-                </button>
+                />
+                <span id={`${props.index}-proj-delete-desc`}>Delete this project?</span>
+                <button
+                    className="deny-delete-project"
+                    onClick={() => {
+                        props.onConfirmingDelete(-1);
+                    }}
+                    ref={deny}
+                />
             </div>
         </FocusTrap>
     );
@@ -88,7 +84,7 @@ export const Project = React.forwardRef((props, ref) => {
                 }}
                 ref={ref}
             >
-                {props.editing ? <img src="/assets/materialicons/material_save_offwhite.svg" alt="Save Project Label" /> : <img src="/assets/materialicons/material_create_offwhite.svg" alt="Edit Project Label" />}
+                {props.editing ? <img src="/assets/materialicons/material_save_offblack.svg" alt="Save Project Label" /> : <img src="/assets/materialicons/material_create_offblack.svg" alt="Edit Project Label" />}
             </button>
             {props.editing ? (
                 <ProjectManagedInput value={props.projectName} onChange={(newName) => props.onProjectNameChange(props.index, newName)} />
@@ -101,7 +97,7 @@ export const Project = React.forwardRef((props, ref) => {
                     props.onConfirmingDelete(props.index);
                 }}
             >
-                <img src="/assets/materialicons/material_delete_offwhite.svg" alt="Delete Project"></img>
+                <img src="/assets/materialicons/material_delete_offblack.svg" alt="Delete Project"></img>
             </button>
             {props.confirmingDelete && <ProjectConfirmDelete index={props.index} onDeleteProject={props.onDeleteProject} onConfirmingDelete={props.onConfirmingDelete} />}
         </li>
@@ -234,7 +230,7 @@ export default function Nav(props) {
                             props.onAddProject();
                         }}
                     >
-                        <img src="/assets/materialicons/material_add_offwhite.svg" alt="" />
+                        <img src="/assets/materialicons/material_playlist_add_offblack.svg" alt="" />
                         Add Project
                     </button>
                 </div>

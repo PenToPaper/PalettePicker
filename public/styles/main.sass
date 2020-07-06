@@ -40,11 +40,10 @@ nav
         bottom: 0px
         left: 0px
         right: 0px
-        background-color: rgba($back-dark, 0.5)
+        background-color: rgba($back-dark, 0.8)
         z-index: 20
 
     #hamburger-menu-body
-        width: 352px
         position: fixed
         overflow-y: scroll
         z-index: 21
@@ -52,43 +51,59 @@ nav
         bottom: 0px
         right: 0px
         background-color: $back-dark
+        padding: 32px
+        box-shadow: $shadow-2
+        ul
+            display: block
+            width: 416px
         button, input
-            @include focus-outline($front-off-white)
-            background-color: transparent
+            @include focus-fill($component-light-selected)
+            background-color: $back-gray
             border: none
         li
+            margin-bottom: 16px
             position: relative
             display: flex
-            min-height: 75px
             input, .project
-                padding: 0
+                padding: 16px
                 flex-grow: 1
                 font-size: 18px
-                text-align: left
-                color: $front-off-white
+                text-align: center
+                color: $back-dark
+                font-weight: 600
             input
                 text-decoration: underline
             &.project-selected
-                background-color: $font-dark-deemphasized
-                .project
-                    font-weight: 600
+                .project, input, .nav-modifier  
+                    background-color: $selected-blue        
+                    &:focus
+                        background-color: $selected-focused-blue
 
         .nav-modifier
-            @include focus-outline($front-off-white)
-            margin: 15px
+            width: 56px
+            height: 56px
+            padding: 0px
+            margin: 0px
+            img
+                height: 26px
+            &:first-child
+                margin-right: 16px
+            &:last-child
+                margin-left: 16px
 
         .add-project
-            margin: 15px auto
             display: flex
-            padding: 8px 15px
-            background-color: $font-dark-deemphasized
+            width: 272px
+            height: 56px
+            background-color: $back-gray
             justify-content: center
+            align-items: center     
             font-size: 18px
-            color: $front-off-white
-            &:focus
-                border: 1px solid $front-off-white
+            color: $back-dark
+            font-weight: 600
+            margin: 0 auto
             img
-                height: 22px
+                height: 28px
                 margin-right: 8px
         
         .project-delete
@@ -97,21 +112,54 @@ nav
             bottom: 0
             left: 0
             right: 0
-            background-color: $font-dark-deemphasized
+            background-color: $back-dark
             display: flex
             align-items: center
             font-size: 18px
             justify-content: space-between
             span
-                color: $front-off-white
-                margin-left: 15px
+                display: block
+                width: 272px
+                height: 56px
+                line-height: 56px
+                font-size: 18px
+                font-weight: 600
+                text-align: center
+                text-decoration: underline
+                background-color: $back-gray
+                color: $back-dark
+            .confirm-delete-project, .deny-delete-project
+                width: 56px
+                height: 56px
+                position: relative
+                &::after
+                    content: " "
+                    background-repeat: no-repeat
+                    background-size: contain
+                    position: absolute
+                    top: 50%
+                    left: 50%
+                    width: 45px
+                    height: 45px
+                    transform: translate(-50%, -50%)
             .confirm-delete-project
-                font-size: 18px
-                color: $approval-back-green
+                background-color: $approval-front-green
+                margin-right: 16px
+                &::after
+                    background-image: url("../assets/materialicons/material_check_darkgreen.svg")
+                &:focus
+                    background-color: $approval-back-green
+                    &::after
+                        background-image: url("../assets/materialicons/material_check_lightgreen.svg")
             .deny-delete-project
-                font-size: 18px
-                color: $denial-back-red
-                margin-right: 15px
+                background-color: $denial-front-red
+                margin-left: 16px
+                &::after
+                    background-image: url("../assets/materialicons/material_close_darkred.svg")
+                &:focus
+                    background-color: $denial-back-red
+                    &::after
+                        background-image: url("../assets/materialicons/material_close_lightred.svg")
 
 header
     display: flex
@@ -197,7 +245,7 @@ header
         &#contrast-checker-tool::after
             background-image: url("../assets/materialicons/material_visibility_offblack.svg")
         &.tool-selecting
-            background-color: #89B2E0
+            background-color: $selected-blue
 
     .header-toolbars
         padding-top: 16px
