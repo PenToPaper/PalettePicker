@@ -738,6 +738,10 @@ export default function PalettePicker() {
                 4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
             },
         };
+        const newSelection = {
+            sectionName: "Main",
+            index: "1",
+        };
 
         setSwatches(newSwatches);
         setHarmony(newHarmony);
@@ -751,7 +755,7 @@ export default function PalettePicker() {
 
             const newProjects = prevProjects.concat();
             newProjects.push("My Project " + newIndex);
-            window.localStorage.setItem("My Project " + newIndex, JSON.stringify({ selection: selection, harmony: newHarmony, swatches: newSwatches, colorMode: newColorMode }));
+            window.localStorage.setItem("My Project " + newIndex, JSON.stringify({ selection: newSelection, harmony: newHarmony, swatches: newSwatches, colorMode: newColorMode }));
             setActiveProject(newProjects.length - 1);
             return newProjects;
         });
