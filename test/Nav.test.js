@@ -182,7 +182,7 @@ describe("Renders state properly based on props", () => {
 
         // Span
         expect(confirmDeleteWrapper.find("span").prop("id")).toEqual("0-proj-delete-desc");
-        expect(confirmDeleteWrapper.find("span").text()).toEqual("Confirm delete project?");
+        expect(confirmDeleteWrapper.find("span").text()).toEqual("Delete this project?");
 
         // Deny button
         expect(confirmDeleteWrapper.find(".deny-delete-project")).toHaveLength(1);
