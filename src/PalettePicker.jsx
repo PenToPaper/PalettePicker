@@ -20,7 +20,7 @@ export default function PalettePicker() {
     const [selection, setSelection] = useState({ sectionName: "Main", index: 1 });
     const [harmony, setHarmony] = useState("None");
     const [modal, setModal] = useState({ status: "hidden" });
-    const [isNavOpen, setIsNavOpen] = useState(false);
+    const [bodyOffsetRight, setBodyOffsetRight] = useState(false);
 
     const [projects, setProjects] = useState(["My Project 1", "My Project 2"]);
     const [activeProject, setActiveProject] = useState(0);
@@ -31,10 +31,6 @@ export default function PalettePicker() {
         refreshProjectsListFromLocalData();
         refreshFromLocalData(activeProject);
     }, []);
-
-    const toggleNav = () => {
-        setIsNavOpen((prevIsNavOpen) => !prevIsNavOpen);
-    };
 
     const setLocalStorage = (changedDataType, newData) => {
         let oldLocalStorage = JSON.parse(window.localStorage.getItem(projects[activeProject]));
@@ -670,6 +666,7 @@ export default function PalettePicker() {
 
         // prevents from comparing/contrasting 2 of the same color
         if (selectionObject.sectionName !== selection.sectionName || parseInt(selectionObject.index) !== parseInt(selection.index)) {
+            toggleBodyModalState(true);
             setModal((prevModal) => {
                 return { ...prevModal, status: "shown", selection: [selection, selectionObject] };
             });
@@ -695,6 +692,7 @@ export default function PalettePicker() {
     };
 
     const exitModal = () => {
+        toggleBodyModalState(false);
         setModal({ status: "hidden" });
     };
 
@@ -789,9 +787,18 @@ export default function PalettePicker() {
         }
     };
 
+    const toggleBodyModalState = (modalOpen) => {
+        if (modalOpen) {
+            const bodyOffset = window.innerWidth - document.body.offsetWidth;
+            setBodyOffsetRight(bodyOffset + "px");
+        } else {
+            setBodyOffsetRight(false);
+        }
+    };
+
     return (
-        <div className={isNavOpen ? "body body-fixed" : "body"} tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
-            <Nav isOpen={isNavOpen} toggleIsOpen={toggleNav} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
+        <div className={bodyOffsetRight ? "body body-fixed" : "body"} tabIndex={-1} onKeyDown={onKeyDown} onKeyUp={onKeyUp} style={{ paddingRight: bodyOffsetRight }}>
+            <Nav toggle={toggleBodyModalState} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
             <main>
                 <PaletteHeader
                     swatches={swatches}
