@@ -1,7 +1,91 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Swatch from "./Swatch";
 import { getWCAGContrast } from "./ColorUtils.js";
 import FocusTrap from "focus-trap-react";
+
+export function ContrastType(props) {
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+    useEffect(() => {
+        const listenEscape = (event) => {
+            if (event.keyCode === 27) {
+                setIsTooltipOpen(false);
+            }
+        };
+
+        document.addEventListener("onKeyDown", listenEscape);
+
+        return () => {
+            document.removeEventListener("onKeyDown", listenEscape);
+        };
+    }, []);
+
+    /*
+        [
+            {
+                type: standard
+                standardMet: boolean,
+                standardRatio: 4.5,
+                standardName: "WCAG AA",
+            },
+            {
+                type: text
+            },
+            {
+                type: graphic
+            }
+        ]
+    */
+    const cssFormattedTypeName = props.typeName.replace(" ", "-").toLowerCase();
+    return (
+        <div className={`contrast-checker-${cssFormattedTypeName}`}>
+            <h4>{props.typeName}</h4>
+            <button
+                aria-describedby={`#tooltip-${cssFormattedTypeName}`}
+                onClick={() => {
+                    setIsTooltipOpen((prevTooltipState) => !prevTooltipState);
+                }}
+            >
+                <img src="/assets/materialicons/material_help_outline_offwhite.svg" alt={`Show definition of ${props.typeName.toLowerCase()}`} />
+            </button>
+            <div class={isTooltipOpen ? "contrast-checker-tooltip tooltip-open" : "contrast-checker-tooltip"} role="tooltip" id={`#tooltip-${cssFormattedTypeName}`} aria-hidden={isTooltipOpen}>
+                {props.tooltip}
+            </div>
+            {props.standards.map((standard, index) => {
+                switch (standard.type) {
+                    case "standard":
+                        return (
+                            <div key={index} className={standard.standardMet ? "standard-met" : "standard-not-met"}>
+                                <div className="standard-compliance-box">
+                                    {standard.standardMet ? <img src="/assets/materialicons/material_check_lightgreen.svg" alt="Check" /> : <img src="/assets/materialicons/material_close_lightred.svg" alt="Standard Not Met" />}
+                                </div>
+                                <span className="standard-name">{standard.standardName}</span>
+                                <span className="contrast-standard">{standard.standardRatio}:1</span>
+                            </div>
+                        );
+                    case "text":
+                        return (
+                            <div key={index} className={`sample-${cssFormattedTypeName}`} style={{ backgroundColor: props.foreground.hex }}>
+                                <span>{standard.label}</span>
+                                <span style={{ color: props.background.hex }}>The quick brown fox jumps over the lazy dog.</span>
+                            </div>
+                        );
+                    case "graphic":
+                        return (
+                            <div key={index} className={`sample-${cssFormattedTypeName}`} style={{ backgroundColor: props.foreground.hex }}>
+                                <span>{standard.label}</span>
+                                <div class="shapes">
+                                    <div style={{ borderBottomColor: props.background.hex }} className="shape-1"></div>
+                                    <div style={{ backgroundColor: props.background.hex }} className="shape-2"></div>
+                                    <div style={{ backgroundColor: props.background.hex }} className="shape-3"></div>
+                                </div>
+                            </div>
+                        );
+                }
+            })}
+        </div>
+    );
+}
 
 export default function ContrastCheck(props) {
     const exit = useRef(null);
@@ -27,56 +111,65 @@ export default function ContrastCheck(props) {
                 <button className="modal-exit" aria-label="Exit Contrast Checker" ref={exit} onClick={props.onModalClose}>
                     <img src="/assets/materialicons/material_close_offblack.svg" alt="" />
                 </button>
-                <div className="contrast-checker-left">
-                    <Swatch
-                        selected={false}
-                        colorMode={props.colorMode}
-                        color={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
-                        onChange={(newColor) => {
-                            props.onChange(props.selection[0].sectionName, props.selection[0].index, newColor);
-                        }}
-                        onSelect={() => {}}
-                    />
-                    <Swatch
-                        selected={false}
-                        colorMode={props.colorMode}
-                        color={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
-                        onChange={(newColor) => {
-                            props.onChange(props.selection[1].sectionName, props.selection[1].index, newColor);
-                        }}
-                        onSelect={() => {}}
-                    />
+                <div className="contrast-checker-row">
+                    <div className="contrast-checker-rating">
+                        <h3>WCAG Contrast</h3>
+                        <h2>{`${Math.round(1000 * wcagContrast) / 1000}:1`}</h2>
+                    </div>
+                    <div className="contrast-checker-swatches">
+                        <Swatch
+                            selected={false}
+                            colorMode={props.colorMode}
+                            color={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                            onChange={(newColor) => {
+                                props.onChange(props.selection[0].sectionName, props.selection[0].index, newColor);
+                            }}
+                            onSelect={() => {}}
+                        />
+                        <Swatch
+                            selected={false}
+                            colorMode={props.colorMode}
+                            color={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                            onChange={(newColor) => {
+                                props.onChange(props.selection[1].sectionName, props.selection[1].index, newColor);
+                            }}
+                            onSelect={() => {}}
+                        />
+                    </div>
                 </div>
-                <div className="contrast-checker-right">
-                    <h2>{`${Math.round(1000 * wcagContrast) / 1000}:1`}</h2>
-                    <h3>Normal Text</h3>
-                    <div className={wcagContrast >= 4.5 ? "standard-met" : "standard-not-met"}>
-                        {wcagContrast >= 4.5 ? <img src="/assets/materialicons/material_check_icongreen.svg" alt="Check" /> : <img src="/assets/materialicons/material_close_iconred.svg" alt="Standard Not Met" />}
-                        <span className="standard-name">WCAG AA</span>
-                        <span className="contrast-standard">4.5:1</span>
-                    </div>
-                    <div className={wcagContrast >= 7 ? "standard-met" : "standard-not-met"}>
-                        {wcagContrast >= 7 ? <img src="/assets/materialicons/material_check_icongreen.svg" alt="Check" /> : <img src="/assets/materialicons/material_close_iconred.svg" alt="Standard Not Met" />}
-                        <span className="standard-name">WCAG AAA</span>
-                        <span className="contrast-standard">7:1</span>
-                    </div>
-                    <h3>Large Text</h3>
-                    <div className={wcagContrast >= 3 ? "standard-met" : "standard-not-met"}>
-                        {wcagContrast >= 3 ? <img src="/assets/materialicons/material_check_icongreen.svg" alt="Check" /> : <img src="/assets/materialicons/material_close_iconred.svg" alt="Standard Not Met" />}
-                        <span className="standard-name">WCAG AA</span>
-                        <span className="contrast-standard">3:1</span>
-                    </div>
-                    <div className={wcagContrast >= 4.5 ? "standard-met" : "standard-not-met"}>
-                        {wcagContrast >= 4.5 ? <img src="/assets/materialicons/material_check_icongreen.svg" alt="Check" /> : <img src="/assets/materialicons/material_close_iconred.svg" alt="Standard Not Met" />}
-                        <span className="standard-name">WCAG AAA</span>
-                        <span className="contrast-standard">4.5:1</span>
-                    </div>
-                    <h3>GUI Components</h3>
-                    <div className={wcagContrast >= 3 ? "standard-met" : "standard-not-met"}>
-                        {wcagContrast >= 3 ? <img src="/assets/materialicons/material_check_icongreen.svg" alt="Check" /> : <img src="/assets/materialicons/material_close_iconred.svg" alt="Standard Not Met" />}
-                        <span className="standard-name">WCAG AA</span>
-                        <span className="contrast-standard">3:1</span>
-                    </div>
+                <div className="contrast-checker-row">
+                    <ContrastType
+                        typeName="Normal Text"
+                        tooltip="Normal text is under 18pt, or under 16pt and bold."
+                        standards={[
+                            { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AA" },
+                            { type: "standard", standardMet: wcagContrast >= 7, standardRatio: 7, standardName: "WCAG AAA" },
+                            { type: "text", label: "12pt" },
+                        ]}
+                        foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                        background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                    />
+                    <ContrastType
+                        typeName="Large Text"
+                        tooltip="Large text is at least 18pt, or 16pt and bold."
+                        standards={[
+                            { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
+                            { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AAA" },
+                            { type: "text", label: "18pt" },
+                        ]}
+                        foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                        background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                    />
+                    <ContrastType
+                        tooltip="A GUI component is any visual information required to identify UI components and states."
+                        typeName="GUI Components"
+                        standards={[
+                            { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
+                            { type: "graphic", label: "GUI" },
+                        ]}
+                        foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                        background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                    />
                 </div>
             </div>
         </FocusTrap>

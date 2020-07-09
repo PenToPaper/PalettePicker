@@ -564,56 +564,159 @@ section
                     margin-bottom: 0px
 
 .contrast-checker
+    background-color: $body-background
+    padding: 64px
     display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
 
-.contrast-checker-left
-    height: 100%
-    width: 25%
-    .swatch
-        width: 100%
-        height: 50%
-        padding-bottom: 0px
-        clear: left
-        >input
-            height: 80px
-            line-height: 80px
-            font-size: 32px
-            font-weight: 400
+.contrast-checker-rating, .contrast-checker-swatches, .contrast-checker-normal-text, .contrast-checker-large-text, .contrast-checker-gui-components
+    background-color: $back-dark
+    box-shadow: $shadow-2
 
-.contrast-checker-right
-    width: 75%
+.contrast-checker-row
+    width: 1424px
+    display: flex
+    margin-top: 48px
+    justify-content: space-between
+    &:first-child
+        margin-top: 0px
+
+.contrast-checker-rating
+    width: 592px
+    margin-right: 48px
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    h3, h2
+        font-weight: 600
+        color: $front-off-white
+        text-align: center
+    h3
+        font-size: 22px
+    h2
+        font-size: 105px
+
+.contrast-checker-swatches
+    width: 784px
+    height: 416px
     padding: 32px
     box-sizing: border-box
-    h2
-        font-size: 82px
-        font-weight: 800
-        color: $back-dark
-    h3
-        margin-top: 32px
-        font-size: 32px
-        color: $back-dark
+    &::after
+        content: " "
+        clear: both
+        display: block
+    .swatch
+        width: 352px
+        padding-bottom: 352px
+        &:first-child
+            float: left
+        &:last-child
+            float: right
 
-    div
-        display: flex
-        align-items: center
-        background-color: $approval-back-green
-        padding: 16px
-        max-width: 608px
-        margin-top: 16px
+.contrast-checker-normal-text, .contrast-checker-large-text, .contrast-checker-gui-components
+    width: 442.67px
+    padding: 32px
+    box-sizing: border-box
+    position: relative
+    h4
+        font-size: 28px
+        font-weight: 600
+        color: $front-off-white
+    button
+        position: absolute
+        top: 32px
+        right: 32px
+        width: 28px
+        height: 28px
+        padding: 0
+        border: none
+        background-color: transparent
         img
-            height: 50px
-        .standard-name
-            margin-left: 16px
-            color: $back-dark
-            font-weight: 600
-            font-size: 24px
-        .contrast-standard
-            color: $approval-text-green
-            font-weight: 400
-            font-size: 24px
-            flex-grow: 2
-            text-align: right
-        &.standard-not-met
-            background-color: $denial-back-red
-            .contrast-standard
-                color: $denial-text-red
+            width: 100%
+            height: 100%
+
+.contrast-checker-tooltip
+    display: none
+    &.tooltip-open
+        display: block
+
+.standard-not-met, .standard-met
+    height: 64px
+    width: 100%
+    display: flex
+    margin-top: 16px
+    .standard-name, .contrast-standard
+        font-size: 18px
+        font-weight: 600
+        line-height: 64px
+        color: $back-dark
+    .standard-name
+        flex-grow: 1
+        margin-left: 16px
+    .contrast-standard
+        margin-right: 16px
+    .contrast-standard, .standard-compliance-box
+        flex-grow: 0
+
+.standard-compliance-box
+    height: 100%
+    width: 64px
+    display: flex
+    justify-content: center
+    align-items: center
+    img
+        width: 43px
+
+.standard-not-met
+    background-color: $denial-front-red
+    .standard-compliance-box
+        background-color: $denial-back-red
+
+.standard-met
+    background-color: $approval-front-green
+    .standard-compliance-box
+        background-color: $approval-back-green
+
+.sample-normal-text, .sample-large-text, .sample-gui-components
+    height: 80px
+    margin-top: 16px
+    display: flex
+    align-items: center
+    span:first-child
+        width: 64px
+        flex-shrink: 0
+        background-color: $back-gray
+        line-height: 80px
+        text-align: center
+        font-size: 18px
+        font-weight: 600
+        color: $back-dark
+    span:last-child
+        padding: 16px
+
+.sample-normal-text span:last-child
+    font-size: 12pt
+
+.sample-large-text span:last-child
+    font-size: 18pt
+
+.shapes
+    display: flex
+    flex-grow: 1
+    align-items: center
+    padding: 0 32px
+    justify-content: space-between
+.shape-1
+    border: 27px solid transparent
+    margin-right: -18px
+    transform: translateY(-12px)
+.shape-2
+    width: 32px
+    height: 32px
+    border-radius: 50%
+.shape-3
+    width: 32px
+    height: 32px
