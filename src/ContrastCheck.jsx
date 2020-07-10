@@ -94,9 +94,7 @@ export default function ContrastCheck(props) {
     return (
         <FocusTrap>
             <div className="contrast-checker modal" role="dialog" aria-label="Contrast Checker" aria-modal="true" onKeyDown={handleButtonKeyDown}>
-                <button className="modal-exit" aria-label="Exit Contrast Checker" ref={exit} onClick={props.onModalClose}>
-                    <img src="/assets/materialicons/material_close_offblack.svg" alt="" />
-                </button>
+                <button className="modal-exit" aria-label="Exit Contrast Checker" ref={exit} onClick={props.onModalClose}></button>
                 <div className="contrast-checker-row">
                     <div className="contrast-checker-rating">
                         <h3>WCAG Contrast</h3>

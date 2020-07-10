@@ -536,40 +536,47 @@ section
     left: 0
     background-color: $back-light
     .modal-exit
-        @include focus-outline($back-dark)
+        @include focus-outline($front-off-white)
         position: absolute
-        top: 5px
-        right: 5px
+        top: 17px
+        right: 17px
+        padding: 0px
         z-index: 11
         width: 64px
         height: 64px
         border: none
+        box-shadow: $shadow-2
         background:
-            color: transparent
-            image: url("../assets/materialicons/material_close_offblack.svg")
+            color: $back-dark
+            image: url("../assets/materialicons/material_close_offwhite.svg")
             size: cover
             repeat: no-repeat
 
 
 .compare-colors
+    .modal-exit
+        box-shadow: none
     .swatch
         width: 50%
         height: 100%
         padding-bottom: 0px
         >input
-            height: 80px
-            line-height: 80px
+            width: 448px
+            height: 64px
+            margin: 16px auto
+            line-height: 64px
             font-size: 32px
-            font-weight: 600
+            font-weight: 800
         .swatch-modifier
-            padding: 48px
+            width: 448px
+            margin: 0 auto
+            padding: 16px
+            box-sizing: border-box
             .modifier-row input
-                height: 56px
-                max-width: 75px
-                line-height: 56px
+                max-width: 48px
+                margin-left: 16px
                 font-weight: 600
-                font-size: 32px
-                margin-bottom: 32px
+                font-size: 22px
                 &:last-of-type
                     margin-bottom: 0px
 
