@@ -649,11 +649,6 @@ section
             width: 100%
             height: 100%
 
-.contrast-checker-tooltip
-    display: none
-    &.tooltip-open
-        display: block
-
 .standard-not-met, .standard-met
     height: 64px
     width: 100%
@@ -731,3 +726,35 @@ section
 .shape-3
     width: 32px
     height: 32px
+
+.contrast-checker-tooltip
+    display: none
+    position: absolute
+    width: 224px
+    padding: 16px
+    box-sizing: border-box
+    top: 0px
+    right: 0px
+    background-color: $back-gray
+    color: $back-dark
+    transform: translate(-35px, -85px)
+    box-shadow: $shadow-4
+    line-height: 24px
+    font-size: 18px
+    font-weight: 600
+    z-index: 10
+    &::after
+        content: " "
+        position: absolute
+        border: 10px solid transparent
+        border-top-color: $back-gray
+        top: 100%
+        right: 0px
+    &.tooltip-open
+        display: block
+
+.contrast-checker-large-text .contrast-checker-tooltip
+    transform: translate(-35px, -61px)
+    
+.contrast-checker-gui-components .contrast-checker-tooltip
+    transform: translate(-35px, -133px)

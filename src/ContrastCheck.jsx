@@ -6,20 +6,6 @@ import FocusTrap from "focus-trap-react";
 export function ContrastType(props) {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
-    useEffect(() => {
-        const listenEscape = (event) => {
-            if (event.keyCode === 27) {
-                setIsTooltipOpen(false);
-            }
-        };
-
-        document.addEventListener("onKeyDown", listenEscape);
-
-        return () => {
-            document.removeEventListener("onKeyDown", listenEscape);
-        };
-    }, []);
-
     /*
         [
             {
@@ -48,7 +34,7 @@ export function ContrastType(props) {
             >
                 <img src="/assets/materialicons/material_help_outline_offwhite.svg" alt={`Show definition of ${props.typeName.toLowerCase()}`} />
             </button>
-            <div class={isTooltipOpen ? "contrast-checker-tooltip tooltip-open" : "contrast-checker-tooltip"} role="tooltip" id={`#tooltip-${cssFormattedTypeName}`} aria-hidden={isTooltipOpen}>
+            <div className={isTooltipOpen ? "contrast-checker-tooltip tooltip-open" : "contrast-checker-tooltip"} role="tooltip" id={`#tooltip-${cssFormattedTypeName}`} aria-hidden={!isTooltipOpen}>
                 {props.tooltip}
             </div>
             {props.standards.map((standard, index) => {
@@ -74,7 +60,7 @@ export function ContrastType(props) {
                         return (
                             <div key={index} className={`sample-${cssFormattedTypeName}`} style={{ backgroundColor: props.foreground.hex }}>
                                 <span>{standard.label}</span>
-                                <div class="shapes">
+                                <div className="shapes">
                                     <div style={{ borderBottomColor: props.background.hex }} className="shape-1"></div>
                                     <div style={{ backgroundColor: props.background.hex }} className="shape-2"></div>
                                     <div style={{ backgroundColor: props.background.hex }} className="shape-3"></div>
@@ -161,7 +147,7 @@ export default function ContrastCheck(props) {
                         background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
                     />
                     <ContrastType
-                        tooltip="A GUI component is any visual information required to identify UI components and states."
+                        tooltip="A GUI component is visual information required to identify UI components and states."
                         typeName="GUI Components"
                         standards={[
                             { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },

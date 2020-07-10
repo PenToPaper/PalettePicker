@@ -239,6 +239,7 @@ describe("Core functions of Nav work properly", () => {
     let projects = ["My Project 1", "My Project 2", "My Project 3", "My Project 4", "My Project 5"];
     const activeProject = 0;
     const selectProject = jest.fn();
+    const toggle = jest.fn();
     const projectNameChange = jest.fn((index, newName) => {
         projects[index] = newName;
         dropdownWrapper.setProps({ projects });
@@ -258,7 +259,7 @@ describe("Core functions of Nav work properly", () => {
         navWrapper.setProps({ isOpen });
     };
     const navWrapper = mount(
-        <Nav.default isOpen={isOpen} toggleIsOpen={toggleNav} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
+        <Nav.default toggle={toggle} toggleIsOpen={toggleNav} projects={projects} activeProject={activeProject} onSelectProject={selectProject} onProjectNameChange={projectNameChange} onDeleteProject={projectDelete} onAddProject={addProject} />
     );
 
     // Open button on click and enter toggle isOpen state, aria attributes update confirming that nav is open and nav's class is updated
@@ -276,6 +277,7 @@ describe("Core functions of Nav work properly", () => {
         navWrapper.update();
 
         // After toggle, checks all isOpen dependent props
+        expect(toggle).toHaveBeenCalled();
         expect(navWrapper.find(FocusTrap).prop("active")).toEqual(true);
         expect(navWrapper.find("nav").hasClass("hamburger-menu-expanded")).toEqual(true);
         expect(navWrapper.find(".hamburger-menu-container").prop("aria-expanded")).toEqual("true");
