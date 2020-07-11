@@ -14,11 +14,12 @@ div.body
     content: " "
     position: absolute
     top: 0
-    bottom: 0
     left: 90%
     width: 500px
     background-color: inherit
     z-index: -1
+    height: 80px
+    border-bottom: 4px solid $font-dark-deemphasized
 
 nav
     height: 80px
@@ -189,7 +190,6 @@ header
     max-height: 100%
     .brightness-vertical
         width: 48px
-        border: 4px solid $back-dark
         background-image: linear-gradient(hsl(0, 0, 0), hsl(0, 0, 100))
         position: relative
         cursor: pointer
@@ -470,7 +470,7 @@ section
         cursor: pointer
         display: flex
         align-items: center
-        margin-top: 15px
+        margin-top: 16px
         &:first-child
             margin-top: 0px
         > div
@@ -478,13 +478,13 @@ section
             height: 40px
             flex-grow: 1
         > input
-            max-width: 50px
+            max-width: 40px
             background-color: transparent
             border: none
             font-weight: 600
             color: $front-off-white
             font-size: 18px
-            margin-left: 8px
+            margin-left: 16px
             -webkit-appearance: none
             -moz-appearance: textfield
     .hue-modifier
@@ -765,3 +765,249 @@ section
     
 .contrast-checker-gui-components .contrast-checker-tooltip
     transform: translate(-35px, -133px)
+
+
+// Small desktops
+@media (max-width: $small-desktop)
+    .body-fixed nav::after
+        height: 64px
+        border-bottom: 4px solid $font-dark-deemphasized
+
+    nav
+        height: 64px
+
+        > img
+            height: 35px
+
+        &.hamburger-menu-expanded::before
+            top: 64px
+
+        #hamburger-menu-body
+            top: 68px
+            padding: 16px
+            ul
+                width: 336px
+            button, input
+                @include focus-fill($component-light-selected)
+                background-color: $back-gray
+                border: none
+            li
+                height: 48px
+                input, .project
+                    padding: 0
+                    line-height: 48px
+
+            .nav-modifier
+                width: 48px
+                height: 48px
+                img
+                    height: 22px
+
+            .add-project
+                width: 208px
+                height: 48px
+                img
+                    height: 24px
+            
+            .project-delete
+                span
+                    width: 208px
+                    height: 48px
+                    line-height: 48px
+                .confirm-delete-project, .deny-delete-project
+                    width: 48px
+                    height: 48px
+                    &::after
+                        width: 32px
+                        height: 32px
+    header
+        max-width: $small-desktop-max-width
+        margin: 32px auto 0
+
+    .controls
+        padding: 16px
+        .brightness-vertical
+            width: 40px
+        
+        .hue-saturation-circle
+            width: 240px
+            height: 240px
+        
+        .hue-saturation-node
+            width: 20px
+            height: 20px
+        
+        .header-tool
+            @include focus-fill($component-light-selected)
+            width: 240px
+            height: 40px
+            line-height: 40px
+            font-size: 16px
+            &::after
+                width: 22px
+                background-size: contain
+
+        .header-toolbars
+            padding-top: 16px
+
+    .project-preview
+        padding: 16px
+        width: 240px
+        margin-right: 32px
+        h1
+            font-size: 32px
+        a
+            margin-top: 16px
+            font-size: 16px
+            line-height: 40px
+            height: 40px
+            span
+                line-height: 40px
+                font-size: 18px
+
+    label
+        margin-top: -14px
+        font-size: 14px
+
+    .dropdown
+        max-width: 240px
+        button
+            height: 40px
+            line-height: 40px
+            font-size: 16px
+            &::after
+                right: 8px
+                width: 40px
+        ul li
+            height: 40px
+            line-height: 40px
+            font-size: 16px
+    section
+        max-width: $small-desktop-max-width
+        padding: 16px
+        margin: 32px auto 0
+        .add-swatch, .delete-section
+            height: 48px
+            width: 48px
+            img
+                height: 22px
+        .add-swatch
+            left: -16px
+            transform: translateX(-100%)
+        .delete-section
+            right: -16px
+            transform: translateX(100%)
+
+        .swatch-section-header
+            width: 40px
+            margin-right: 16px
+            input
+                font-size: 22px
+                height: 40px
+                transform: translateX(-100%)  rotate(-90deg)
+
+            .swatch
+                width: 33.333%
+                padding-bottom: 33.333%
+
+    .swatch
+        >input
+            height: 32px
+            line-height: 32px
+            font-size: 16px
+        >button
+            height: 32px
+            width: 32px
+            img
+                height: 20px
+
+    .swatch-modifier
+        .modifier-row
+            > div
+                height: 28px
+            > input
+                max-width: 40px
+                font-size: 16px
+
+    .add-section-container
+        .add-section
+            width: 208px
+            height: 48px
+            font-size: 16px
+            img
+                margin-right: 8px
+
+
+    .compare-colors
+        .swatch
+            >input
+                width: 384px
+            .swatch-modifier
+                width: 384px
+
+    .contrast-checker-row
+        width: 1088px
+        margin-bottom: 32px
+        &:last-child
+            margin-bottom: 0px
+
+    .contrast-checker-rating
+        width: 448px
+        margin-right: 32px
+        h3
+            font-size: 16px
+        h2
+            font-size: 80px
+
+    .contrast-checker-swatches
+        width: 608px
+        height: 320px
+        padding: 16px
+        .swatch
+            width: 50%
+            padding-bottom: 50%
+
+    .contrast-checker-normal-text, .contrast-checker-large-text, .contrast-checker-gui-components
+        width: 341.33px
+        padding: 16px
+        h4
+            font-size: 22px
+        button
+            top: 16px
+            right: 16px
+            width: 22px
+            height: 22px
+
+    .standard-not-met, .standard-met
+        height: 48px
+        margin-top: 16px
+        .standard-name, .contrast-standard
+            font-size: 16px
+            line-height: 48px
+        .standard-name
+            flex-grow: 1
+            margin-left: 16px
+        .contrast-standard
+            margin-right: 16px
+        .contrast-standard, .standard-compliance-box
+            flex-grow: 0
+
+    .standard-compliance-box
+        width: 48px
+        img
+            width: 30px
+    
+    .sample-normal-text, .sample-large-text, .sample-gui-components
+        span:first-child
+            font-size: 16px
+
+    .contrast-checker-tooltip
+        transform: translate(-17px, -75px)
+        line-height: 22px
+        font-size: 16px
+
+    .contrast-checker-large-text .contrast-checker-tooltip
+        transform: translate(-17px, -75px)
+        
+    .contrast-checker-gui-components .contrast-checker-tooltip
+        transform: translate(-17px, -119px)
