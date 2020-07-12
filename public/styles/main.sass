@@ -374,14 +374,18 @@ section
         border: none
         background-color: $back-dark
         box-shadow: $shadow-2
-        img
-            height: 32px
+        background:
+            size: 32px auto
+            repeat: no-repeat
+            position: center center
     .add-swatch
         left: -32px
         transform: translateX(-100%)
+        background-image: url("../assets/materialicons/material_note_add_offwhite.svg")
     .delete-section
         right: -32px
         transform: translateX(100%)
+        background-image: url("../assets/materialicons/material_delete_offwhite.svg")
 
     .swatch-section-header
         width: 48px
@@ -538,8 +542,8 @@ section
     .modal-exit
         @include focus-outline($front-off-white)
         position: absolute
-        top: 17px
-        right: 17px
+        top: 16px
+        right: 16px
         padding: 0px
         z-index: 11
         width: 64px
@@ -787,10 +791,6 @@ section
             padding: 16px
             ul
                 width: 336px
-            button, input
-                @include focus-fill($component-light-selected)
-                background-color: $back-gray
-                border: none
             li
                 height: 48px
                 input, .project
@@ -838,7 +838,6 @@ section
             height: 20px
         
         .header-tool
-            @include focus-fill($component-light-selected)
             width: 240px
             height: 40px
             line-height: 40px
@@ -889,8 +888,7 @@ section
         .add-swatch, .delete-section
             height: 48px
             width: 48px
-            img
-                height: 22px
+            background-size: 22px auto
         .add-swatch
             left: -16px
             transform: translateX(-100%)
@@ -999,6 +997,7 @@ section
     
     .sample-normal-text, .sample-large-text, .sample-gui-components
         span:first-child
+            width: 48px
             font-size: 16px
 
     .contrast-checker-tooltip
@@ -1011,3 +1010,168 @@ section
         
     .contrast-checker-gui-components .contrast-checker-tooltip
         transform: translate(-17px, -119px)
+    
+    .shape-1
+        margin-right: -7px
+
+
+// Tablets
+@media (max-width: $tablet)
+    #hamburger-menu-body
+        ul
+            width: 368px
+
+    header
+        margin-top: 48px
+        max-width: $tablet-max-width
+        flex-direction: column
+
+    .controls
+        padding: 24px
+        
+        .hue-saturation-circle
+            width: 300px
+            height: 300px
+        
+        .hue-saturation-node
+            width: 24px
+            height: 24px
+
+    .project-preview
+        padding: 24px
+        width: 100%
+        margin-right: 0px
+        margin-bottom: 48px
+        ul::after
+            content: " "
+            clear: both
+            display: block
+        a
+            margin-top: 16px
+            margin-right: 24px
+            float: left
+
+    section
+        max-width: $tablet-max-width
+        padding: 24px
+        margin: 48px auto 0
+        display: block
+        .add-swatch, .delete-section
+            height: 40px
+            width: 40px
+            transform: translateX(0px)
+            box-shadow: none
+            background-color: $back-gray
+        .add-swatch
+            top: 24px
+            left: 24px
+            background-image: url("../assets/materialicons/material_note_add_offblack.svg")
+        .delete-section
+            top: 24px
+            right: 24px
+            background-image: url("../assets/materialicons/material_delete_offblack.svg")
+        .swatch-section-header
+            width: 100%
+            margin-right: 0px
+            margin-bottom: 24px
+            input
+                font-size: 22px
+                width: 544px
+                margin: 0 auto
+                text-align: left
+                height: 40px
+                transform: translateX(0px)  rotate(0deg)
+
+        .section-swatches .swatch
+            width: 50%
+            padding-bottom: 50%
+
+    .swatch
+        >input
+            height: 40px
+            line-height: 40px
+            font-size: 18px
+        >button
+            top: 2px
+            height: 40px
+            width: 40px
+            img
+                height: 20px
+
+    .swatch-modifier
+        .modifier-row
+            > div
+                height: 30px
+            > input
+                font-size: 18px
+
+    .compare-colors
+        .swatch
+            >input
+                // Can try width 100% if it looks better?
+                width: 192px
+            .swatch-modifier
+                width: 100%
+
+    // Contrast checker
+    .contrast-checker-row
+        width: $tablet-contrast-checker-max-width
+        margin-bottom: 24px
+    
+    .contrast-checker-column
+        width: 292px
+        float: left
+        margin-right: 24px
+        &:last-child
+            margin-right: 0px
+    
+    .contrast-checker::after
+        content: " "
+        display: block
+        clear: both
+
+    .contrast-checker-rating
+        width: 100%
+        height: 168px
+        margin-bottom: 24px
+        margin-right: 0px
+        h2
+            font-size: 60px
+
+    .contrast-checker-swatches
+        width: 608px
+        .swatch
+            width: 50%
+            padding-bottom: 50%
+
+    .contrast-checker-normal-text, .contrast-checker-large-text, .contrast-checker-gui-components
+        width: 292px
+        margin-bottom: 24px
+        &:last-child
+            margin-bottom: 0px
+    
+    .sample-normal-text
+        height: 64px
+        span:first-child
+            height: 64px
+            line-height: 64px
+    
+    .sample-large-text
+        height: 94px
+        span:first-child
+            height: 94px
+            line-height: 94px
+    
+    .sample-gui-components
+        height: 64px
+        span:first-child
+            height: 64px
+            line-height: 64px
+
+    .standard-not-met, .standard-met
+        height: 48px
+        margin-top: 16px
+    
+    .sample-normal-text, .sample-large-text, .sample-gui-components
+        span:first-child
+            font-size: 16px

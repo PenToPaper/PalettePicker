@@ -6,7 +6,11 @@ export default function SwatchSection(props) {
 
     const adjustInputWidth = () => {
         const newHeight = inputContainer.current.clientHeight;
-        inputContainer.current.childNodes[0].style.width = newHeight + "px";
+        if (window.innerWidth > 1200) {
+            inputContainer.current.childNodes[0].style.width = newHeight + "px";
+        } else {
+            inputContainer.current.childNodes[0].removeAttribute("style");
+        }
     };
 
     useEffect(() => {
@@ -23,9 +27,7 @@ export default function SwatchSection(props) {
 
     return (
         <section id={props.sectionName}>
-            <button aria-label="Add Swatch to Section" className="add-swatch" onClick={props.onAddSwatch}>
-                <img src="/assets/materialicons/material_note_add_offwhite.svg" alt="" />
-            </button>
+            <button aria-label="Add Swatch to Section" className="add-swatch" onClick={props.onAddSwatch} />
             <div className="swatch-section-header" ref={inputContainer}>
                 <input
                     value={props.sectionName}
@@ -61,9 +63,7 @@ export default function SwatchSection(props) {
                     props.onDeleteSwatchSection(props.sectionName);
                 }}
                 className="delete-section"
-            >
-                <img src="/assets/materialicons/material_delete_offwhite.svg" alt="" />
-            </button>
+            />
         </section>
     );
 }

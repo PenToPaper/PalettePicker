@@ -75,10 +75,24 @@ export function ContrastType(props) {
 
 export default function ContrastCheck(props) {
     const exit = useRef(null);
+    const [isMobileLayout, setIsMobileLayout] = useState(false);
 
     useEffect(() => {
         exit.current.focus();
     }, []);
+
+    const determineMobileLayout = () => {
+        setIsMobileLayout(window.innerWidth <= 1200);
+    };
+
+    useEffect(() => {
+        determineMobileLayout();
+        window.addEventListener("resize", determineMobileLayout);
+
+        return () => {
+            window.removeEventListener("resize", determineMobileLayout);
+        };
+    }, [determineMobileLayout]);
 
     const handleButtonKeyDown = (event) => {
         switch (event.keyCode) {
@@ -95,66 +109,136 @@ export default function ContrastCheck(props) {
         <FocusTrap>
             <div className="contrast-checker modal" role="dialog" aria-label="Contrast Checker" aria-modal="true" onKeyDown={handleButtonKeyDown}>
                 <button className="modal-exit" aria-label="Exit Contrast Checker" ref={exit} onClick={props.onModalClose}></button>
-                <div className="contrast-checker-row">
-                    <div className="contrast-checker-rating">
-                        <h3>WCAG Contrast</h3>
-                        <h2>{`${Math.round(1000 * wcagContrast) / 1000}:1`}</h2>
+                {isMobileLayout ? (
+                    <div className="contrast-checker-row">
+                        <div className="contrast-checker-swatches">
+                            <Swatch
+                                selected={false}
+                                colorMode={props.colorMode}
+                                color={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                                onChange={(newColor) => {
+                                    props.onChange(props.selection[0].sectionName, props.selection[0].index, newColor);
+                                }}
+                                onSelect={() => {}}
+                            />
+                            <Swatch
+                                selected={false}
+                                colorMode={props.colorMode}
+                                color={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                                onChange={(newColor) => {
+                                    props.onChange(props.selection[1].sectionName, props.selection[1].index, newColor);
+                                }}
+                                onSelect={() => {}}
+                            />
+                        </div>
                     </div>
-                    <div className="contrast-checker-swatches">
-                        <Swatch
-                            selected={false}
-                            colorMode={props.colorMode}
-                            color={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
-                            onChange={(newColor) => {
-                                props.onChange(props.selection[0].sectionName, props.selection[0].index, newColor);
-                            }}
-                            onSelect={() => {}}
+                ) : (
+                    <div className="contrast-checker-row">
+                        <div className="contrast-checker-rating">
+                            <h3>WCAG Contrast</h3>
+                            <h2>{`${Math.round(1000 * wcagContrast) / 1000}:1`}</h2>
+                        </div>
+                        <div className="contrast-checker-swatches">
+                            <Swatch
+                                selected={false}
+                                colorMode={props.colorMode}
+                                color={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                                onChange={(newColor) => {
+                                    props.onChange(props.selection[0].sectionName, props.selection[0].index, newColor);
+                                }}
+                                onSelect={() => {}}
+                            />
+                            <Swatch
+                                selected={false}
+                                colorMode={props.colorMode}
+                                color={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                                onChange={(newColor) => {
+                                    props.onChange(props.selection[1].sectionName, props.selection[1].index, newColor);
+                                }}
+                                onSelect={() => {}}
+                            />
+                        </div>
+                    </div>
+                )}
+                {isMobileLayout ? (
+                    <div className="contrast-checker-grid">
+                        <div className="contrast-checker-column">
+                            <div className="contrast-checker-rating">
+                                <h3>WCAG Contrast</h3>
+                                <h2>{`${Math.round(1000 * wcagContrast) / 1000}:1`}</h2>
+                            </div>
+                            <ContrastType
+                                typeName="Large Text"
+                                tooltip="Large text is at least 18pt, or 16pt and bold."
+                                standards={[
+                                    { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
+                                    { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AAA" },
+                                    { type: "text", label: "18pt" },
+                                ]}
+                                foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                                background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                            />
+                        </div>
+                        <div className="contrast-checker-column">
+                            <ContrastType
+                                typeName="Normal Text"
+                                tooltip="Normal text is under 18pt, or under 16pt and bold."
+                                standards={[
+                                    { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AA" },
+                                    { type: "standard", standardMet: wcagContrast >= 7, standardRatio: 7, standardName: "WCAG AAA" },
+                                    { type: "text", label: "12pt" },
+                                ]}
+                                foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                                background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                            />
+                            <ContrastType
+                                tooltip="A GUI component is visual information required to identify UI components and states."
+                                typeName="GUI Components"
+                                standards={[
+                                    { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
+                                    { type: "graphic", label: "GUI" },
+                                ]}
+                                foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                                background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                            />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="contrast-checker-row">
+                        <ContrastType
+                            typeName="Normal Text"
+                            tooltip="Normal text is under 18pt, or under 16pt and bold."
+                            standards={[
+                                { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AA" },
+                                { type: "standard", standardMet: wcagContrast >= 7, standardRatio: 7, standardName: "WCAG AAA" },
+                                { type: "text", label: "12pt" },
+                            ]}
+                            foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                            background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
                         />
-                        <Swatch
-                            selected={false}
-                            colorMode={props.colorMode}
-                            color={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
-                            onChange={(newColor) => {
-                                props.onChange(props.selection[1].sectionName, props.selection[1].index, newColor);
-                            }}
-                            onSelect={() => {}}
+                        <ContrastType
+                            typeName="Large Text"
+                            tooltip="Large text is at least 18pt, or 16pt and bold."
+                            standards={[
+                                { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
+                                { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AAA" },
+                                { type: "text", label: "18pt" },
+                            ]}
+                            foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                            background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
+                        />
+                        <ContrastType
+                            tooltip="A GUI component is visual information required to identify UI components and states."
+                            typeName="GUI Components"
+                            standards={[
+                                { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
+                                { type: "graphic", label: "GUI" },
+                            ]}
+                            foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
+                            background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
                         />
                     </div>
-                </div>
-                <div className="contrast-checker-row">
-                    <ContrastType
-                        typeName="Normal Text"
-                        tooltip="Normal text is under 18pt, or under 16pt and bold."
-                        standards={[
-                            { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AA" },
-                            { type: "standard", standardMet: wcagContrast >= 7, standardRatio: 7, standardName: "WCAG AAA" },
-                            { type: "text", label: "12pt" },
-                        ]}
-                        foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
-                        background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
-                    />
-                    <ContrastType
-                        typeName="Large Text"
-                        tooltip="Large text is at least 18pt, or 16pt and bold."
-                        standards={[
-                            { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
-                            { type: "standard", standardMet: wcagContrast >= 4.5, standardRatio: 4.5, standardName: "WCAG AAA" },
-                            { type: "text", label: "18pt" },
-                        ]}
-                        foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
-                        background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
-                    />
-                    <ContrastType
-                        tooltip="A GUI component is visual information required to identify UI components and states."
-                        typeName="GUI Components"
-                        standards={[
-                            { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
-                            { type: "graphic", label: "GUI" },
-                        ]}
-                        foreground={props.swatches[props.selection[0].sectionName][props.selection[0].index]}
-                        background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
-                    />
-                </div>
+                )}
             </div>
         </FocusTrap>
     );
