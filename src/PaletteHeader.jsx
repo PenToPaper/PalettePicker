@@ -20,6 +20,15 @@ function ProjectPreviewTile(props) {
                         </li>
                     );
                 })}
+                <li>
+                    <button
+                        aria-label="Add Swatch Section"
+                        onClick={() => {
+                            props.onAddSwatchSection(props.sectionName);
+                        }}
+                        className="add-section"
+                    />
+                </li>
             </ul>
         </div>
     );
@@ -74,7 +83,7 @@ export default function PaletteHeader(props) {
 
     return (
         <header>
-            <ProjectPreviewTile projectName={props.projectName} sections={Object.keys(props.swatches)} />
+            <ProjectPreviewTile onAddSwatchSection={props.onAddSwatchSection} projectName={props.projectName} sections={Object.keys(props.swatches)} />
             <div className="controls">
                 <VerticalSlider
                     divClass="brightness-vertical"

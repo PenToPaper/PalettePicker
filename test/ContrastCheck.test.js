@@ -1,7 +1,7 @@
 import React from "react";
 import PalettePicker from "../src/PalettePicker";
 import { mount, shallow } from "enzyme";
-import ContrastCheck, { ContrastType } from "../src/ContrastCheck";
+import ContrastCheck, { ContrastType, AccordianSwatches } from "../src/ContrastCheck";
 import Swatch from "../src/Swatch";
 import FocusTrap from "focus-trap-react";
 
@@ -107,8 +107,9 @@ describe("ContrastCheck modal appears properly with correct props", () => {
 
     const contrastSwatches = { Main: { 1: { hex: "#FFEA70", colorData: [255, 234, 112] }, 2: { hex: "#4238FF", colorData: [66, 56, 255] } } };
 
+    window.innerWidth = 1500;
     const appWrapper = shallow(<PalettePicker />);
-    const contrastWrapper = shallow(<ContrastCheck swatches={contrastSwatches} onModalClose={() => {}} colorMode="RGB" selection={[defaultSelection, newSelection]} onChange={onChange} />);
+    const contrastWrapper = mount(<ContrastCheck swatches={contrastSwatches} onModalClose={() => {}} colorMode="RGB" selection={[defaultSelection, newSelection]} onChange={onChange} />);
 
     it("Renders the correct modal after button clicked and color selected", () => {
         // Press ContrastCheck button
@@ -144,6 +145,8 @@ describe("ContrastCheck modal appears properly with correct props", () => {
         expect(contrastWrapper.find("h2").html()).toEqual("<h2>5.323:1</h2>");
 
         // Swatch 1
+        contrastWrapper.update();
+        expect(contrastWrapper.find("AccordianSwatches")).toHaveLength(0);
         expect(contrastWrapper.find("Swatch").at(0).prop("selected")).toEqual(false);
         expect(contrastWrapper.find("Swatch").at(0).prop("colorMode")).toEqual("RGB");
         expect(contrastWrapper.find("Swatch").at(0).prop("color")).toEqual(contrastSwatches.Main[1]);
@@ -303,5 +306,127 @@ describe("ContrastCheck modal is structured correctly and internal accessibility
         // On exit button press, closes modal
         contrastCheckWrapper.find("button").at(0).prop("onClick")();
         expect(exitModal).toHaveBeenCalledTimes(2);
+    });
+});
+
+describe("AccordianSwatches expands and contracts", () => {
+    const onColorChange = jest.fn();
+    const colorMode = "HSB";
+    const swatches = {
+        Main: {
+            1: { hex: "#00AAFF", colorData: [200, 100, 100] },
+            2: { hex: "#FF00AA", colorData: [320, 100, 100] },
+            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+        },
+    };
+    const selection = [
+        {
+            sectionName: "Main",
+            index: 1,
+        },
+        {
+            sectionName: "Main",
+            index: 2,
+        },
+    ];
+
+    const accordianWrapper = shallow(<AccordianSwatches onChange={onColorChange} colorMode={colorMode} swatches={swatches} selection={selection} />);
+
+    it("AccordianSwatches is structured correctly through html", () => {
+        expect(accordianWrapper.find(".contrast-checker-row")).toHaveLength(1);
+        expect(accordianWrapper.find("button")).toHaveLength(1);
+        expect(accordianWrapper.find("button").hasClass("phone-accordian-swatches")).toEqual(true);
+        expect(accordianWrapper.find("button").hasClass("accordian-open")).toEqual(false);
+        expect(accordianWrapper.find("button").prop("aria-expanded")).toEqual(false);
+        expect(accordianWrapper.find("button").prop("aria-controls")).toEqual("contrast-checker-accordian-swatches");
+        expect(accordianWrapper.find(".contrast-checker-swatches").hasClass("contrast-checker-swatches-hidden")).toEqual(true);
+        expect(accordianWrapper.find(".contrast-checker-swatches").prop("id")).toEqual("contrast-checker-accordian-swatches");
+        expect(accordianWrapper.find(".contrast-checker-swatches").prop("aria-labelledby")).toEqual("contrast-checker-accordian-label");
+        expect(accordianWrapper.find(".contrast-checker-swatches").prop("aria-hidden")).toEqual(true);
+
+        expect(accordianWrapper.find("Swatch").at(0).prop("selected")).toEqual(false);
+        expect(accordianWrapper.find("Swatch").at(0).prop("colorMode")).toEqual("HSB");
+        expect(accordianWrapper.find("Swatch").at(0).prop("color")).toEqual({ hex: "#00AAFF", colorData: [200, 100, 100] });
+        accordianWrapper.find("Swatch").at(0).prop("onChange")({ hex: "#00AAFA", colorData: [199, 100, 98] });
+        expect(onColorChange).toHaveBeenLastCalledWith("Main", 1, { hex: "#00AAFA", colorData: [199, 100, 98] });
+
+        expect(accordianWrapper.find("Swatch").at(1).prop("selected")).toEqual(false);
+        expect(accordianWrapper.find("Swatch").at(1).prop("colorMode")).toEqual("HSB");
+        expect(accordianWrapper.find("Swatch").at(1).prop("color")).toEqual({ hex: "#FF00AA", colorData: [320, 100, 100] });
+        accordianWrapper.find("Swatch").at(1).prop("onChange")({ hex: "#00AAAA", colorData: [180, 100, 66.7] });
+        expect(onColorChange).toHaveBeenLastCalledWith("Main", 2, { hex: "#00AAAA", colorData: [180, 100, 66.7] });
+    });
+
+    it("Expands and contracts based on button click and focus-space", () => {
+        accordianWrapper.find("button").prop("onClick")();
+        accordianWrapper.update();
+
+        expect(accordianWrapper.find("button").hasClass("accordian-open")).toEqual(true);
+        expect(accordianWrapper.find("button").prop("aria-expanded")).toEqual(true);
+        expect(accordianWrapper.find(".contrast-checker-swatches").hasClass("contrast-checker-swatches-hidden")).toEqual(false);
+        expect(accordianWrapper.find(".contrast-checker-swatches").prop("aria-hidden")).toEqual(false);
+
+        accordianWrapper.find("button").prop("onKeyDown")({ keyCode: 32 });
+        accordianWrapper.update();
+
+        expect(accordianWrapper.find("button").hasClass("accordian-open")).toEqual(false);
+        expect(accordianWrapper.find("button").prop("aria-expanded")).toEqual(false);
+        expect(accordianWrapper.find(".contrast-checker-swatches").hasClass("contrast-checker-swatches-hidden")).toEqual(true);
+        expect(accordianWrapper.find(".contrast-checker-swatches").prop("aria-hidden")).toEqual(true);
+    });
+});
+
+describe("ContrastCheck adjusts layout based on screen size", () => {
+    const defaultSwatches = {
+        Main: {
+            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+        },
+    };
+    const defaultSelection = {
+        sectionName: "Main",
+        index: 1,
+    };
+    const newSelection = {
+        sectionName: "Main",
+        index: 2,
+    };
+    const onChange = jest.fn();
+
+    const contrastSwatches = { Main: { 1: { hex: "#FFEA70", colorData: [255, 234, 112] }, 2: { hex: "#4238FF", colorData: [66, 56, 255] } } };
+
+    it("Renders properly between 800 and 1200 width", () => {
+        window.innerWidth = 1100;
+        const contrastWrapper = mount(<ContrastCheck swatches={contrastSwatches} onModalClose={() => {}} colorMode="RGB" selection={[defaultSelection, newSelection]} onChange={onChange} />);
+
+        expect(contrastWrapper.find(".contrast-checker-row").find(".contrast-checker-rating")).toHaveLength(0);
+        expect(contrastWrapper.find(".contrast-checker-row").find(".contrast-checker-swatches")).toHaveLength(1);
+        expect(contrastWrapper.find(".contrast-checker-row").find("Swatch")).toHaveLength(2);
+
+        expect(contrastWrapper.find(".contrast-checker-grid").find(".contrast-checker-rating")).toHaveLength(1);
+        expect(contrastWrapper.find(".contrast-checker-grid").find(".contrast-checker-rating").find("h2").text()).toEqual("5.323:1");
+        expect(contrastWrapper.find(".contrast-checker-grid").find(".contrast-checker-column")).toHaveLength(2);
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType")).toHaveLength(3);
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType").at(0).prop("typeName")).toEqual("Large Text");
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType").at(1).prop("typeName")).toEqual("Normal Text");
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType").at(2).prop("typeName")).toEqual("GUI Components");
+    });
+
+    it("Renders properly below 800 width", () => {
+        window.innerWidth = 600;
+        const contrastWrapper = mount(<ContrastCheck swatches={contrastSwatches} onModalClose={() => {}} colorMode="RGB" selection={[defaultSelection, newSelection]} onChange={onChange} />);
+
+        expect(contrastWrapper.find("AccordianSwatches")).toHaveLength(1);
+
+        expect(contrastWrapper.find(".contrast-checker-grid").find(".contrast-checker-rating")).toHaveLength(1);
+        expect(contrastWrapper.find(".contrast-checker-grid").find(".contrast-checker-rating").find("h2").text()).toEqual("5.323:1");
+        expect(contrastWrapper.find(".contrast-checker-grid").find(".contrast-checker-column")).toHaveLength(2);
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType")).toHaveLength(3);
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType").at(0).prop("typeName")).toEqual("Large Text");
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType").at(1).prop("typeName")).toEqual("Normal Text");
+        expect(contrastWrapper.find(".contrast-checker-grid").find("ContrastType").at(2).prop("typeName")).toEqual("GUI Components");
     });
 });

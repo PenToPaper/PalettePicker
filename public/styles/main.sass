@@ -271,6 +271,8 @@ header
     box-sizing: border-box
     overflow-y: auto
     margin-right: 48px
+    .add-section
+        display: none
     h1
         color: $front-off-white
         font-size: 40px
@@ -583,19 +585,24 @@ section
                 font-size: 22px
                 &:last-of-type
                     margin-bottom: 0px
+    .phone-compare-colors-wrapper
+        display: none
 
 .contrast-checker
     background-color: $body-background
     padding: 64px
     display: flex
     flex-direction: column
-    justify-content: center
     align-items: center
     overflow-y: auto
 
 .contrast-checker-rating, .contrast-checker-swatches, .contrast-checker-normal-text, .contrast-checker-large-text, .contrast-checker-gui-components
     background-color: $back-dark
     box-shadow: $shadow-2
+    display: block
+
+.contrast-checker-swatches-hidden
+    display: none
 
 .contrast-checker-row
     width: 1424px
@@ -1175,3 +1182,276 @@ section
     .sample-normal-text, .sample-large-text, .sample-gui-components
         span:first-child
             font-size: 16px
+
+// Phone
+@media (max-width: $phone-large)
+    #hamburger-menu-body
+        ul
+            width: 368px
+
+    header
+        max-width: 100%
+        margin: 32px 16px 0px
+
+    .controls
+        padding: 16px
+        flex-wrap: wrap
+        justify-content: center
+        
+        .header-tool
+            flex-basis: 40%
+            flex-grow: 1
+            &:first-of-type
+                margin-right: 16px
+
+        .header-toolbars
+            width: 100%
+            margin-top: 24px
+            align-items: center
+            flex-wrap: wrap
+            flex-direction: row
+        
+        .hue-saturation-circle
+            margin-left: 64px
+
+    .labeled-dropdown
+        flex-basis: 40%
+        flex-grow: 1
+        margin-bottom: 16px
+        &:first-of-type
+            margin-right: 16px
+
+    .dropdown
+        max-width: none
+        width: 100%
+        height: 40px
+
+    .project-preview
+        padding: 16px
+        margin-bottom: 32px
+        a
+            margin-right: 16px
+        .add-section
+            width: 40px
+            height: 40px
+            float: left
+            display: block
+            margin-top: 16px
+            border: none
+            padding: 0
+            background:
+                image: url("../assets/materialicons/material_create_folder_offblack.svg")
+                size: 25px auto
+                repeat: no-repeat
+                position: center center
+                color: $back-gray
+
+    section
+        max-width: 100%
+        padding: 16px
+        margin: 32px 16px 0
+        .add-swatch
+            top: 16px
+            left: 16px
+        .delete-section
+            top: 16px
+            right: 16px
+        .swatch-section-header
+            width: auto
+            margin: 0px 56px 16px
+            input
+                width: 100%
+
+        .section-swatches .swatch
+            width: 50%
+            padding-bottom: 50%
+    
+    .contrast-checker
+        padding-top: 96px
+        display: block
+
+    .contrast-checker-grid
+        width: 100%
+    
+    .contrast-checker-rating
+        width: 100%
+    
+    .contrast-checker-row
+        background-color: $back-dark
+        box-shadow: $shadow-2
+        display: block
+        width: 100%
+
+    .contrast-checker-column
+        width: 100%
+        float: none
+        margin-right: 0px
+    
+    .phone-accordian-swatches
+        background-color: transparent
+        border: none
+        font-size: 18px
+        font-weight: 600
+        height: 40px
+        line-height: 40px
+        padding: 0px 16px 16px
+        position: relative
+        width: 100%
+        text-align: left
+        h4
+            color: $front-off-white
+        &::after
+            content: " "
+            position: absolute
+            right: 0
+            top: 0
+            bottom: 0
+            width: 40px
+            transform: rotate(180deg)
+            background:
+                image: url("../assets/materialicons/material_dropdown_offwhite.svg")
+                repeat: no-repeat
+                size: contain
+                position: center center
+        &.accordian-open::after
+            transform: rotate(0deg)
+    
+    .contrast-checker-swatches
+        box-shadow: none
+        background-color: transparent
+        padding-top: 0px
+        padding-bottom: 16px
+        width: 100%
+        height: auto
+        .swatch
+            float: none
+            width: 100%
+            padding-bottom: 100%
+    
+    .contrast-checker-normal-text, .contrast-checker-large-text, .contrast-checker-gui-components
+        width: 100%
+        margin-bottom: 24px
+        &:last-child
+            margin-bottom: 24px
+    
+    .sample-large-text, .sample-normal-text
+        min-height: 48px
+        height: auto
+        align-items: stretch
+        span:first-child
+            height: auto
+            display: flex
+            align-items: center
+            justify-content: center
+            line-height: 16px
+    
+    .compare-colors
+        display: flex
+        flex-direction: column
+        background-color: $back-gray
+        .phone-compare-colors-wrapper
+            display: block
+            flex-grow: 1
+            margin-bottom: 16px
+            box-shadow: $shadow-2
+            div
+                float: left
+                width: 50%
+                height: 100%
+        .swatch
+            float: none
+            width: 100%
+            height: auto
+            flex-basis: 208px
+            flex-grow: 0
+            box-shadow: $shadow-2
+            >input
+                width: 208px
+                height: auto
+                margin: 0px
+                line-height: 32px
+                position: absolute
+                transform: translateX(-100%) rotate(-90deg)
+                transform-origin: top right
+                left: 32px
+                padding: 0px
+                cursor: vertical-text
+                background-color: transparent
+                z-index: 6
+            .swatch-modifier
+                padding-left: 100px
+                height: 208px
+                display: flex
+                flex-direction: column
+                justify-content: space-between
+                background-color: $back-dark
+            .modifier-row > div
+                height: 40px
+            &::before
+                content: " "
+                position: absolute
+                top: 0
+                bottom: 0
+                left: 0
+                width: 16px
+                background-color: inherit
+                z-index: 10
+            &:last-child
+                margin-top: 16px
+
+
+
+@media (max-width: $phone-small)
+    .controls
+        padding: 16px
+        flex-wrap: wrap
+        justify-content: center
+        
+        .header-tool
+            flex-basis: 100%
+            flex-grow: 0
+            margin-bottom: 24px
+            &:first-of-type
+                margin-right: 0px
+            &:last-of-type
+                margin-bottom: 0px
+
+        .header-toolbars
+            width: 100%
+            margin-top: 24px
+            align-items: center
+            flex-wrap: wrap
+            flex-direction: row
+        
+        .hue-saturation-circle
+            margin-left: 16px
+            width: 250px
+            height: 250px
+
+    .labeled-dropdown
+        flex-basis: 100%
+        flex-grow: 0
+        margin-bottom: 24px
+        &:first-of-type
+            margin-right: 0px
+
+    .dropdown
+        max-width: none
+        width: 100%
+        height: 40px
+
+    .project-preview
+        padding: 16px
+        margin-bottom: 32px
+
+    section
+        .section-swatches .swatch
+            width: 100%
+            padding-bottom: 100%
+    
+    .add-section-container .add-section
+        width: 100%
+
+    .contrast-checker
+        padding-left: 16px
+        padding-right: 16px

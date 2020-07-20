@@ -812,6 +812,7 @@ export default function PalettePicker() {
                     onContrastChecker={contrastChecker}
                     onColorMode={recalculateColors}
                     onColorHarmony={colorHarmony}
+                    onAddSwatchSection={addSwatchSection}
                     projectName={projects[activeProject]}
                 />
                 <PaletteBody
