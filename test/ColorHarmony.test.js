@@ -2,6 +2,7 @@ import React from "react";
 import * as colorUtils from "../src/ColorUtils.js";
 import PalettePicker from "../src/PalettePicker";
 import { shallow } from "enzyme";
+import convert from "color-convert";
 
 describe("Algorithms for finding color harmonies function correctly", () => {
     let colorDataMargin = (arrayOne, arrayTwo, margin = 1) => {
@@ -406,4 +407,125 @@ describe("WCAG Contrast checker accurately represents contrast ratio between two
 describe("getAbsoluteHueDiff returns correct hue diff", () => {
     expect(colorUtils.getAbsoluteHueDiff([359, 100, 100], [271, 100, 100])).toEqual(-88);
     expect(colorUtils.getAbsoluteHueDiff([360, 100, 100], [270, 100, 100])).toEqual(-90);
+});
+
+describe("Color randomizer correctly returns random colors within possible range", () => {
+    const randomizer = colorUtils.getRandomColor;
+
+    const expectToBeBetween = (x, min, max) => {
+        if (!(x >= min && x < max)) {
+            console.log(x, " is not between ", min, max);
+        }
+        expect(x >= min && x < max).toEqual(true);
+    };
+
+    it("Correctly assigns random colors without a section to guide", () => {
+        const random1 = randomizer("HSB");
+        const random1HSBConvert = convert.hex.hsv(random1.hex);
+
+        // Small 5 value difference allowed to compensate for inaccurate hex codes
+        expectToBeBetween(random1.colorData[0], 0, 360);
+        expectToBeBetween(random1.colorData[1], 55, 80);
+        expectToBeBetween(random1.colorData[2], 75, 90);
+
+        expectToBeBetween(random1HSBConvert[0], 0, 360);
+        expectToBeBetween(random1HSBConvert[1], 55, 80);
+        expectToBeBetween(random1HSBConvert[2], 75, 90);
+
+        const random2 = randomizer("HSB");
+        const random2HSBConvert = convert.hex.hsv(random2.hex);
+
+        expectToBeBetween(random2.colorData[0], 0, 360);
+        expectToBeBetween(random2.colorData[1], 55, 80);
+        expectToBeBetween(random2.colorData[2], 75, 90);
+
+        expectToBeBetween(random2HSBConvert[0], 0, 360);
+        expectToBeBetween(random2HSBConvert[1], 55, 80);
+        expectToBeBetween(random2HSBConvert[2], 75, 90);
+
+        const random3 = randomizer("HSB");
+        const random3HSBConvert = convert.hex.hsv(random3.hex);
+
+        expectToBeBetween(random3.colorData[0], 0, 360);
+        expectToBeBetween(random3.colorData[1], 55, 80);
+        expectToBeBetween(random3.colorData[2], 75, 90);
+
+        expectToBeBetween(random3HSBConvert[0], 0, 360);
+        expectToBeBetween(random3HSBConvert[1], 55, 80);
+        expectToBeBetween(random3HSBConvert[2], 75, 90);
+
+        const random4 = randomizer("HSB");
+        const random4HSBConvert = convert.hex.hsv(random4.hex);
+
+        expectToBeBetween(random4.colorData[0], 0, 360);
+        expectToBeBetween(random4.colorData[1], 55, 80);
+        expectToBeBetween(random4.colorData[2], 75, 90);
+
+        expectToBeBetween(random4HSBConvert[0], 0, 360);
+        expectToBeBetween(random4HSBConvert[1], 55, 80);
+        expectToBeBetween(random4HSBConvert[2], 75, 90);
+    });
+
+    it("Correctly assigns weighted random colors with a section to guide", () => {
+        const section = {
+            "1": { hex: "#59B3B3", colorData: [180, 50, 70] },
+            "2": { hex: "#52B8CC", colorData: [190, 60, 80] },
+            "3": { hex: "#45B0E6", colorData: [200, 70, 90] },
+        };
+
+        const random1 = randomizer("HSB", section);
+        const random1HSBConvert = convert.hex.hsv(random1.hex);
+
+        expectToBeBetween(random1.colorData[0], 178, 202);
+        expectToBeBetween(random1.colorData[1], 50, 70);
+        expectToBeBetween(random1.colorData[2], 70, 90);
+
+        expectToBeBetween(random1HSBConvert[0], 178, 202);
+        expectToBeBetween(random1HSBConvert[1], 50, 70);
+        expectToBeBetween(random1HSBConvert[2], 70, 90);
+
+        const random2 = randomizer("HSB", section);
+        const random2HSBConvert = convert.hex.hsv(random2.hex);
+
+        expectToBeBetween(random2.colorData[0], 178, 202);
+        expectToBeBetween(random2.colorData[1], 50, 70);
+        expectToBeBetween(random2.colorData[2], 70, 90);
+
+        expectToBeBetween(random2HSBConvert[0], 178, 202);
+        expectToBeBetween(random2HSBConvert[1], 50, 70);
+        expectToBeBetween(random2HSBConvert[2], 70, 90);
+
+        const random3 = randomizer("HSB", section);
+        const random3HSBConvert = convert.hex.hsv(random3.hex);
+
+        expectToBeBetween(random3.colorData[0], 178, 202);
+        expectToBeBetween(random3.colorData[1], 50, 70);
+        expectToBeBetween(random3.colorData[2], 70, 90);
+
+        expectToBeBetween(random3HSBConvert[0], 178, 202);
+        expectToBeBetween(random3HSBConvert[1], 50, 70);
+        expectToBeBetween(random3HSBConvert[2], 70, 90);
+
+        const random4 = randomizer("HSB", section);
+        const random4HSBConvert = convert.hex.hsv(random4.hex);
+
+        expectToBeBetween(random4.colorData[0], 178, 202);
+        expectToBeBetween(random4.colorData[1], 50, 70);
+        expectToBeBetween(random4.colorData[2], 70, 90);
+
+        expectToBeBetween(random4HSBConvert[0], 178, 202);
+        expectToBeBetween(random4HSBConvert[1], 50, 70);
+        expectToBeBetween(random4HSBConvert[2], 70, 90);
+
+        const random5 = randomizer("HSB", section);
+        const random5HSBConvert = convert.hex.hsv(random5.hex);
+
+        expectToBeBetween(random5.colorData[0], 178, 202);
+        expectToBeBetween(random5.colorData[1], 50, 70);
+        expectToBeBetween(random5.colorData[2], 70, 90);
+
+        expectToBeBetween(random5HSBConvert[0], 178, 202);
+        expectToBeBetween(random5HSBConvert[1], 50, 70);
+        expectToBeBetween(random5HSBConvert[2], 70, 90);
+    });
 });

@@ -42,7 +42,7 @@ describe("PalettePicker renders default state properly", () => {
 
     it("Supplies child components with changeColor method", () => {
         const newSwatches = Object.assign({}, defaultSwatches);
-        newSwatches.Main[3] = "#fffaaa";
+        newSwatches.Main[3] = { hex: "#FFFAAA", colorData: [56, 33, 100] };
 
         appWrapper.find("PaletteHeader").prop("onChange")("Main", 3, newSwatches.Main[3]);
         expect(appWrapper.find("PaletteHeader").prop("swatches")).toEqual(newSwatches);
@@ -53,7 +53,8 @@ describe("PalettePicker renders default state properly", () => {
         expect(Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main)).toHaveLength(5);
         let newKey = Object.keys(appWrapper.find("PaletteBody").prop("swatches").Main).filter((item) => !(item in defaultSwatches.Main));
         newKey = newKey[0];
-        expect(appWrapper.find("PaletteBody").prop("swatches").Main[newKey].hex).toEqual("#FFFFFF");
+        expect(appWrapper.find("PaletteBody").prop("swatches").Main[newKey].colorData).not.toEqual([0, 0, 0]);
+        expect(appWrapper.find("PaletteBody").prop("swatches").Main[newKey].hex).not.toEqual("#FFFFFF");
     });
 });
 

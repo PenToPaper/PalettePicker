@@ -278,3 +278,41 @@ export function hsbReplaceValue(hsbArray, index, newValue) {
     newArray[index] = newValue;
     return newArray;
 }
+
+export function getRandomColor(colorMode, baseSection = null) {
+    const getRandomNumberBetween = (min, max) => {
+        const range = max - min;
+        const random = Math.random() * range;
+        return min + random;
+    };
+
+    const getAverageIndexHSB = (index, section) => {
+        // Loop through indexes
+        // const example = {
+        //     1: { hex: "#AAAAAA", colorData: [100, 100, 100] },
+        //     2: { hex: "#AAAAAA", colorData: [100, 100, 100] },
+        // };
+
+        let indexSum = 0;
+        Object.keys(section).forEach((key) => {
+            const hsb = getColorDataFromHex(section[key].hex, colorMode);
+            indexSum += hsb[index];
+        });
+
+        return indexSum / Object.keys(section).length;
+    };
+
+    if (baseSection === null) {
+        const hex = "#" + convert.hsv.hex([getRandomNumberBetween(0, 360), getRandomNumberBetween(60, 75), getRandomNumberBetween(80, 90)]);
+        return { hex, colorData: getColorDataFromHex(hex, colorMode) };
+    } else {
+        const averageHSB = [getAverageIndexHSB(0, baseSection), getAverageIndexHSB(1, baseSection), getAverageIndexHSB(2, baseSection)];
+        const randomAverageHSB = [
+            getRandomNumberBetween(averageHSB[0] - 10 < 0 ? 0 : averageHSB[0] - 10, averageHSB[0] + 10 > 360 ? 360 : averageHSB[0] + 10),
+            getRandomNumberBetween(averageHSB[1] - 5 < 0 ? 0 : averageHSB[1] - 5, averageHSB[1] + 5 > 100 ? 100 : averageHSB[1] + 5),
+            getRandomNumberBetween(averageHSB[2] - 5 < 0 ? 0 : averageHSB[2] - 5, averageHSB[2] + 5 > 100 ? 100 : averageHSB[2] + 5),
+        ];
+        const hex = "#" + convert.hsv.hex(randomAverageHSB);
+        return { hex, colorData: getColorDataFromHex(hex, colorMode) };
+    }
+}

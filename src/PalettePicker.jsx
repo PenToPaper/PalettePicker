@@ -579,7 +579,7 @@ export default function PalettePicker() {
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
             const newSwatchSectionName = generateUniqueIndex(prevSwatches);
-            newSwatches[newSwatchSectionName] = { 1: { hex: "#FFFFFF", colorData: [0, 0, 100] } };
+            newSwatches[newSwatchSectionName] = { 1: colorUtils.getRandomColor(colorMode) };
             return newSwatches;
         });
     };
@@ -602,7 +602,7 @@ export default function PalettePicker() {
 
         setSaveSwatches((prevSwatches) => {
             const newSwatches = Object.assign({}, prevSwatches);
-            newSwatches[sectionName][generateUniqueIndex(prevSwatches, sectionName)] = { hex: "#FFFFFF", colorData: colorUtils.getColorDataFromHex("#FFFFFF", colorMode) };
+            newSwatches[sectionName][generateUniqueIndex(prevSwatches, sectionName)] = colorUtils.getRandomColor(colorMode, prevSwatches[sectionName]);
             return newSwatches;
         });
     };
@@ -730,10 +730,10 @@ export default function PalettePicker() {
         const newColorMode = "HSB";
         const newSwatches = {
             Main: {
-                1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-                2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-                3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-                4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+                1: colorUtils.getRandomColor("HSB"),
+                2: colorUtils.getRandomColor("HSB"),
+                3: colorUtils.getRandomColor("HSB"),
+                4: colorUtils.getRandomColor("HSB"),
             },
         };
         const newSelection = {
