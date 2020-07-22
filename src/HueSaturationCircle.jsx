@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HueSaturationNode from "./HueSaturationNode";
 import { getCoordinateFromHueSaturation } from "./HueSaturationNode";
 import convert from "color-convert";
@@ -34,12 +34,26 @@ export default function HueSaturationCircle(props) {
     const [circleRadius, setCircleRadius] = useState(0);
     let instance = null;
 
-    const updateSize = (element) => {
+    const setStartSize = (element) => {
         if (element) {
             setCircleRadius(element.getBoundingClientRect().width / 2);
             instance = element;
         }
     };
+
+    const refreshSize = () => {
+        if (instance !== null) {
+            setCircleRadius(instance.getBoundingClientRect().width / 2);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("resize", refreshSize);
+
+        return () => {
+            window.removeEventListener("resize", refreshSize);
+        };
+    }, [refreshSize]);
 
     const getRelativeMouseX = (absoluteMouseX) => {
         if (instance !== null) {
@@ -101,7 +115,7 @@ export default function HueSaturationCircle(props) {
     };
 
     return (
-        <div className="hue-saturation-circle" ref={updateSize} onMouseDown={handleMouseDown} aria-hidden="true">
+        <div className="hue-saturation-circle" ref={setStartSize} onMouseDown={handleMouseDown} aria-hidden="true">
             {Object.keys(props.swatches).map((swatchCategory) => {
                 return Object.keys(props.swatches[swatchCategory])
                     .reverse()
