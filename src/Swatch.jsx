@@ -50,6 +50,12 @@ export function BufferedNumberInput(props) {
 }
 
 export function HsbModifier(props) {
+    const hueZero = "#" + convert.hsv.hex([0, props.color.colorData[1], props.color.colorData[2]]);
+    const hueOne = "#" + convert.hsv.hex([300, props.color.colorData[1], props.color.colorData[2]]);
+    const hueTwo = "#" + convert.hsv.hex([240, props.color.colorData[1], props.color.colorData[2]]);
+    const hueThree = "#" + convert.hsv.hex([180, props.color.colorData[1], props.color.colorData[2]]);
+    const hueFour = "#" + convert.hsv.hex([120, props.color.colorData[1], props.color.colorData[2]]);
+    const hueFive = "#" + convert.hsv.hex([60, props.color.colorData[1], props.color.colorData[2]]);
     const hueSaturated = "#" + convert.hsv.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 100));
     const hueDesaturated = "#" + convert.hsv.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 0));
     const hueBright = "#" + convert.hsv.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 100));
@@ -64,6 +70,7 @@ export function HsbModifier(props) {
                     min={0}
                     value={props.color.colorData[0]}
                     pageIncrement={10}
+                    style={{ backgroundImage: `linear-gradient(to left, ${hueZero}, ${hueOne}, ${hueTwo}, ${hueThree}, ${hueFour}, ${hueFive}, ${hueZero})` }}
                     innerLabel="Hue"
                     innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
@@ -182,6 +189,12 @@ export function RgbModifier(props) {
 }
 
 export function HslModifier(props) {
+    const hueZero = "#" + convert.hsv.hex([0, props.color.colorData[1], props.color.colorData[2]]);
+    const hueOne = "#" + convert.hsv.hex([300, props.color.colorData[1], props.color.colorData[2]]);
+    const hueTwo = "#" + convert.hsv.hex([240, props.color.colorData[1], props.color.colorData[2]]);
+    const hueThree = "#" + convert.hsv.hex([180, props.color.colorData[1], props.color.colorData[2]]);
+    const hueFour = "#" + convert.hsv.hex([120, props.color.colorData[1], props.color.colorData[2]]);
+    const hueFive = "#" + convert.hsv.hex([60, props.color.colorData[1], props.color.colorData[2]]);
     const hueSaturated = "#" + convert.hsl.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 100));
     const hueDesaturated = "#" + convert.hsl.hex(colorUtils.hsbReplaceValue(props.color.colorData, 1, 0));
     const hueMediumLightness = "#" + convert.hsl.hex(colorUtils.hsbReplaceValue(props.color.colorData, 2, 50));
@@ -197,6 +210,7 @@ export function HslModifier(props) {
                     value={props.color.colorData[0]}
                     pageIncrement={10}
                     innerLabel="Hue"
+                    style={{ backgroundImage: `linear-gradient(to left, ${hueZero}, ${hueOne}, ${hueTwo}, ${hueThree}, ${hueFour}, ${hueFive}, ${hueZero})` }}
                     innerStyle={{ backgroundColor: props.color.hex }}
                     onChange={(newValue) => {
                         const newColorData = colorUtils.hsbReplaceValue(props.color.colorData, 0, newValue);
