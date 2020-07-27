@@ -367,7 +367,7 @@ section
     position: relative
     align-items: stretch
     .add-swatch, .delete-section
-        z-index: 10
+        z-index: 6
         position: absolute
         top: 0px
         height: 64px
@@ -591,8 +591,8 @@ section
 
 .contrast-checker
     background-color: $body-background
-    padding: 64px
-    display: flex
+    padding: 48px 96px
+    display: block
     flex-direction: column
     align-items: center
     overflow-y: auto
@@ -608,10 +608,8 @@ section
 .contrast-checker-row
     width: 1424px
     display: flex
-    margin-bottom: 48px
+    margin: 0px auto 48px auto
     justify-content: space-between
-    &:last-child
-        margin-bottom: 0px
 
 .contrast-checker-rating
     width: 592px
@@ -1083,6 +1081,7 @@ section
             margin-right: 0px
             margin-bottom: 24px
             input
+                cursor: text
                 font-size: 22px
                 width: 544px
                 margin: 0 auto
@@ -1132,6 +1131,14 @@ section
         margin-right: 24px
         &:last-child
             margin-right: 0px
+
+    .contrast-checker-grid
+        width: 608px
+        margin: 0 auto
+        &::after
+            content: " "
+            display: block
+            clear: both
     
     .contrast-checker::after
         content: " "
@@ -1269,7 +1276,6 @@ section
     
     .contrast-checker
         padding-top: 96px
-        display: block
 
     .contrast-checker-grid
         width: 100%
@@ -1376,7 +1382,6 @@ section
                 transform-origin: top right
                 left: 32px
                 padding: 0px
-                cursor: vertical-text
                 background-color: transparent
                 z-index: 6
             .swatch-modifier

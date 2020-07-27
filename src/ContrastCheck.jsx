@@ -149,7 +149,7 @@ export default function ContrastCheck(props) {
     };
 
     const getLayoutByScreenSize = (screenSize) => {
-        if (screenSize >= 1200) {
+        if (screenSize > 1280) {
             return (
                 <div className="contrast-checker modal" role="dialog" aria-label="Contrast Checker" aria-modal="true" onKeyDown={handleButtonKeyDown}>
                     <button className="modal-exit" aria-label="Exit Contrast Checker" ref={exit} onClick={props.onModalClose}></button>
@@ -215,7 +215,7 @@ export default function ContrastCheck(props) {
                     </div>
                 </div>
             );
-        } else if (screenSize >= 800) {
+        } else if (screenSize > 800) {
             return (
                 <div className="contrast-checker modal" role="dialog" aria-label="Contrast Checker" aria-modal="true" onKeyDown={handleButtonKeyDown}>
                     <button className="modal-exit" aria-label="Exit Contrast Checker" ref={exit} onClick={props.onModalClose}></button>

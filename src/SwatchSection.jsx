@@ -6,7 +6,7 @@ export default function SwatchSection(props) {
 
     const adjustInputWidth = () => {
         const newHeight = inputContainer.current.clientHeight;
-        if (window.innerWidth > 1200) {
+        if (window.innerWidth > 1280) {
             inputContainer.current.childNodes[0].style.width = newHeight + "px";
         } else {
             inputContainer.current.childNodes[0].removeAttribute("style");
