@@ -78,11 +78,13 @@ nav
             input, .project
                 padding: 16px
                 flex-grow: 1
+                flex-shrink: 1
                 font-size: 18px
                 text-align: center
                 color: $back-dark
                 font-weight: 700
             input
+                min-width: 0
                 text-decoration: underline
             &.project-selected
                 .project, input, .nav-modifier  
@@ -95,6 +97,7 @@ nav
             height: 56px
             padding: 0px
             margin: 0px
+            flex-shrink: 0
             img
                 height: 26px
             &:first-child
@@ -447,7 +450,7 @@ section
         height: 48px
         line-height: 48px
         font-size: 18px
-        font-weight: 900
+        font-weight: 700
         text-align: center
         z-index: 2
     >button
@@ -573,7 +576,7 @@ section
             margin: 16px auto
             line-height: 64px
             font-size: 32px
-            font-weight: 900
+            font-weight: 700
         .swatch-modifier
             width: 448px
             margin: 0 auto
