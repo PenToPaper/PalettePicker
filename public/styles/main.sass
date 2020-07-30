@@ -7,6 +7,10 @@ body
 div.body
     position: relative
     &.body-fixed
+        position: fixed
+        left: 0
+        right: 0
+        overflow-x: hidden
         overflow-y: hidden
         height: 100vh
 
@@ -952,11 +956,12 @@ section
             .swatch-modifier
                 width: 384px
 
+    .contrast-checker
+        padding-top: 32px
+
     .contrast-checker-row
         width: 1088px
         margin-bottom: 32px
-        &:last-child
-            margin-bottom: 0px
 
     .contrast-checker-rating
         width: 448px
@@ -1124,6 +1129,9 @@ section
                 width: 100%
 
     // Contrast checker
+    .contrast-checker
+        padding-top: 24px
+
     .contrast-checker-row
         width: $tablet-contrast-checker-max-width
         margin-bottom: 24px
@@ -1165,8 +1173,6 @@ section
     .contrast-checker-normal-text, .contrast-checker-large-text, .contrast-checker-gui-components
         width: 292px
         margin-bottom: 24px
-        &:last-child
-            margin-bottom: 0px
     
     .sample-normal-text
         height: 64px
