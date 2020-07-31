@@ -18,7 +18,7 @@ describe("HueSaturationCircle is able to calculate the hue and saturation of a g
         // getHue(radius, xOffsetFromCenter, yOffsetFromCenter)
         expect(getHue(100, 50, 50)).toEqual(45);
         expect(getHue(100, 32, 60)).toEqual(62);
-        expect(getHue(100, 100, 0)).toEqual(0);
+        expect(getHue(100, 100, 0)).toEqual(360);
         expect(getHue(100, -10, 40)).toEqual(104);
         expect(getHue(100, -50, 20)).toEqual(158);
         expect(getHue(100, -50, -50)).toEqual(225);
@@ -37,19 +37,76 @@ describe("HueSaturationCircle is able to calculate the hue and saturation of a g
 });
 
 describe("HueSaturationCircle calls callback function on click and generates circle elements when supplied with swatches", () => {
-    const callback = jest.fn();
+    const onSelectSwatch = jest.fn();
+    const onNewColor = jest.fn();
+
     const swatchData = {
         Main: {
-            10: { hex: "#aaaaaa", colorData: [0, 0, 67] },
             2: { hex: "#aaabbb", colorData: [236, 9, 73] },
+            10: { hex: "#aaaaaa", colorData: [0, 0, 67] },
             13: { hex: "#aaaccc", colorData: [236, 17, 80] },
         },
     };
-    const circleWrapper = mount(<HueSaturationCircle onSelectSwatch={callback} selection={{ sectionName: "Main", index: 2 }} colorMode={"HSB"} onPickColor={callback} swatches={swatchData} />);
+    const circleWrapper = mount(<HueSaturationCircle onSelectSwatch={onSelectSwatch} selection={{ sectionName: "Main", index: 2 }} colorMode={"HSB"} onPickColor={onNewColor} swatches={swatchData} />);
 
-    it("Calls callback onPickColor", () => {
+    const map = {};
+    document.addEventListener = jest.fn((event, callback) => {
+        map[event] = callback;
+    });
+    document.removeEventListener = jest.fn((event, callback) => {
+        delete map[event];
+    });
+
+    it("On mouseDown, calls callback onPickColor and registers event handlers", () => {
+        expect(Object.keys(map)).toHaveLength(0);
         circleWrapper.find(".hue-saturation-circle").prop("onMouseDown")({ clientX: 1, clientY: 1 });
-        expect(callback).toHaveBeenCalledTimes(4);
+        expect(onSelectSwatch).toHaveBeenLastCalledWith({ sectionName: "Main", index: "2" });
+        expect(onNewColor).toHaveBeenCalledTimes(1);
+        expect(onNewColor).toHaveBeenLastCalledWith(315, 100, { sectionName: "Main", index: "2" });
+        expect(Object.keys(map)).toHaveLength(2);
+        expect(typeof map["mousemove"]).toEqual("function");
+        expect(typeof map["mouseup"]).toEqual("function");
+    });
+
+    it("On mousemove, calls callback onPickColor", () => {
+        map["mousemove"]({ clientX: -1, clientY: -1 });
+        expect(onNewColor).toHaveBeenCalledTimes(2);
+        expect(onNewColor).toHaveBeenLastCalledWith(135, 100, { sectionName: "Main", index: "2" });
+    });
+
+    it("On mouseup, calls callback onPickColor and removes event handlers", () => {
+        map["mouseup"]({ clientX: 1, clientY: -1 });
+        expect(onNewColor).toHaveBeenCalledTimes(3);
+        expect(onNewColor).toHaveBeenLastCalledWith(45, 100, { sectionName: "Main", index: "2" });
+        expect(Object.keys(map)).toHaveLength(0);
+        expect(typeof map["mousemove"]).toEqual("undefined");
+        expect(typeof map["mouseup"]).toEqual("undefined");
+    });
+
+    it("On touchstart, calls callback onPickColor and registers event handlers", () => {
+        expect(Object.keys(map)).toHaveLength(0);
+        circleWrapper.find(".hue-saturation-circle").prop("onTouchStart")({ touches: [{ pageX: 1, pageY: 1 }], preventDefault: () => {} });
+        expect(onSelectSwatch).toHaveBeenLastCalledWith({ sectionName: "Main", index: "2" });
+        expect(onNewColor).toHaveBeenCalledTimes(4);
+        expect(onNewColor).toHaveBeenLastCalledWith(315, 100, { sectionName: "Main", index: "2" });
+        expect(Object.keys(map)).toHaveLength(2);
+        expect(typeof map["touchmove"]).toEqual("function");
+        expect(typeof map["touchend"]).toEqual("function");
+    });
+
+    it("On touchmove, calls callback onPickColor", () => {
+        map["touchmove"]({ pageX: -1, pageY: -1, preventDefault: () => {} });
+        expect(onNewColor).toHaveBeenCalledTimes(5);
+        expect(onNewColor).toHaveBeenLastCalledWith(135, 100, { sectionName: "Main", index: "2" });
+    });
+
+    it("On touchend, calls callback onPickColor and removes event handlers", () => {
+        map["touchend"]({ pageX: 1, pageY: -1 });
+        expect(onNewColor).toHaveBeenCalledTimes(6);
+        expect(onNewColor).toHaveBeenLastCalledWith(45, 100, { sectionName: "Main", index: "2" });
+        expect(Object.keys(map)).toHaveLength(0);
+        expect(typeof map["touchmove"]).toEqual("undefined");
+        expect(typeof map["touchend"]).toEqual("undefined");
     });
 
     it("Creates 3 circle elements when supplied with the swatch data", () => {

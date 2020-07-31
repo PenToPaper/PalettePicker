@@ -11,8 +11,8 @@ export function getHue(radius, xOffset, yOffset) {
     // Math.atan finds degree of hue in radians, Math.round * 180/Math.PI converts this to degrees
     let triangleAngle = (Math.atan(yOffset / xOffset) * 180) / Math.PI;
     let ret = triangleAngle;
-    if (xOffset > 0) {
-        if (yOffset < 0) {
+    if (xOffset >= 0) {
+        if (yOffset <= 0) {
             // Q4
             ret = triangleAngle + 360;
         }
@@ -55,32 +55,9 @@ export default function HueSaturationCircle(props) {
         };
     }, [refreshSize]);
 
-    const getRelativeMouseX = (absoluteMouseX) => {
-        if (instance !== null) {
-            return absoluteMouseX - instance.getBoundingClientRect().left;
-        }
-        return 0;
-    };
-
-    const getRelativeMouseY = (absoluteMouseY) => {
-        if (instance !== null) {
-            return absoluteMouseY - instance.getBoundingClientRect().top;
-        }
-        return 0;
-    };
-
     const dragSelection = Object.assign({}, props.selection);
 
-    const handleMouseUp = (event) => {
-        handleDrag(event);
-
-        document.removeEventListener("mousemove", handleDrag);
-        document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    const handleDrag = (event) => {
-        const x = getRelativeMouseX(event.clientX);
-        const y = getRelativeMouseY(event.clientY);
+    const handleDrag = (x, y) => {
         props.onPickColor(getHue(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), getSaturation(circleRadius, ...getOffsetFromCenter(circleRadius, x, y)), dragSelection);
     };
 
@@ -88,34 +65,84 @@ export default function HueSaturationCircle(props) {
         return Math.sqrt(Math.pow(x1 - x, 2) + Math.pow(y1 - y, 2)) <= distance;
     };
 
-    const handleMouseDown = (event) => {
-        const x = getRelativeMouseX(event.clientX);
-        const y = getRelativeMouseY(event.clientY);
+    const startDrag = (x, y) => {
         dragSelection.sectionName = props.selection.sectionName;
         dragSelection.index = props.selection.index;
 
-        Object.keys(props.swatches).forEach((swatchCategory) => {
-            Object.keys(props.swatches[swatchCategory])
-                .reverse()
-                .forEach((swatchKey) => {
-                    const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey].hex);
-                    const coordinates = getCoordinateFromHueSaturation(circleRadius, hue, saturation);
-                    if (coordinatesAreWithin(...getOffsetFromCenter(circleRadius, x, y), ...coordinates, 26)) {
-                        dragSelection.sectionName = swatchCategory;
-                        dragSelection.index = swatchKey;
-                        props.onSelectSwatch({ sectionName: swatchCategory, index: swatchKey });
-                    }
-                });
-        });
+        for (let swatchCategory of Object.keys(props.swatches)) {
+            for (let swatchKey of Object.keys(props.swatches[swatchCategory])) {
+                const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey].hex);
+                const coordinates = getCoordinateFromHueSaturation(circleRadius, hue, saturation);
+                if (coordinatesAreWithin(...getOffsetFromCenter(circleRadius, x, y), ...coordinates, 25)) {
+                    dragSelection.sectionName = swatchCategory;
+                    dragSelection.index = swatchKey;
+                    props.onSelectSwatch({ sectionName: swatchCategory, index: swatchKey });
+                    return;
+                }
+            }
+        }
+    };
 
-        handleDrag(event);
+    const handleMouseUp = (event) => {
+        const x = event.clientX - instance.getBoundingClientRect().left;
+        const y = event.clientY - instance.getBoundingClientRect().top;
 
-        document.addEventListener("mousemove", handleDrag);
+        handleDrag(x, y);
+
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleMouseMove = (event) => {
+        const x = event.clientX - instance.getBoundingClientRect().left;
+        const y = event.clientY - instance.getBoundingClientRect().top;
+
+        handleDrag(x, y);
+    };
+
+    const handleMouseDown = (event) => {
+        const x = event.clientX - instance.getBoundingClientRect().left;
+        const y = event.clientY - instance.getBoundingClientRect().top;
+
+        startDrag(x, y);
+        handleDrag(x, y);
+        document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
     };
 
+    const handleTouchMove = (event) => {
+        event.preventDefault();
+        const x = event.pageX - instance.getBoundingClientRect().left - window.scrollX;
+        const y = event.pageY - instance.getBoundingClientRect().top - window.scrollY;
+
+        handleDrag(x, y);
+    };
+
+    const handleTouchEnd = (event) => {
+        const x = event.pageX - instance.getBoundingClientRect().left - window.scrollX;
+        const y = event.pageY - instance.getBoundingClientRect().top - window.scrollY;
+
+        handleDrag(x, y);
+
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+    };
+
+    const handleTouchStart = (event) => {
+        // TODO: Verify that the event listeners are properly disposed of when touch ends
+        event.preventDefault();
+
+        const x = event.touches[0].pageX - instance.getBoundingClientRect().left - window.scrollX;
+        const y = event.touches[0].pageY - instance.getBoundingClientRect().top - window.scrollY;
+
+        startDrag(x, y);
+        handleDrag(x, y);
+        document.addEventListener("touchmove", handleTouchMove);
+        document.addEventListener("touchend", handleTouchEnd);
+    };
+
     return (
-        <div className="hue-saturation-circle" ref={setStartSize} onMouseDown={handleMouseDown} aria-hidden="true">
+        <div className="hue-saturation-circle" ref={setStartSize} onMouseDown={handleMouseDown} onTouchStart={handleTouchStart} aria-hidden="true">
             {Object.keys(props.swatches).map((swatchCategory) => {
                 return Object.keys(props.swatches[swatchCategory])
                     .reverse()
