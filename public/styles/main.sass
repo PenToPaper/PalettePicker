@@ -80,6 +80,7 @@ nav
             position: relative
             display: flex
             input, .project
+                margin: 0px
                 padding: 16px
                 flex-grow: 1
                 flex-shrink: 1
@@ -1109,7 +1110,6 @@ section
             line-height: 40px
             font-size: 18px
         >button
-            top: 2px
             height: 40px
             width: 40px
             img
@@ -1368,14 +1368,20 @@ section
         flex-direction: column
         background-color: $back-gray
         .phone-compare-colors-wrapper
+            position: relative
             display: block
             flex-grow: 1
             margin-bottom: 16px
             box-shadow: $shadow-2
             div
-                float: left
+                position: absolute
+                top: 0
+                bottom: 0
+                left: 0
                 width: 50%
-                height: 100%
+                &:last-child
+                    left: auto
+                    right: 0
         .swatch
             float: none
             width: 100%
