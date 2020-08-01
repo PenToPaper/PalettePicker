@@ -426,44 +426,44 @@ describe("Color randomizer correctly returns random colors within possible range
         // Small 5 value difference allowed to compensate for inaccurate hex codes
         expectToBeBetween(random1.colorData[0], 0, 360);
         expectToBeBetween(random1.colorData[1], 55, 80);
-        expectToBeBetween(random1.colorData[2], 75, 90);
+        expectToBeBetween(random1.colorData[2], 70, 95);
 
         expectToBeBetween(random1HSBConvert[0], 0, 360);
         expectToBeBetween(random1HSBConvert[1], 55, 80);
-        expectToBeBetween(random1HSBConvert[2], 75, 90);
+        expectToBeBetween(random1HSBConvert[2], 70, 95);
 
         const random2 = randomizer("HSB");
         const random2HSBConvert = convert.hex.hsv(random2.hex);
 
         expectToBeBetween(random2.colorData[0], 0, 360);
         expectToBeBetween(random2.colorData[1], 55, 80);
-        expectToBeBetween(random2.colorData[2], 75, 90);
+        expectToBeBetween(random2.colorData[2], 70, 95);
 
         expectToBeBetween(random2HSBConvert[0], 0, 360);
         expectToBeBetween(random2HSBConvert[1], 55, 80);
-        expectToBeBetween(random2HSBConvert[2], 75, 90);
+        expectToBeBetween(random2HSBConvert[2], 70, 95);
 
         const random3 = randomizer("HSB");
         const random3HSBConvert = convert.hex.hsv(random3.hex);
 
         expectToBeBetween(random3.colorData[0], 0, 360);
         expectToBeBetween(random3.colorData[1], 55, 80);
-        expectToBeBetween(random3.colorData[2], 75, 90);
+        expectToBeBetween(random3.colorData[2], 70, 95);
 
         expectToBeBetween(random3HSBConvert[0], 0, 360);
         expectToBeBetween(random3HSBConvert[1], 55, 80);
-        expectToBeBetween(random3HSBConvert[2], 75, 90);
+        expectToBeBetween(random3HSBConvert[2], 70, 95);
 
         const random4 = randomizer("HSB");
         const random4HSBConvert = convert.hex.hsv(random4.hex);
 
         expectToBeBetween(random4.colorData[0], 0, 360);
         expectToBeBetween(random4.colorData[1], 55, 80);
-        expectToBeBetween(random4.colorData[2], 75, 90);
+        expectToBeBetween(random4.colorData[2], 70, 95);
 
         expectToBeBetween(random4HSBConvert[0], 0, 360);
         expectToBeBetween(random4HSBConvert[1], 55, 80);
-        expectToBeBetween(random4HSBConvert[2], 75, 90);
+        expectToBeBetween(random4HSBConvert[2], 70, 95);
     });
 
     it("Correctly assigns weighted random colors with a section to guide", () => {
