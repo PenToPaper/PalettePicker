@@ -13,29 +13,62 @@ export function getPercentFilled(sliderHeight, relativeMouseY) {
 export default function VerticalSlider(props) {
     const containerDom = useRef(null);
 
-    const getRelativeMouseY = (absoluteMouseY) => {
-        return containerDom.current ? absoluteMouseY - containerDom.current.getBoundingClientRect().top : 0;
+    const handleDrag = (y) => {
+        props.onChange(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().height : 0, y) * 100);
     };
 
     const handleMouseUp = (event) => {
-        handleDrag(event);
+        const y = event.clientY - containerDom.current.getBoundingClientRect().top;
 
-        document.removeEventListener("mousemove", handleDrag);
+        handleDrag(y);
+
+        document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    const handleDrag = (event) => {
-        props.onChange(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().height : 0, getRelativeMouseY(event.clientY)) * 100);
+    const handleMouseMove = (event) => {
+        const y = event.clientY - containerDom.current.getBoundingClientRect().top;
+
+        handleDrag(y);
     };
 
-    const handleStartDrag = (event) => {
-        handleDrag(event);
-        document.addEventListener("mousemove", handleDrag);
+    const handleMouseDown = (event) => {
+        const y = event.clientY - containerDom.current.getBoundingClientRect().top;
+
+        handleDrag(y);
+        document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
     };
 
+    const handleTouchMove = (event) => {
+        event.preventDefault();
+        const y = event.pageY - containerDom.current.getBoundingClientRect().top - window.scrollY;
+
+        handleDrag(y);
+    };
+
+    const handleTouchEnd = (event) => {
+        const y = event.pageY - containerDom.current.getBoundingClientRect().top - window.scrollY;
+
+        handleDrag(y);
+
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+    };
+
+    const handleTouchStart = (event) => {
+        // TODO: Verify that the event listeners are properly disposed of when touch ends
+        event.preventDefault();
+
+        const y = event.touches[0].pageY - containerDom.current.getBoundingClientRect().top - window.scrollY;
+
+        handleDrag(y);
+        document.addEventListener("touchmove", handleTouchMove);
+        document.addEventListener("touchend", handleTouchEnd);
+    };
+
     return (
-        <div ref={containerDom} style={props.style} className={props.divClass} onMouseDown={handleStartDrag}>
+        <div ref={containerDom} style={props.style} className={props.divClass} onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}>
             <div className={props.thumbClass} style={{ ...props.innerStyle, top: props.value + "%" }} />
         </div>
     );
