@@ -80,7 +80,7 @@ describe("ContrastType renders properly and makes collapsable help text", () => 
     });
 
     it("Toggles the help menu on button click", () => {
-        contrastTypeWrapper.find("button").prop("onClick")();
+        contrastTypeWrapper.find("button").prop("onMouseUp")({ preventDefault: () => {} });
         expect(contrastTypeWrapper.find(".contrast-checker-tooltip").hasClass("tooltip-open")).toEqual(true);
         expect(contrastTypeWrapper.find(".contrast-checker-tooltip").prop("aria-hidden")).toEqual(false);
     });
@@ -215,7 +215,7 @@ describe("ContrastCheck modal appears properly with correct props", () => {
 
         expect(gui).toHaveLength(1);
         expect(gui.prop("typeName")).toEqual("GUI Components");
-        expect(gui.prop("tooltip")).toEqual("A GUI component is visual information required to identify UI components and states.");
+        expect(gui.prop("tooltip")).toEqual("A GUI component contains visual information required to identify UI components and states.");
         expect(gui.prop("foreground")).toEqual(contrastSwatches.Main[1]);
         expect(gui.prop("background")).toEqual(contrastSwatches.Main[2]);
 

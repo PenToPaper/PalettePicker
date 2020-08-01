@@ -28,8 +28,12 @@ export function ContrastType(props) {
             <h4>{props.typeName}</h4>
             <button
                 aria-describedby={`#tooltip-${cssFormattedTypeName}`}
-                onClick={() => {
+                onMouseUp={(event) => {
+                    event.preventDefault();
                     setIsTooltipOpen((prevTooltipState) => !prevTooltipState);
+                }}
+                onMouseDown={(event) => {
+                    event.preventDefault();
                 }}
             >
                 <img src="/assets/materialicons/material_help_outline_offwhite.svg" alt={`Show definition of ${props.typeName.toLowerCase()}`} />
@@ -203,7 +207,7 @@ export default function ContrastCheck(props) {
                             background={props.swatches[props.selection[1].sectionName][props.selection[1].index]}
                         />
                         <ContrastType
-                            tooltip="A GUI component is visual information required to identify UI components and states."
+                            tooltip="A GUI component contains visual information required to identify UI components and states."
                             typeName="GUI Components"
                             standards={[
                                 { type: "standard", standardMet: wcagContrast >= 3, standardRatio: 3, standardName: "WCAG AA" },
