@@ -57,7 +57,6 @@ export default function VerticalSlider(props) {
     };
 
     const handleTouchStart = (event) => {
-        // TODO: Verify that the event listeners are properly disposed of when touch ends
         event.preventDefault();
 
         const y = event.touches[0].pageY - containerDom.current.getBoundingClientRect().top - window.scrollY;

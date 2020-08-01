@@ -71,26 +71,69 @@ export default function Slider(props) {
         }
     };
 
+    const handleDrag = (x) => {
+        props.onChange(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().width : 0, x) * props.max);
+    };
+
     const handleMouseUp = (event) => {
-        handleDrag(event);
-        document.removeEventListener("mousemove", handleDrag);
+        const x = event.clientX - containerDom.current.getBoundingClientRect().left;
+
+        handleDrag(x);
+
+        document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
+
         innerDom.current.focus();
     };
 
-    const handleDrag = (event) => {
-        props.onChange(getPercentFilled(containerDom.current ? containerDom.current.getBoundingClientRect().width : 0, getRelativeMouseX(event.clientX)) * props.max);
+    const handleMouseMove = (event) => {
+        const x = event.clientX - containerDom.current.getBoundingClientRect().left;
+
+        handleDrag(x);
     };
 
-    const handleStartDrag = (event) => {
-        handleDrag(event);
-        document.addEventListener("mousemove", handleDrag);
+    const handleMouseDown = (event) => {
+        const x = event.clientX - containerDom.current.getBoundingClientRect().left;
+
+        handleDrag(x);
+        document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
+
+        innerDom.current.focus();
+    };
+
+    const handleTouchMove = (event) => {
+        event.preventDefault();
+        const x = event.pageX - containerDom.current.getBoundingClientRect().left - window.scrollX;
+
+        handleDrag(x);
+    };
+
+    const handleTouchEnd = (event) => {
+        const x = event.pageX - containerDom.current.getBoundingClientRect().left - window.scrollX;
+
+        handleDrag(x);
+
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+
+        innerDom.current.focus();
+    };
+
+    const handleTouchStart = (event) => {
+        event.preventDefault();
+
+        const x = event.touches[0].pageX - containerDom.current.getBoundingClientRect().left - window.scrollX;
+
+        handleDrag(x);
+        document.addEventListener("touchmove", handleTouchMove);
+        document.addEventListener("touchend", handleTouchEnd);
+
         innerDom.current.focus();
     };
 
     return (
-        <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleStartDrag} style={props.style}>
+        <div className={props.wrapperClass} ref={containerDom} onMouseDown={handleMouseDown} onTouchStart={handleTouchStart} style={props.style}>
             <div
                 ref={innerDom}
                 onKeyDown={handleKeyDown}

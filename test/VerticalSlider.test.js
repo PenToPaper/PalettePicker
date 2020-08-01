@@ -88,21 +88,4 @@ describe("Vertical Slider click and drag algorithm works inside of component", (
         expect(typeof map["touchmove"]).toEqual("undefined");
         expect(typeof map["touchend"]).toEqual("undefined");
     });
-
-    // it("Increases slider value based on click and drag", () => {
-    //     act(() => {
-    //         sliderWrapper.find(".brightness-vertical").prop("onMouseDown")({ clientY: 0 });
-    //         map.mousemove({ clientY: 10 });
-    //         map.mouseup({ clientY: 10 });
-    //     });
-
-    //     sliderWrapper.update();
-
-    //     expect(callback).toHaveBeenCalled();
-    // });
-
-    // it("Unbinds event handlers from the dom after mouseup", () => {
-    //     expect(map).not.toHaveProperty("mousemove");
-    //     expect(map).not.toHaveProperty("mouseup");
-    // });
 });
