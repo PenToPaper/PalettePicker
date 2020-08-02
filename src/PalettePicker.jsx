@@ -750,6 +750,7 @@ export default function PalettePicker() {
         setSwatches(newSwatches);
         setHarmony(newHarmony);
         setColorMode(newColorMode);
+        setSelection(newSelection);
 
         setProjects((prevProjects) => {
             let newIndex = prevProjects.length;
