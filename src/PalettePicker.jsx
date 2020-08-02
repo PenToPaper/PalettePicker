@@ -511,6 +511,12 @@ export default function PalettePicker() {
     };
 
     const changeColor = (sectionName, index, newColor) => {
+        const firstSectionName = getFirstSectionName(swatches);
+        if (sectionName !== firstSectionName) {
+            setColor(sectionName, index, newColor);
+            return;
+        }
+
         switch (harmony) {
             case "Complementary":
                 restrictComplement(index, newColor);

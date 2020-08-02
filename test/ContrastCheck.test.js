@@ -41,7 +41,7 @@ describe("ContrastType renders properly and makes collapsable help text", () => 
         const standardMet = contrastTypeWrapper.find(".standard-met");
         expect(standardMet).toHaveLength(1);
         expect(standardMet.find(".standard-compliance-box")).toHaveLength(1);
-        expect(standardMet.find(".standard-compliance-box").find("img").prop("src")).toEqual("/assets/materialicons/material_check_lightgreen.svg");
+        expect(standardMet.find(".standard-compliance-box").find("img").prop("src")).toEqual("assets/materialicons/material_check_lightgreen.svg");
         expect(standardMet.find(".standard-name")).toHaveLength(1);
         expect(standardMet.find(".standard-name").text()).toEqual("WCAG AA");
         expect(standardMet.find(".contrast-standard")).toHaveLength(1);
@@ -51,7 +51,7 @@ describe("ContrastType renders properly and makes collapsable help text", () => 
         const standardNotMet = contrastTypeWrapper.find(".standard-not-met");
         expect(standardNotMet).toHaveLength(1);
         expect(standardNotMet.find(".standard-compliance-box")).toHaveLength(1);
-        expect(standardNotMet.find(".standard-compliance-box").find("img").prop("src")).toEqual("/assets/materialicons/material_close_lightred.svg");
+        expect(standardNotMet.find(".standard-compliance-box").find("img").prop("src")).toEqual("assets/materialicons/material_close_lightred.svg");
         expect(standardNotMet.find(".standard-name")).toHaveLength(1);
         expect(standardNotMet.find(".standard-name").text()).toEqual("WCAG AAA");
         expect(standardNotMet.find(".contrast-standard")).toHaveLength(1);
