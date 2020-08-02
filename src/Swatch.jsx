@@ -419,7 +419,7 @@ export default function Swatch(props) {
                         props.onDeleteSwatch();
                     }}
                 >
-                    <img src="/assets/materialicons/material_delete_offwhite.svg" alt="" />
+                    <img src="assets/materialicons/material_delete_offwhite.svg" alt="" />
                 </button>
             )}
 

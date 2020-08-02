@@ -39,5 +39,6 @@
     },
     "jest": {
         "testEnvironment": "node"
-    }
+    },
+    "homepage": "/palettepicker"
 }

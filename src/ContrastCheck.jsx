@@ -36,7 +36,7 @@ export function ContrastType(props) {
                     event.preventDefault();
                 }}
             >
-                <img src="/assets/materialicons/material_help_outline_offwhite.svg" alt={`Show definition of ${props.typeName.toLowerCase()}`} />
+                <img src="assets/materialicons/material_help_outline_offwhite.svg" alt={`Show definition of ${props.typeName.toLowerCase()}`} />
             </button>
             <div className={isTooltipOpen ? "contrast-checker-tooltip tooltip-open" : "contrast-checker-tooltip"} role="tooltip" id={`#tooltip-${cssFormattedTypeName}`} aria-hidden={!isTooltipOpen}>
                 {props.tooltip}
@@ -47,7 +47,7 @@ export function ContrastType(props) {
                         return (
                             <div key={index} className={standard.standardMet ? "standard-met" : "standard-not-met"}>
                                 <div className="standard-compliance-box">
-                                    {standard.standardMet ? <img src="/assets/materialicons/material_check_lightgreen.svg" alt="Check" /> : <img src="/assets/materialicons/material_close_lightred.svg" alt="Standard Not Met" />}
+                                    {standard.standardMet ? <img src="assets/materialicons/material_check_lightgreen.svg" alt="Check" /> : <img src="assets/materialicons/material_close_lightred.svg" alt="Standard Not Met" />}
                                 </div>
                                 <span className="standard-name">{standard.standardName}</span>
                                 <span className="contrast-standard">{standard.standardRatio}:1</span>

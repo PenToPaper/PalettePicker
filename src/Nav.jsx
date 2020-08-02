@@ -84,7 +84,7 @@ export const Project = React.forwardRef((props, ref) => {
                 }}
                 ref={ref}
             >
-                {props.editing ? <img src="/assets/materialicons/material_save_offblack.svg" alt="Save Project Label" /> : <img src="/assets/materialicons/material_create_offblack.svg" alt="Edit Project Label" />}
+                {props.editing ? <img src="assets/materialicons/material_save_offblack.svg" alt="Save Project Label" /> : <img src="assets/materialicons/material_create_offblack.svg" alt="Edit Project Label" />}
             </button>
             {props.editing ? (
                 <ProjectManagedInput value={props.projectName} onChange={(newName) => props.onProjectNameChange(props.index, newName)} />
@@ -97,7 +97,7 @@ export const Project = React.forwardRef((props, ref) => {
                     props.onConfirmingDelete(props.index);
                 }}
             >
-                <img src="/assets/materialicons/material_delete_offblack.svg" alt="Delete Project"></img>
+                <img src="assets/materialicons/material_delete_offblack.svg" alt="Delete Project"></img>
             </button>
             {props.confirmingDelete && <ProjectConfirmDelete index={props.index} onDeleteProject={props.onDeleteProject} onConfirmingDelete={props.onConfirmingDelete} />}
         </li>
@@ -207,9 +207,9 @@ export default function Nav(props) {
     return (
         <FocusTrap active={isOpen}>
             <nav role="navigation" className={isOpen ? "hamburger-menu-expanded" : ""} onKeyDown={handleButtonKeyDown}>
-                <img src="/assets/PalettePickerLogo.svg" alt="Palette Picker Logo" />
+                <img src="assets/PalettePickerLogo.svg" alt="Palette Picker Logo" />
                 <button className="hamburger-menu-container" aria-label="Toggle the Project Menu" aria-expanded={isOpen ? "true" : "false"} aria-controls="hamburger-menu-body" onClick={toggle}>
-                    <img src="/assets/materialicons/material_menu_offwhite.svg" alt="" />
+                    <img src="assets/materialicons/material_menu_offwhite.svg" alt="" />
                 </button>
                 <div id="hamburger-menu-body" aria-label="Your Projects" hidden={!isOpen}>
                     <ul role="menubar" aria-label="Load, delete, and edit PalettePicker saved projects">
@@ -238,7 +238,7 @@ export default function Nav(props) {
                             props.onAddProject();
                         }}
                     >
-                        <img src="/assets/materialicons/material_playlist_add_offblack.svg" alt="" />
+                        <img src="assets/materialicons/material_playlist_add_offblack.svg" alt="" />
                         Add Project
                     </button>
                 </div>
