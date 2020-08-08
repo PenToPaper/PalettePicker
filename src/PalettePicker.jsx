@@ -711,7 +711,7 @@ export default function PalettePicker() {
         setProjects((prevProjects) => {
             const newProjects = prevProjects.concat();
             window.localStorage.removeItem(prevProjects[index]);
-            window.localStorage.setItem(newName, JSON.stringify({ harmony, swatches, colorMode }));
+            window.localStorage.setItem(newName, JSON.stringify({ selection, harmony, swatches, colorMode }));
             newProjects[index] = newName;
             return newProjects;
         });
