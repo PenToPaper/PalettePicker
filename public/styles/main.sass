@@ -281,6 +281,7 @@ header
     box-sizing: border-box
     overflow-y: auto
     margin-right: 48px
+    max-height: 416px
     .add-section
         display: none
     h1
@@ -305,6 +306,8 @@ header
             font-size: 18px
             color: $back-dark
             margin-right: 8px
+    li:last-child a
+        margin-bottom: 32px
 
 label
     margin-top: -16px
@@ -869,6 +872,7 @@ section
         padding: 16px
         width: 240px
         margin-right: 32px
+        max-height: 272px
         h1
             font-size: 32px
         a
@@ -879,6 +883,8 @@ section
             span
                 line-height: 40px
                 font-size: 18px
+        li:last-child a
+            margin-bottom: 16px
 
     label
         margin-top: -14px
@@ -1062,6 +1068,7 @@ section
         width: 100%
         margin-right: 0px
         margin-bottom: 48px
+        max-height: none
         ul::after
             content: " "
             clear: both
@@ -1254,19 +1261,20 @@ section
         a
             margin-right: 16px
         .add-section
-            width: 40px
-            height: 40px
-            float: left
             display: block
-            margin-top: 16px
-            border: none
-            padding: 0
-            background:
-                image: url("../assets/materialicons/material_create_folder_offblack.svg")
-                size: 25px auto
-                repeat: no-repeat
-                position: center center
-                color: $back-gray
+            button
+                width: 40px
+                height: 40px
+                float: left
+                margin-top: 16px
+                border: none
+                padding: 0
+                background:
+                    image: url("../assets/materialicons/material_create_folder_offblack.svg")
+                    size: 25px auto
+                    repeat: no-repeat
+                    position: center center
+                    color: $back-gray
 
     section
         max-width: 100%

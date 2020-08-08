@@ -20,13 +20,12 @@ function ProjectPreviewTile(props) {
                         </li>
                     );
                 })}
-                <li>
+                <li className="add-section">
                     <button
                         aria-label="Add Swatch Section"
                         onClick={() => {
                             props.onAddSwatchSection(props.sectionName);
                         }}
-                        className="add-section"
                     />
                 </li>
             </ul>
