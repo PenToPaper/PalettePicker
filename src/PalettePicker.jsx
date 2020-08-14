@@ -28,8 +28,7 @@ export default function PalettePicker() {
     let pressedKeys = [];
 
     useEffect(() => {
-        refreshProjectsListFromLocalData();
-        refreshFromLocalData(activeProject);
+        refreshProjectsListFromLocalData(refreshFromLocalData);
     }, []);
 
     const setLocalStorage = (changedDataType, newData) => {
@@ -57,17 +56,20 @@ export default function PalettePicker() {
         window.localStorage.setItem(projects[activeProject], JSON.stringify(oldLocalStorage));
     };
 
-    const refreshProjectsListFromLocalData = () => {
+    const refreshProjectsListFromLocalData = (callback) => {
         let localStorageObjects = Object.keys(window.localStorage);
         if (localStorageObjects.length === 0) {
             localStorageObjects = ["My Project 1"];
         }
         localStorageObjects.sort(NaturalCompare);
-        setProjects(localStorageObjects);
+        setProjects(() => {
+            callback(localStorageObjects, activeProject);
+            return localStorageObjects;
+        });
     };
 
-    const refreshFromLocalData = (index) => {
-        const storedJson = JSON.parse(window.localStorage.getItem(projects[index]));
+    const refreshFromLocalData = (projectList, index) => {
+        const storedJson = JSON.parse(window.localStorage.getItem(projectList[index]));
 
         if (storedJson) {
             setColorMode(storedJson.colorMode);
