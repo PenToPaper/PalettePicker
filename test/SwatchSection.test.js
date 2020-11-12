@@ -10,7 +10,7 @@ describe("Swatch Section properly renders elements based on props", () => {
         2: "#aaabbb",
         13: "#aaaccc",
     };
-    const selection = 2;
+    const selection = "2";
     const onChangeCallback = jest.fn();
     const swatchSectionWrapper = shallow(<SwatchSection sectionName="Section Title" swatches={swatchData} selection={selection} onAddSwatch={callback} onChange={onChangeCallback} onSelectSwatch={() => {}} />);
 

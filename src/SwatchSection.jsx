@@ -19,11 +19,11 @@ export default function SwatchSection(props) {
         return () => {
             window.removeEventListener("resize", adjustInputWidth);
         };
-    }, [inputContainer, adjustInputWidth]);
+    }, [inputContainer]);
 
     useEffect(() => {
         adjustInputWidth();
-    }, [Object.keys(props.swatches).length]);
+    });
 
     return (
         <section id={props.sectionName}>
@@ -41,7 +41,7 @@ export default function SwatchSection(props) {
                     return (
                         <Swatch
                             key={swatchKey}
-                            selected={props.selection == swatchKey}
+                            selected={props.selection === swatchKey}
                             deleteButton={true}
                             onDeleteSwatch={() => props.onDeleteSwatch(props.sectionName, swatchKey)}
                             colorMode={props.colorMode}
