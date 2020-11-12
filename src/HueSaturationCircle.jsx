@@ -48,10 +48,11 @@ export default function HueSaturationCircle(props) {
     });
 
     useEffect(() => {
-        window.addEventListener("resize", refreshSize.current);
+        const refreshCallback = refreshSize.current;
+        window.addEventListener("resize", refreshCallback);
 
         return () => {
-            window.removeEventListener("resize", refreshSize.current);
+            window.removeEventListener("resize", refreshCallback);
         };
     }, [refreshSize]);
 

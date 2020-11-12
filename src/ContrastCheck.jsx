@@ -139,11 +139,12 @@ export default function ContrastCheck(props) {
     });
 
     useEffect(() => {
-        determineMobileLayout.current();
-        window.addEventListener("resize", determineMobileLayout.current);
+        const mobileLayoutCallback = determineMobileLayout.current;
+        mobileLayoutCallback();
+        window.addEventListener("resize", mobileLayoutCallback);
 
         return () => {
-            window.removeEventListener("resize", determineMobileLayout.current);
+            window.removeEventListener("resize", mobileLayoutCallback);
         };
     }, [determineMobileLayout]);
 
