@@ -5,6 +5,7 @@ import PaletteBody from "./PaletteBody";
 import CompareColors from "./CompareColors";
 import ContrastCheck from "./ContrastCheck";
 import NaturalCompare from "natural-compare-lite";
+import Footer from "./Footer";
 import * as colorUtils from "./ColorUtils";
 
 export default function PalettePicker() {
@@ -844,6 +845,7 @@ export default function PalettePicker() {
             </main>
             {modal.status === "shown" && modal.type === "compare" && <CompareColors onModalClose={exitModal} colorMode={colorMode} swatches={swatches} selection={modal.selection} onChange={changeColor} />}
             {modal.status === "shown" && modal.type === "contrast" && <ContrastCheck onModalClose={exitModal} colorMode={colorMode} swatches={swatches} selection={modal.selection} onChange={changeColor} />}
+            <Footer />
         </div>
     );
 }
