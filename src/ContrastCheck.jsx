@@ -134,18 +134,18 @@ export default function ContrastCheck(props) {
         exit.current.focus();
     }, []);
 
-    const determineMobileLayout = () => {
+    const determineMobileLayout = useRef(() => {
         setWindowWidth(window.innerWidth);
-    };
+    });
 
     useEffect(() => {
-        determineMobileLayout();
-        window.addEventListener("resize", determineMobileLayout);
+        determineMobileLayout.current();
+        window.addEventListener("resize", determineMobileLayout.current);
 
         return () => {
-            window.removeEventListener("resize", determineMobileLayout);
+            window.removeEventListener("resize", determineMobileLayout.current);
         };
-    }, []);
+    }, [determineMobileLayout]);
 
     const handleButtonKeyDown = (event) => {
         switch (event.keyCode) {

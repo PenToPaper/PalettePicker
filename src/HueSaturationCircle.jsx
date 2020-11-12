@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import HueSaturationNode from "./HueSaturationNode";
 import { getCoordinateFromHueSaturation } from "./HueSaturationNode";
 import convert from "color-convert";
@@ -41,17 +41,17 @@ export default function HueSaturationCircle(props) {
         }
     };
 
-    const refreshSize = () => {
+    const refreshSize = useRef(() => {
         if (instance !== null) {
             setCircleRadius(instance.getBoundingClientRect().width / 2);
         }
-    };
+    });
 
     useEffect(() => {
-        window.addEventListener("resize", refreshSize);
+        window.addEventListener("resize", refreshSize.current);
 
         return () => {
-            window.removeEventListener("resize", refreshSize);
+            window.removeEventListener("resize", refreshSize.current);
         };
     }, [refreshSize]);
 
@@ -71,7 +71,7 @@ export default function HueSaturationCircle(props) {
 
         for (let swatchCategory of Object.keys(props.swatches)) {
             for (let swatchKey of Object.keys(props.swatches[swatchCategory])) {
-                const [hue, saturation, brightness] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey].hex);
+                const [hue, saturation] = convert.hex.hsv(props.swatches[swatchCategory][swatchKey].hex);
                 const coordinates = getCoordinateFromHueSaturation(circleRadius, hue, saturation);
                 if (coordinatesAreWithin(...getOffsetFromCenter(circleRadius, x, y), ...coordinates, 25)) {
                     dragSelection.sectionName = swatchCategory;
