@@ -71,6 +71,8 @@ export function ContrastType(props) {
                                 </div>
                             </div>
                         );
+                    default:
+                        return false;
                 }
             })}
         </div>
@@ -90,6 +92,8 @@ export function AccordianSwatches(props) {
             case 32:
                 toggle();
                 break;
+            default:
+                return;
         }
     };
 
@@ -141,7 +145,7 @@ export default function ContrastCheck(props) {
         return () => {
             window.removeEventListener("resize", determineMobileLayout);
         };
-    }, [determineMobileLayout]);
+    }, []);
 
     const handleButtonKeyDown = (event) => {
         switch (event.keyCode) {
@@ -149,6 +153,8 @@ export default function ContrastCheck(props) {
             case 27:
                 props.onModalClose();
                 break;
+            default:
+                return;
         }
     };
 
