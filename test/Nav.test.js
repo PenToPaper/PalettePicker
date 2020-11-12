@@ -130,7 +130,7 @@ describe("Renders state properly based on props", () => {
         expect(li.hasClass("project-selected")).toEqual(true);
         expect(li.prop("id")).toEqual("project-0");
         expect(li.prop("aria-selected")).toEqual("true");
-        expect(li.prop("role")).toEqual("menuitem");
+        expect(li.prop("role")).toEqual("option");
 
         expect(buttonList.get(0).props.className).toEqual("nav-modifier");
         buttonList.get(0).props.onClick();

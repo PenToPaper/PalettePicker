@@ -48,6 +48,8 @@ export function ProjectConfirmDelete(props) {
             case 27:
                 props.onConfirmingDelete(-1);
                 break;
+            default:
+                return;
         }
     };
 
@@ -76,7 +78,7 @@ export function ProjectConfirmDelete(props) {
 
 export const Project = React.forwardRef((props, ref) => {
     return (
-        <li className={props.selected ? "project-selected" : ""} key={props.index} id={"project-" + props.index} aria-selected={props.selected ? "true" : "false"} role="menuitem">
+        <li className={props.selected ? "project-selected" : ""} key={props.index} id={"project-" + props.index} aria-selected={props.selected ? "true" : "false"} role="option">
             <button
                 className="nav-modifier"
                 onClick={() => {
@@ -167,14 +169,14 @@ export default function Nav(props) {
         }
         switch (event.keyCode) {
             // Arrow right
-            case 39:
             // Arrow down
+            case 39:
             case 40:
                 event.preventDefault();
                 return focusNextProject(currentElement);
             // Arrow left
-            case 37:
             // Arrow up
+            case 37:
             case 38:
                 event.preventDefault();
                 return focusPreviousProject(currentElement);
