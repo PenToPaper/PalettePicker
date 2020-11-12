@@ -360,7 +360,7 @@ export default function PalettePicker() {
         });
     };
 
-    const deleteAnalogousSwatch = () => {
+    const deleteAnalogousSwatch = (callback) => {
         setSaveSwatches((prevSwatches) => {
             const firstSectionName = getFirstSectionName(prevSwatches);
             const indexOneHSB = colorUtils.getHSBFromColorData(prevSwatches[firstSectionName][1].colorData, colorMode);
@@ -373,6 +373,9 @@ export default function PalettePicker() {
 
             const newSwatches = Object.assign({}, prevSwatches);
             newSwatches[firstSectionName] = newSectionSwatches;
+            if (callback) {
+                callback(newSwatches);
+            }
             return newSwatches;
         });
     };
@@ -616,19 +619,19 @@ export default function PalettePicker() {
     };
 
     const deleteSwatch = (sectionName, swatchIndex) => {
+        const updateSelection = (newSwatches) => {
+            setSaveSelection((prevSelection) => {
+                if (prevSelection.sectionName === sectionName && prevSelection.index === swatchIndex) {
+                    const newSelection = Object.assign(prevSelection);
+                    newSelection.index = Object.keys(newSwatches[sectionName])[0];
+                    return newSelection;
+                }
+                return prevSelection;
+            });
+        };
+
         if (Object.keys(swatches[sectionName]).length > 1) {
             if (harmony === "None" || getFirstSectionName(swatches) !== sectionName) {
-                const updateSelection = (newSwatches) => {
-                    setSaveSelection((prevSelection) => {
-                        if (prevSelection.sectionName === sectionName && prevSelection.index === swatchIndex) {
-                            const newSelection = Object.assign(prevSelection);
-                            newSelection.index = Object.keys(newSwatches[sectionName])[0];
-                            return newSelection;
-                        }
-                        return prevSelection;
-                    });
-                };
-
                 setSaveSwatches((prevSwatches) => {
                     const newSwatches = Object.assign({}, prevSwatches);
                     delete newSwatches[sectionName][swatchIndex];
@@ -636,7 +639,7 @@ export default function PalettePicker() {
                     return newSwatches;
                 });
             } else if (harmony === "Analogous" && Object.keys(swatches[sectionName]).length > 2) {
-                deleteAnalogousSwatch();
+                deleteAnalogousSwatch(updateSelection);
             }
         }
     };
