@@ -50,6 +50,8 @@ export default function Dropdown(props) {
                 selectNextOption();
                 event.preventDefault();
                 break;
+            default:
+                return;
         }
     };
 
@@ -130,6 +132,13 @@ export default function Dropdown(props) {
         setIsOpen(false);
     };
 
+    // Makes sure aria-activedescendant is not a prop at all when the nav menu is closed
+    const activeDescendant = {};
+
+    if (isOpen) {
+        activeDescendant["aria-activedescendant"] = `${props.labelId}-${getSelectedIndex()}`;
+    }
+
     return (
         <div className={`dropdown ${isOpen ? "dropdown-expanded" : ""}`}>
             <button
@@ -143,7 +152,7 @@ export default function Dropdown(props) {
             >
                 {props.selectedOption}
             </button>
-            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" aria-activedescendant={`${props.labelId}-${getSelectedIndex()}`} onBlur={handleBlur}>
+            <ul onKeyDown={handleUlKeyDown} ref={ulDom} role="listbox" aria-labelledby={props.labelId} tabIndex="-1" {...activeDescendant} onBlur={handleBlur}>
                 {props.options.map((option, index) => {
                     return (
                         <li

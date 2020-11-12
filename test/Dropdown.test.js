@@ -23,7 +23,7 @@ describe("Dropdown renders default state correctly based on props", () => {
         expect(dropdownWrapper.find("ul").prop("role")).toEqual("listbox");
         expect(dropdownWrapper.find("ul").prop("aria-labelledby")).toEqual("dropdown-color-harmony");
         expect(dropdownWrapper.find("ul").prop("tabIndex")).toEqual("-1");
-        expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-0");
+        expect(Object.keys(dropdownWrapper.find("ul").props())).not.toContain("aria-activedescendant");
     });
 
     it("Renders all li elements with proper react and accessibility attributes", () => {
@@ -43,14 +43,16 @@ const expectMenuOpen = (dropdownWrapper, menuOpen) => {
     expect(dropdownWrapper.find(".dropdown").hasClass("dropdown-expanded")).toEqual(menuOpen);
 };
 
-const expectLiSelected = (dropdownWrapper, index) => {
+const expectLiSelected = (dropdownWrapper, index, activeDescendant) => {
     let expectedAriaSelected = new Array(6).fill(undefined);
     expectedAriaSelected[index] = "true";
 
     let expectedDropdownSelected = new Array(6).fill(false);
     expectedDropdownSelected[index] = true;
 
-    expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-" + index);
+    if (activeDescendant) {
+        expect(dropdownWrapper.find("ul").prop("aria-activedescendant")).toEqual("dropdown-color-harmony-" + index);
+    }
     expect(dropdownWrapper.find("li").map((li) => li.prop("aria-selected"))).toEqual(expectedAriaSelected);
     expect(dropdownWrapper.find("li").get(index).props.className.includes("dropdown-selected")).toEqual(true);
 };
@@ -83,14 +85,14 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
         simulateKeyDown(dropdownWrapper, "ul", "end");
 
         // Bottom li is selected
-        expectLiSelected(dropdownWrapper, 5);
+        expectLiSelected(dropdownWrapper, 5, true);
         expect(callback).toHaveBeenLastCalledWith(optionsList[5]);
 
         simulateKeyDown(dropdownWrapper, "ul", "home");
 
         // Top li is selected
         dropdownWrapper.update();
-        expectLiSelected(dropdownWrapper, 0);
+        expectLiSelected(dropdownWrapper, 0, true);
         expect(callback).toHaveBeenLastCalledWith(optionsList[0]);
     });
 
@@ -101,7 +103,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // 2nd li is selected
         dropdownWrapper.update();
-        expectLiSelected(dropdownWrapper, 1);
+        expectLiSelected(dropdownWrapper, 1, true);
         expect(callback).toHaveBeenLastCalledWith(optionsList[1]);
     });
 
@@ -127,7 +129,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
         expectMenuOpen(dropdownWrapper, true);
 
         // 3rd li is selected
-        expectLiSelected(dropdownWrapper, 2);
+        expectLiSelected(dropdownWrapper, 2, true);
         expect(callback).toHaveBeenLastCalledWith(optionsList[2]);
     });
 
@@ -152,7 +154,7 @@ describe("Dropdown renders updated states properly based on keyboard input", () 
 
         // 4th li is selected
         dropdownWrapper.update();
-        expectLiSelected(dropdownWrapper, 3);
+        expectLiSelected(dropdownWrapper, 3, true);
         expect(callback).toHaveBeenLastCalledWith(optionsList[3]);
     });
 });
@@ -189,7 +191,7 @@ describe("Dropdown renders updated states properly based on mouse input", () => 
         });
 
         dropdownWrapper.update();
-        expectLiSelected(dropdownWrapper, 2);
+        expectLiSelected(dropdownWrapper, 2, false);
         expect(callback).toHaveBeenLastCalledWith(optionsList[2]);
         expectMenuOpen(dropdownWrapper, false);
     });
