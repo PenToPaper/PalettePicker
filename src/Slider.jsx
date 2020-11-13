@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 
 export function getPercentFilled(sliderWidth, relativeMouseX) {
     let percentNum = relativeMouseX / sliderWidth;
@@ -13,10 +13,6 @@ export function getPercentFilled(sliderWidth, relativeMouseX) {
 export default function Slider(props) {
     const containerDom = useRef(null);
     const innerDom = useRef(null);
-
-    const getRelativeMouseX = (absoluteMouseX) => {
-        return containerDom.current ? absoluteMouseX - containerDom.current.getBoundingClientRect().left : 0;
-    };
 
     const incrementValue = (incrementBy) => {
         props.onChange((props.value + incrementBy) % props.max);
@@ -68,6 +64,8 @@ export default function Slider(props) {
                 event.preventDefault();
                 decrementValue(props.pageIncrement);
                 break;
+            default:
+                return;
         }
     };
 
