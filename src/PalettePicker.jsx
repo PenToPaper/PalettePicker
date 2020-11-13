@@ -28,6 +28,13 @@ export default function PalettePicker() {
 
     let pressedKeys = [];
 
+    const saveInitialProject = useCallback(() => {
+        setProjects(["My Project 1"]);
+        window.localStorage.setItem("My Project 1", JSON.stringify({ selection, harmony, swatches, colorMode }));
+        // Disables eslint warning about selection, harmony, swatches, and colorMode not being marked as a dependency. Not needed because this function will be run only once
+        // eslint-disable-next-line
+    }, []);
+
     const refreshProjectsListFromLocalData = useCallback(
         (callback) => {
             let localStorageObjects = Object.keys(window.localStorage);
@@ -56,7 +63,10 @@ export default function PalettePicker() {
 
     useEffect(() => {
         refreshProjectsListFromLocalData(refreshFromLocalData);
-    }, [refreshProjectsListFromLocalData, refreshFromLocalData]);
+        if (Object.keys(window.localStorage).length === 0) {
+            saveInitialProject();
+        }
+    }, [refreshProjectsListFromLocalData, refreshFromLocalData, saveInitialProject]);
 
     const setLocalStorage = (changedDataType, newData) => {
         let oldLocalStorage = JSON.parse(window.localStorage.getItem(projects[activeProject]));
