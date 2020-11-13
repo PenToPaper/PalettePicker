@@ -15,6 +15,8 @@ export default function CompareColors(props) {
             case 27:
                 props.onModalClose();
                 break;
+            default:
+                return;
         }
     };
 
