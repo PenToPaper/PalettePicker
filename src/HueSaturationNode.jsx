@@ -11,7 +11,7 @@ export function getCoordinateFromHueSaturation(circleRadius, hue, saturation) {
 }
 
 export default function HueSaturationNode(props) {
-    const [hue, saturation, brightness] = convert.hex.hsv(props.color.hex);
+    const [hue, saturation] = convert.hex.hsv(props.color.hex);
     let coordinates;
     // More accurate representation if colorMode is already HSB
     if (props.colorMode === "HSB") {
