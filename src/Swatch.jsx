@@ -8,10 +8,10 @@ export function BufferedNumberInput(props) {
 
     useEffect(() => {
         setIsEmpty(false);
-    }, [props.color.colorData[props.index]]);
+    }, [props.value]);
 
     const getNewColor = (newValue) => {
-        const colorData = props.color.colorData.concat();
+        const colorData = props.colorData.concat();
         colorData[props.index] = parseInt(newValue);
         const hex = "#" + colorUtils.getHexFromColorData(colorData, props.colorMode);
         return { hex, colorData };
@@ -26,7 +26,7 @@ export function BufferedNumberInput(props) {
             return;
         }
 
-        if (parsedNumber !== NaN && parsedNumber <= props.max && parsedNumber >= props.min) {
+        if (!isNaN(parsedNumber) && parsedNumber <= props.max && parsedNumber >= props.min) {
             props.onChange(getNewColor(parsedNumber));
             setIsEmpty(false);
         }
@@ -37,7 +37,7 @@ export function BufferedNumberInput(props) {
             className={props.className}
             type="text"
             inputMode="numeric"
-            value={isEmpty ? "" : Math.round(props.color.colorData[props.index]).toString()}
+            value={isEmpty ? "" : Math.round(props.value).toString()}
             onChange={(e) => {
                 onInputChange(e.target.value);
             }}
@@ -78,7 +78,7 @@ export function HsbModifier(props) {
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={360} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />
+                <BufferedNumberInput max={360} min={0} value={props.color.colorData[0]} colorData={props.color.colorData} onChange={props.onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -96,7 +96,7 @@ export function HsbModifier(props) {
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"saturation"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[1]} colorData={props.color.colorData} onChange={props.onChange} index={1} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"saturation"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -114,7 +114,7 @@ export function HsbModifier(props) {
                         props.onChange({ hex: "#" + convert.hsv.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"brightness"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[2]} colorData={props.color.colorData} onChange={props.onChange} index={2} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"brightness"} />
             </div>
         </>
     );
@@ -146,7 +146,7 @@ export function RgbModifier(props) {
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={255} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"red value"} />
+                <BufferedNumberInput max={255} min={0} value={props.color.colorData[0]} colorData={props.color.colorData} onChange={props.onChange} index={0} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"red value"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -164,7 +164,7 @@ export function RgbModifier(props) {
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={255} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"green value"} />
+                <BufferedNumberInput max={255} min={0} value={props.color.colorData[1]} colorData={props.color.colorData} onChange={props.onChange} index={1} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"green value"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -182,7 +182,7 @@ export function RgbModifier(props) {
                         props.onChange({ hex: "#" + convert.rgb.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={255} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"blue value"} />
+                <BufferedNumberInput max={255} min={0} value={props.color.colorData[2]} colorData={props.color.colorData} onChange={props.onChange} index={2} colorMode={"RGB"} className={"slider-input"} modifyingLabel={"blue value"} />
             </div>
         </>
     );
@@ -217,7 +217,7 @@ export function HslModifier(props) {
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={360} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"hue"} />
+                <BufferedNumberInput max={360} min={0} value={props.color.colorData[0]} colorData={props.color.colorData} onChange={props.onChange} index={0} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"hue"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -235,7 +235,7 @@ export function HslModifier(props) {
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"saturation"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[1]} colorData={props.color.colorData} onChange={props.onChange} index={1} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"saturation"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -253,7 +253,7 @@ export function HslModifier(props) {
                         props.onChange({ hex: "#" + convert.hsl.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"lightness"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[2]} colorData={props.color.colorData} onChange={props.onChange} index={2} colorMode={"HSL"} className={"slider-input"} modifyingLabel={"lightness"} />
             </div>
         </>
     );
@@ -286,7 +286,7 @@ export function CmykModifier(props) {
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={0} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"cyan value"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[0]} colorData={props.color.colorData} onChange={props.onChange} index={0} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"cyan value"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -304,7 +304,7 @@ export function CmykModifier(props) {
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={1} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"magenta value"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[1]} colorData={props.color.colorData} onChange={props.onChange} index={1} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"magenta value"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -322,7 +322,7 @@ export function CmykModifier(props) {
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={2} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"yellow value"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[2]} colorData={props.color.colorData} onChange={props.onChange} index={2} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"yellow value"} />
             </div>
             <div className="modifier-row">
                 <Slider
@@ -340,7 +340,7 @@ export function CmykModifier(props) {
                         props.onChange({ hex: "#" + convert.cmyk.hex(newColorData), colorData: newColorData });
                     }}
                 />
-                <BufferedNumberInput max={100} min={0} color={props.color} onChange={props.onChange} index={3} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"key value"} />
+                <BufferedNumberInput max={100} min={0} value={props.color.colorData[3]} colorData={props.color.colorData} onChange={props.onChange} index={3} colorMode={"CMYK"} className={"slider-input"} modifyingLabel={"key value"} />
             </div>
         </>
     );
@@ -367,6 +367,8 @@ export default function Swatch(props) {
                 return <HslModifier color={props.color} onChange={props.onChange} />;
             case "CMYK":
                 return <CmykModifier color={props.color} onChange={props.onChange} />;
+            default:
+                return;
         }
     };
 

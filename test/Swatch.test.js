@@ -321,7 +321,7 @@ describe("BufferedNumberInput is implemented properly", () => {
         color = newColor;
         inputWrapper.setProps({ color });
     });
-    const inputWrapper = shallow(<BufferedNumberInput max={360} min={10} color={color} onChange={onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />);
+    const inputWrapper = shallow(<BufferedNumberInput max={360} min={10} value={color.colorData[0]} colorData={color.colorData} onChange={onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />);
     const input = inputWrapper.find("input");
 
     it("Is constructed peoperly based on given props", () => {
@@ -370,13 +370,13 @@ describe("BufferedNumberInput is implemented properly", () => {
         expect(inputWrapper.find("input").prop("value")).toEqual("");
     });
 
-    const inputWrapperMount = mount(<BufferedNumberInput max={360} min={10} color={color} onChange={onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />);
+    const inputWrapperMount = mount(<BufferedNumberInput max={360} min={10} value={color.colorData[0]} colorData={color.colorData} onChange={onChange} index={0} colorMode={"HSB"} className={"slider-input"} modifyingLabel={"hue"} />);
     it("Clears blank input when props.color.colorData[index] is updated, then refreshes new value", () => {
         act(() => {
             inputWrapperMount.find("input").prop("onChange")({ target: { value: "" } });
         });
         inputWrapperMount.update();
-        inputWrapperMount.setProps({ color: { hex: "#00B33C", colorData: [140, 100, 70] } });
+        inputWrapperMount.setProps({ value: 140, colorData: [140, 100, 70] });
         inputWrapperMount.update();
         expect(inputWrapperMount.find("input").prop("value")).toEqual("140");
     });
@@ -397,9 +397,9 @@ describe("BufferedNumberInput is implemented properly", () => {
         expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("min")).toEqual(0);
         expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
 
-        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorData")).toEqual(colorStart.colorData);
 
         expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
         expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
@@ -438,9 +438,9 @@ describe("BufferedNumberInput is implemented properly", () => {
         expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("min")).toEqual(0);
         expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
 
-        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorData")).toEqual(colorStart.colorData);
 
         expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
         expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
@@ -479,9 +479,9 @@ describe("BufferedNumberInput is implemented properly", () => {
         expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("min")).toEqual(0);
         expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
 
-        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorData")).toEqual(colorStart.colorData);
 
         expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
         expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
@@ -522,10 +522,10 @@ describe("BufferedNumberInput is implemented properly", () => {
         expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("min")).toEqual(0);
         expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("min")).toEqual(0);
 
-        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("color")).toEqual(colorStart);
-        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("color")).toEqual(colorStart);
+        expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(2).prop("colorData")).toEqual(colorStart.colorData);
+        expect(hsbWrapper.find(BufferedNumberInput).at(3).prop("colorData")).toEqual(colorStart.colorData);
 
         expect(hsbWrapper.find(BufferedNumberInput).at(0).prop("onChange")).toEqual(onChange);
         expect(hsbWrapper.find(BufferedNumberInput).at(1).prop("onChange")).toEqual(onChange);
