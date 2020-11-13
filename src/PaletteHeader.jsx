@@ -12,7 +12,7 @@ function ProjectPreviewTile(props) {
             <ul>
                 {props.sections.map((section) => {
                     return (
-                        <li>
+                        <li key={section}>
                             <a href={`#${section}`}>
                                 <span>#</span>
                                 {section}
@@ -94,12 +94,12 @@ export default function PaletteHeader(props) {
                 />
                 <HueSaturationCircle colorMode={props.colorMode} onSelectSwatch={props.onSelectSwatch} onPickColor={onHueSaturationChange} selection={props.selection} swatches={props.swatches} />
                 <div className="header-toolbars">
-                    <div class="labeled-dropdown">
+                    <div className="labeled-dropdown">
                         <label id="dropdown-color-harmony">Color Harmony</label>
 
                         <Dropdown labelId="dropdown-color-harmony" options={["None", "Complementary", "Analogous", "Triad", "Split-Complementary", "Rectangle"]} selectedOption={props.colorHarmony} onChange={props.onColorHarmony} />
                     </div>
-                    <div class="labeled-dropdown">
+                    <div className="labeled-dropdown">
                         <label id="dropdown-color-harmony">Color Mode</label>
                         <Dropdown labelId="dropdown-color-mode" options={["HSB", "HSL", "RGB", "CMYK"]} selectedOption={props.colorMode} onChange={props.onColorMode} />
                     </div>
