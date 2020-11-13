@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import HueSaturationNode from "./HueSaturationNode";
 import { getCoordinateFromHueSaturation } from "./HueSaturationNode";
 import convert from "color-convert";
@@ -41,18 +41,17 @@ export default function HueSaturationCircle(props) {
         }
     };
 
-    const refreshSize = useRef(() => {
+    const refreshSize = useCallback(() => {
         if (instance !== null) {
             setCircleRadius(instance.getBoundingClientRect().width / 2);
         }
-    });
+    }, [instance]);
 
     useEffect(() => {
-        const refreshCallback = refreshSize.current;
-        window.addEventListener("resize", refreshCallback);
+        window.addEventListener("resize", refreshSize);
 
         return () => {
-            window.removeEventListener("resize", refreshCallback);
+            window.removeEventListener("resize", refreshSize);
         };
     }, [refreshSize]);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Nav from "./Nav";
 import PaletteHeader from "./PaletteHeader";
 import PaletteBody from "./PaletteBody";
@@ -28,9 +28,35 @@ export default function PalettePicker() {
 
     let pressedKeys = [];
 
+    const refreshProjectsListFromLocalData = useCallback(
+        (callback) => {
+            let localStorageObjects = Object.keys(window.localStorage);
+            if (localStorageObjects.length === 0) {
+                localStorageObjects = ["My Project 1"];
+            }
+            localStorageObjects.sort(NaturalCompare);
+            setProjects(() => {
+                callback(localStorageObjects, activeProject);
+                return localStorageObjects;
+            });
+        },
+        [activeProject]
+    );
+
+    const refreshFromLocalData = useCallback((projectList, index) => {
+        const storedJson = JSON.parse(window.localStorage.getItem(projectList[index]));
+
+        if (storedJson) {
+            setColorMode(storedJson.colorMode);
+            setHarmony(storedJson.harmony);
+            setSwatches(storedJson.swatches);
+            setSelection(storedJson.selection);
+        }
+    }, []);
+
     useEffect(() => {
         refreshProjectsListFromLocalData(refreshFromLocalData);
-    }, []);
+    }, [refreshProjectsListFromLocalData, refreshFromLocalData]);
 
     const setLocalStorage = (changedDataType, newData) => {
         let oldLocalStorage = JSON.parse(window.localStorage.getItem(projects[activeProject]));
@@ -52,32 +78,11 @@ export default function PalettePicker() {
             case "selection":
                 oldLocalStorage.selection = newData;
                 break;
+            default:
+                return;
         }
 
         window.localStorage.setItem(projects[activeProject], JSON.stringify(oldLocalStorage));
-    };
-
-    const refreshProjectsListFromLocalData = (callback) => {
-        let localStorageObjects = Object.keys(window.localStorage);
-        if (localStorageObjects.length === 0) {
-            localStorageObjects = ["My Project 1"];
-        }
-        localStorageObjects.sort(NaturalCompare);
-        setProjects(() => {
-            callback(localStorageObjects, activeProject);
-            return localStorageObjects;
-        });
-    };
-
-    const refreshFromLocalData = (projectList, index) => {
-        const storedJson = JSON.parse(window.localStorage.getItem(projectList[index]));
-
-        if (storedJson) {
-            setColorMode(storedJson.colorMode);
-            setHarmony(storedJson.harmony);
-            setSwatches(storedJson.swatches);
-            setSelection(storedJson.selection);
-        }
     };
 
     const onKeyDown = (e) => {

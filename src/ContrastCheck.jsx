@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import Swatch from "./Swatch";
 import { getWCAGContrast } from "./ColorUtils.js";
 import FocusTrap from "focus-trap-react";
@@ -134,17 +134,16 @@ export default function ContrastCheck(props) {
         exit.current.focus();
     }, []);
 
-    const determineMobileLayout = useRef(() => {
+    const determineMobileLayout = useCallback(() => {
         setWindowWidth(window.innerWidth);
-    });
+    }, []);
 
     useEffect(() => {
-        const mobileLayoutCallback = determineMobileLayout.current;
-        mobileLayoutCallback();
-        window.addEventListener("resize", mobileLayoutCallback);
+        determineMobileLayout();
+        window.addEventListener("resize", determineMobileLayout);
 
         return () => {
-            window.removeEventListener("resize", mobileLayoutCallback);
+            window.removeEventListener("resize", determineMobileLayout);
         };
     }, [determineMobileLayout]);
 
