@@ -87,18 +87,15 @@ describe("ContrastType renders properly and makes collapsable help text", () => 
 });
 
 describe("ContrastCheck modal appears properly with correct props", () => {
-    const defaultSwatches = {
-        Main: {
-            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-        },
-    };
+    const appWrapper = shallow(<PalettePicker />);
+
+    const defaultSwatches = appWrapper.find("PaletteHeader").prop("swatches");
+
     const defaultSelection = {
         sectionName: "Main",
         index: 1,
     };
+
     const newSelection = {
         sectionName: "Main",
         index: 2,
@@ -108,7 +105,6 @@ describe("ContrastCheck modal appears properly with correct props", () => {
     const contrastSwatches = { Main: { 1: { hex: "#FFEA70", colorData: [255, 234, 112] }, 2: { hex: "#4238FF", colorData: [66, 56, 255] } } };
 
     window.innerWidth = 1500;
-    const appWrapper = shallow(<PalettePicker />);
     const contrastWrapper = mount(<ContrastCheck swatches={contrastSwatches} onModalClose={() => {}} colorMode="RGB" selection={[defaultSelection, newSelection]} onChange={onChange} />);
 
     it("Renders the correct modal after button clicked and color selected", () => {
@@ -133,7 +129,7 @@ describe("ContrastCheck modal appears properly with correct props", () => {
     });
 
     it("Is passed the correct methods from PalettePicker", () => {
-        expect(appWrapper.find("PaletteHeader").prop("swatches").Main[1].hex).toEqual("#FFFFFF");
+        expect(appWrapper.find("PaletteHeader").prop("swatches").Main[1].hex).toEqual(defaultSwatches.Main[1].hex);
         appWrapper.find("ContrastCheck").prop("onChange")(defaultSelection.sectionName, defaultSelection.index, { hex: "#FA840E", colorData: [30, 94, 98] });
         expect(appWrapper.find("PaletteHeader").prop("swatches").Main[1].hex).toEqual("#FA840E");
 

@@ -11,10 +11,10 @@ import * as colorUtils from "./ColorUtils";
 export default function PalettePicker() {
     const [swatches, setSwatches] = useState({
         Main: {
-            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
+            1: colorUtils.getRandomColor("HSB"),
+            2: colorUtils.getRandomColor("HSB"),
+            3: colorUtils.getRandomColor("HSB"),
+            4: colorUtils.getRandomColor("HSB"),
         },
     });
     const [colorMode, setColorMode] = useState("HSB");

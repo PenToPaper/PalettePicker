@@ -6,24 +6,19 @@ import Swatch from "../src/Swatch";
 import FocusTrap from "focus-trap-react";
 
 describe("CompareColors modal appears properly with correct props", () => {
-    const defaultSwatches = {
-        Main: {
-            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-        },
-    };
+    const appWrapper = shallow(<PalettePicker />);
+
+    const defaultSwatches = appWrapper.find("PaletteHeader").prop("swatches");
+
     const defaultSelection = {
         sectionName: "Main",
         index: 1,
     };
+
     const newSelection = {
         sectionName: "Main",
         index: 2,
     };
-
-    const appWrapper = shallow(<PalettePicker />);
 
     it("Renders the correct modal after button clicked and color selected", () => {
         // Press CompareColors button
@@ -47,7 +42,7 @@ describe("CompareColors modal appears properly with correct props", () => {
     });
 
     it("Is passed the correct methods from PalettePicker", () => {
-        expect(appWrapper.find("PaletteHeader").prop("swatches").Main[1].hex).toEqual("#FFFFFF");
+        expect(appWrapper.find("PaletteHeader").prop("swatches").Main[1].hex).toEqual(defaultSwatches.Main[1].hex);
         appWrapper.find("CompareColors").prop("onChange")(defaultSelection.sectionName, defaultSelection.index, { hex: "#FA840E", colorData: [30, 94, 98] });
         expect(appWrapper.find("PaletteHeader").prop("swatches").Main[1].hex).toEqual("#FA840E");
 

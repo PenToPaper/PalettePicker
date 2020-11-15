@@ -4,19 +4,14 @@ import { shallow, mount } from "enzyme";
 import { act } from "react-dom/test-utils";
 
 describe("PalettePicker renders default state properly", () => {
-    const defaultSwatches = {
-        Main: {
-            1: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            2: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            3: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-            4: { hex: "#FFFFFF", colorData: [0, 0, 100] },
-        },
-    };
     const defaultSelection = {
         sectionName: "Main",
         index: 1,
     };
+
     const appWrapper = shallow(<PalettePicker />);
+
+    const defaultSwatches = JSON.parse(JSON.stringify(appWrapper.find("PaletteHeader").prop("swatches")));
 
     it("Includes all necessary components", () => {
         expect(appWrapper.find("Nav")).toHaveLength(1);
@@ -67,6 +62,8 @@ describe("PalletePicker complementary color functions work properly", () => {
 
     it("Changes swatches properly on complementary color initilization", () => {
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
 
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("Complementary");
@@ -135,6 +132,8 @@ describe("PalletePicker triad color functions work properly", () => {
 
     it("Changes swatches properly on triad color initilization", () => {
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
 
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("Triad");
@@ -236,6 +235,8 @@ describe("PalletePicker split complementary color functions work properly", () =
 
     it("Changes swatches properly on triad color initilization", () => {
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
 
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("Split-Complementary");
@@ -351,6 +352,8 @@ describe("PalletePicker analogous color functions work properly with 4 swatches"
 
     it("Changes swatches properly on analogous color initilization", () => {
         expect(Object.keys(getSwatches().Main)).toHaveLength(4);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
 
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("Analogous");
@@ -467,6 +470,8 @@ describe("PalletePicker analogous color functions work properly with 5 swatches"
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
 
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("Analogous");
@@ -596,6 +601,8 @@ describe("PalletePicker Rectangle color functions work properly on click and dra
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
 
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("Rectangle");
@@ -712,6 +719,8 @@ describe("PalletePicker Rectangle color functions work properly on SHIFT click a
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
 
         appWrapper.find("PaletteHeader").prop("onColorHarmony")("Rectangle");
@@ -832,6 +841,8 @@ describe("PalletePicker addSwatch functionality is partially restricted with col
         appWrapper.find("PaletteBody").prop("onAddSwatch")("Main");
 
         expect(Object.keys(getSwatches().Main)).toHaveLength(5);
+
+        appWrapper.find("PaletteHeader").prop("onChange")("Main", 1, { hex: "#FFFFFF", colorData: [0, 0, 0] });
         expect(getSwatches().Main[1].hex).toEqual("#FFFFFF");
     });
 
